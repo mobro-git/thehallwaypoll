@@ -4,7 +4,7 @@ pagetitle: "The Hallway Poll"
 subtitle: "Just trying to get through the day..."
 image: images/doyoulikepolls.png
 about:
-  template: broadside
+  template: trestles
   image-shape: rectangle
 ---
 

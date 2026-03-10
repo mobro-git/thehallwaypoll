@@ -16,5 +16,6 @@ library(tidyverse)
 df = readxl::read_xlsx("whiteboardpollresults.xlsx")
 ```
 
-How many polls have we had? `r length(unique(df$poll))`
+How many polling questions have been asked? `r length(unique(df$question))`
+
 How many votes have been counted? `r sum(df$votes)`
