@@ -1,0 +1,12 @@
+---
+title: "Hello there!"
+pagetitle: "The Hallway Poll"
+subtitle: "Just trying to get through the day..."
+image: images/doyoulikepolls.png
+about:
+  template: broadside
+  image-shape: rectangle
+---
+
+This site hosts the results from and ruminations on *The Hallway Poll*. *The Hallway Poll* was developed to help bring joy and intrigue to the WJCS 4232 suite and all those who pass through it. Please explore the site by using the navigation bar to explore.
+

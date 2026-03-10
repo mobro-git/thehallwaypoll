@@ -1,0 +1,43 @@
+/*-- scss:defaults --*/
+
+// Sass Variables
+// https://quarto.org/docs/output-formats/html-themes.html#sass-variables
+
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+
+$theme-darkblue: #334d81;
+$theme-orange: #ea8300;
+$theme-white: #ffffff;
+$theme-pink: #ff00e8;
+
+/* Colors */
+$body-bg: $theme-darkblue;
+$body-color: $theme-white;
+$link-color: $theme-pink;
+ 
+/* Fonts */
+$font-family-sans-serif: "Lato", sans-serif;
+$font-size-root: 17px;
+
+/*-- scss:rules --*/
+
+h1 {
+  text-transform: uppercase;
+  color: $theme-orange;
+}
+
+h2 {
+  text-transform: uppercase;
+  color: lighten($theme-orange, 40%);
+}
+
+.navbar * {
+  color: $theme-darkblue;
+  transition-duration: 0.5s;
+}
+
+span.navbar-title:hover {
+  color: $theme-orange;
+  transition-duration: 0.5s;
+}
+

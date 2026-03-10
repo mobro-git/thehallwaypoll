@@ -1,0 +1,42 @@
+---
+title: "Cats vs. Dogs"
+description: |
+  Woofs and meows, which will prevail?
+date: '2025-12-08'
+image: "catsvdogs.jpg"
+categories:
+    - Pets
+format: html
+toc: true
+lightbox: true
+execute:
+  echo: false
+  warning: false
+  error: false
+  message: false
+---
+
+```{r}
+library(tidyverse)
+library(ggpattern)
+library(here)
+library(kableExtra)
+
+data = readxl::read_xlsx(here("whiteboardpollresults.xlsx")) %>%
+  filter(question == "2")
+```
+
+The age old question, "cats or dogs", has long been debated. From ancient times, both have been revered as companions, utilized for their hunting prowess, and appreciated for their beauty. But...... how do we feel about them at EPA?
+
+```{r}
+ggplot(data) +
+  geom_bar(aes(x=option,y=votes,fill=option), stat="identity") +
+  geom_text(aes(x=option,y=votes,label=votes), vjust=-0.5, color = "black", size = 3) +
+  labs(fill="",
+       x="",
+       y="Votes") +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+Unfortunately, its a resounding vote for dogs. Cats, better luck next time.

@@ -1,0 +1,17 @@
+{
+  "hash": "520fdb703b31301ac886b239971d1ce7",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Home Vibe\"\ndescription: |\n  How do you live?\ndate: '2026-02-10'\nimage: \"home.jpg\"\ncategories:\n    - Home\nformat: html\ntoc: true\nlightbox: true\nexecute:\n  echo: false\n  warning: false\n  error: false\n  message: false\n---\n\n::: {.cell}\n\n:::\n\n::: {.cell}\n::: {.cell-output-display}\n![](index_files/figure-html/unnamed-chunk-2-1.png){width=672}\n:::\n:::\n\n::: {.cell}\n::: {.cell-output-display}\n![](index_files/figure-html/unnamed-chunk-3-1.png){width=672}\n:::\n:::\n\n::: {.cell}\n::: {.cell-output-display}\n![](index_files/figure-html/unnamed-chunk-4-1.png){width=672}\n:::\n:::\n\n::: {.cell}\n::: {.cell-output-display}\n![](index_files/figure-html/unnamed-chunk-5-1.png){width=672}\n:::\n:::",
+    "supporting": [
+      "index_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

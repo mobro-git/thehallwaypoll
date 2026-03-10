@@ -1,0 +1,44 @@
+project:
+  type: website
+
+freeze: true
+
+website:
+  title: "The Hallway Poll"
+  description: "The Hallway Poll is a crowd-sourced, silly, interactive project to bring a little levity to our day"
+  favicon: "moose_cutout.jpg"
+  site-url: "https://www.thehallwaypoll.org"
+  repo-url: "https://github.com/mobro-git/thehallwaypoll"
+  
+  navbar:
+    pinned: true
+
+    left:
+      - text: "About"
+        href: index.qmd
+      - text: "Voting Statistics"
+        href: votingstatistics.qmd
+      - text: "Polls"
+        href: polls/index.qmd
+      
+    tools:
+      - icon: github
+        href: https://github.com/mobro-git/thehallwaypoll
+    
+  page-footer:
+    left: |
+      <span class="faux-block">{{< var years >}} Morgan Browning</span>
+      <span class="faux-block">[All content licensed under Creative Commons CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)</span>      
+    center: |
+      <span class="faux-block">Thank you for your service and your vote</span>
+    right: |
+      <span class="faux-block">Made with R Studio and [Quarto](https://quarto.org/)</span>
+      <span class="faux-block">[View the source code at GitHub]({{< var github-url >}})</span>
+      
+format:
+  html: 
+    theme: sketchy
+  
+
+    
+    

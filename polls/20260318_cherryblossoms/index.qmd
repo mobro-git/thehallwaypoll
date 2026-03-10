@@ -1,0 +1,96 @@
+---
+title: "Cherry Blossom Season"
+description: |
+  How do you enjoy them?
+date: '2025-12-08'
+image: "cherryblossoms.jpg"
+categories:
+    - DC
+    - Adventure
+format: html
+toc: true
+lightbox: true
+execute:
+  echo: false
+  warning: false
+  error: false
+  message: false
+draft: true
+---
+
+```{r}
+library(tidyverse)
+library(ggpattern)
+library(here)
+library(kableExtra)
+```
+
+```{r}
+data = readxl::read_xlsx(here("whiteboardpollresults.xlsx")) %>%
+  filter(question == "25")
+
+ggplot(data) +
+  geom_bar(aes(x=option,y=votes,fill=option), stat="identity") +
+  geom_text(aes(x=option,y=votes,label=votes), vjust=-0.5, color = "black", size = 3) +
+  labs(fill="",
+       x="",
+       y="Votes") +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+```{r}
+data = readxl::read_xlsx(here("whiteboardpollresults.xlsx")) %>%
+  filter(question == "26")
+
+ggplot(data) +
+  geom_bar(aes(x=option,y=votes,fill=option), stat="identity") +
+  geom_text(aes(x=option,y=votes,label=votes), vjust=-0.5, color = "black", size = 3) +
+  labs(fill="",
+       x="",
+       y="Votes") +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+```{r}
+data = readxl::read_xlsx(here("whiteboardpollresults.xlsx")) %>%
+  filter(question == "27")
+
+ggplot(data) +
+  geom_bar(aes(x=option,y=votes,fill=option), stat="identity") +
+  geom_text(aes(x=option,y=votes,label=votes), vjust=-0.5, color = "black", size = 3) +
+  labs(fill="",
+       x="",
+       y="Votes") +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+```{r}
+data = readxl::read_xlsx(here("whiteboardpollresults.xlsx")) %>%
+  filter(question == "28")
+
+ggplot(data) +
+  geom_bar(aes(x=option,y=votes,fill=option), stat="identity") +
+  geom_text(aes(x=option,y=votes,label=votes), vjust=-0.5, color = "black", size = 3) +
+  labs(fill="",
+       x="",
+       y="Votes") +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+```{r}
+data = readxl::read_xlsx(here("whiteboardpollresults.xlsx")) %>%
+  filter(question == "29")
+
+ggplot(data) +
+  geom_bar(aes(x=option,y=votes,fill=option), stat="identity") +
+  geom_text(aes(x=option,y=votes,label=votes), vjust=-0.5, color = "black", size = 3) +
+  labs(fill="",
+       x="",
+       y="Votes") +
+  theme_minimal() +
+  theme(legend.position = "none")
+```

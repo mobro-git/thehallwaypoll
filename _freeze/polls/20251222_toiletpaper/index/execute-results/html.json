@@ -1,0 +1,17 @@
+{
+  "hash": "69ba85d0f6b485dfc1596eafa9c1cdb5",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Toilet Paper Rolls: Over or Under\"\ndescription: |\n  Which way do you hang?\ndate: '2025-12-22'\nimage: \"tp_overunder.png\"\ncategories:\n    - Home\nformat: html\ntoc: true\nlightbox: true\nexecute:\n  echo: false\n  warning: false\n  error: false\n  message: false\n---\n\n::: {.cell}\n\n:::\n\n::: {.cell}\n::: {.cell-output-display}\n![](index_files/figure-html/unnamed-chunk-2-1.png){width=672}\n:::\n:::\n",
+    "supporting": [
+      "index_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

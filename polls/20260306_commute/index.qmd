@@ -1,0 +1,95 @@
+---
+title: "Commute"
+description: |
+  Getting from home to work, unfortunately
+date: '2026-03-06'
+image: "commute.jpg"
+categories:
+    - DC
+    - Adventure
+format: html
+toc: true
+lightbox: true
+execute:
+  echo: false
+  warning: false
+  error: false
+  message: false
+---
+
+```{r}
+library(tidyverse)
+library(ggpattern)
+library(here)
+library(kableExtra)
+```
+
+```{r}
+data = readxl::read_xlsx(here("whiteboardpollresults.xlsx")) %>%
+  filter(question == "20")
+
+ggplot(data) +
+  geom_bar(aes(x=option,y=votes,fill=option), stat="identity") +
+  geom_text(aes(x=option,y=votes,label=votes), vjust=-0.5, color = "black", size = 3) +
+  labs(fill="",
+       x="",
+       y="Votes") +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+```{r}
+data = readxl::read_xlsx(here("whiteboardpollresults.xlsx")) %>%
+  filter(question == "21")
+
+ggplot(data) +
+  geom_bar(aes(x=option,y=votes,fill=option), stat="identity") +
+  geom_text(aes(x=option,y=votes,label=votes), vjust=-0.5, color = "black", size = 3) +
+  labs(fill="",
+       x="",
+       y="Votes") +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+```{r}
+data = readxl::read_xlsx(here("whiteboardpollresults.xlsx")) %>%
+  filter(question == "22")
+
+ggplot(data) +
+  geom_bar(aes(x=option,y=votes,fill=option), stat="identity") +
+  geom_text(aes(x=option,y=votes,label=votes), vjust=-0.5, color = "black", size = 3) +
+  labs(fill="",
+       x="",
+       y="Votes") +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+```{r}
+data = readxl::read_xlsx(here("whiteboardpollresults.xlsx")) %>%
+  filter(question == "23")
+
+ggplot(data) +
+  geom_bar(aes(x=option,y=votes,fill=option), stat="identity") +
+  geom_text(aes(x=option,y=votes,label=votes), vjust=-0.5, color = "black", size = 3) +
+  labs(fill="",
+       x="",
+       y="Votes") +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+```{r}
+data = readxl::read_xlsx(here("whiteboardpollresults.xlsx")) %>%
+  filter(question == "24")
+
+ggplot(data) +
+  geom_bar(aes(x=option,y=votes,fill=option), stat="identity") +
+  geom_text(aes(x=option,y=votes,label=votes), vjust=-0.5, color = "black", size = 3) +
+  labs(fill="",
+       x="",
+       y="Votes") +
+  theme_minimal() +
+  theme(legend.position = "none")
+```

@@ -1,0 +1,17 @@
+{
+  "hash": "2f77158a7d034ed70e71e12ccc794bb9",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Eggs\"\ndescription: |\n  Which came first, the chicken or the egg?\ndate: '2026-02-23'\nimage: \"egg.jpg\"\ncategories:\n    - Food\nformat: html\ntoc: true\nlightbox: true\nexecute:\n  echo: false\n  warning: false\n  error: false\n  message: false\n---\n\n::: {.cell}\n\n:::\n\n::: {.cell}\n::: {.cell-output-display}\n![](index_files/figure-html/unnamed-chunk-2-1.png){width=672}\n:::\n:::\n\n::: {.cell}\n::: {.cell-output-display}\n![](index_files/figure-html/unnamed-chunk-3-1.png){width=672}\n:::\n:::\n\n::: {.cell}\n::: {.cell-output-display}\n![](index_files/figure-html/unnamed-chunk-4-1.png){width=672}\n:::\n:::\n\n::: {.cell}\n::: {.cell-output-display}\n![](index_files/figure-html/unnamed-chunk-5-1.png){width=672}\n:::\n:::\n\n::: {.cell}\n::: {.cell-output-display}\n![](index_files/figure-html/unnamed-chunk-6-1.png){width=672}\n:::\n:::\n",
+    "supporting": [
+      "index_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "hash": "8c70fb1d245749749a8b11e348481b7f",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: Voting Statistics\nformat:\n  dashboard:\n    orientation: rows\nexecute:\n  echo: false\n  warning: false\n  error: false\n  message: false\n---\n\n::: {.cell}\n\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

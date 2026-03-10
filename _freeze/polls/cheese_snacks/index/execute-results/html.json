@@ -1,0 +1,17 @@
+{
+  "hash": "be4ce8a33eeaa21f6bf1cb3c3156de74",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Cheesy Snacks\"\ndescription: |\n  Which crunch do you prefer?\ndate: '2025-12-01'\nimage: \"cheese-01.jpg\"\ncategories:\n    - Pets\nformat: html\ntoc: true\nlightbox: true\nexecute:\n  echo: false\n  warning: false\n  error: false\n  message: false\n---\n\n::: {.cell}\n\n:::\n\n\n\nITS A TIE! I've gotta come up with a more contentious snack poll.\n\n\n\n::: {.cell}\n::: {.cell-output-display}\n![](index_files/figure-html/unnamed-chunk-2-1.png){width=672}\n:::\n:::\n",
+    "supporting": [
+      "index_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

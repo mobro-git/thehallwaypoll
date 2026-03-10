@@ -1,0 +1,40 @@
+---
+title: "Toilet Paper Rolls: Over or Under"
+description: |
+  Which way do you hang?
+date: '2025-12-22'
+image: "tp_overunder.png"
+categories:
+    - Home
+format: html
+toc: true
+lightbox: true
+execute:
+  echo: false
+  warning: false
+  error: false
+  message: false
+---
+
+```{r}
+library(tidyverse)
+library(ggpattern)
+library(here)
+library(kableExtra)
+
+data = readxl::read_xlsx(here("whiteboardpollresults.xlsx")) %>%
+  filter(question == "4")
+```
+
+
+```{r}
+ggplot(data) +
+  geom_bar(aes(x=option,y=votes,fill=option), stat="identity") +
+  geom_text(aes(x=option,y=votes,label=votes), vjust=-0.5, color = "black", size = 3) +
+  labs(fill="",
+       x="",
+       y="Votes") +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+

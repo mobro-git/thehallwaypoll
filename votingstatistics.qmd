@@ -1,0 +1,20 @@
+---
+title: Voting Statistics
+format:
+  dashboard:
+    orientation: rows
+execute:
+  echo: false
+  warning: false
+  error: false
+  message: false
+---
+
+```{r}
+library(tidyverse)
+
+df = readxl::read_xlsx("whiteboardpollresults.xlsx")
+```
+
+How many polls have we had? `r length(unique(df$poll))`
+How many votes have been counted? `r sum(df$votes)`

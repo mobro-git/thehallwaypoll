@@ -1,0 +1,17 @@
+{
+  "hash": "9149b9ab738fad3ced6dda4f623d9ee6",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Breakfast Foods\"\ndescription: |\n  Battle of the griddle cakes\ndate: '2026-01-05'\nimage: \"wafflespancakes.jpg\"\ncategories:\n    - Food\nformat: html\ntoc: true\nlightbox: true\nexecute:\n  echo: false\n  warning: false\n  error: false\n  message: false\n---\n\n::: {.cell}\n\n:::\n\n::: {.cell}\n::: {.cell-output-display}\n![](index_files/figure-html/unnamed-chunk-2-1.png){width=672}\n:::\n:::\n\n::: {.cell}\n::: {.cell-output-display}\n![](index_files/figure-html/unnamed-chunk-3-1.png){width=672}\n:::\n:::\n",
+    "supporting": [
+      "index_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

@@ -1,0 +1,82 @@
+---
+title: "Vacations"
+description: |
+  Where and when?
+date: '2026-01-20'
+image: "vacation.jpg"
+categories:
+    - Adventure
+format: html
+toc: true
+lightbox: true
+execute:
+  echo: false
+  warning: false
+  error: false
+  message: false
+---
+
+```{r}
+library(tidyverse)
+library(ggpattern)
+library(here)
+library(kableExtra)
+```
+
+```{r}
+data = readxl::read_xlsx(here("whiteboardpollresults.xlsx")) %>%
+  filter(question == "7")
+
+ggplot(data) +
+  geom_bar(aes(x=option,y=votes,fill=option), stat="identity") +
+  geom_text(aes(x=option,y=votes,label=votes), vjust=-0.5, color = "black", size = 3) +
+  labs(fill="",
+       x="",
+       y="Votes") +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+```{r}
+data = readxl::read_xlsx(here("whiteboardpollresults.xlsx")) %>%
+  filter(question == "8")
+
+ggplot(data) +
+  geom_bar(aes(x=option,y=votes,fill=option), stat="identity") +
+  geom_text(aes(x=option,y=votes,label=votes), vjust=-0.5, color = "black", size = 3) +
+  labs(fill="",
+       x="",
+       y="Votes") +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+```{r}
+data = readxl::read_xlsx(here("whiteboardpollresults.xlsx")) %>%
+  filter(question == "9")
+
+ggplot(data) +
+  geom_bar(aes(x=option,y=votes,fill=option), stat="identity") +
+  geom_text(aes(x=option,y=votes,label=votes), vjust=-0.5, color = "black", size = 3) +
+  labs(fill="",
+       x="",
+       y="Votes") +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+```{r}
+data = readxl::read_xlsx(here("whiteboardpollresults.xlsx")) %>%
+  filter(question == "10")
+
+ggplot(data) +
+  geom_bar(aes(x=option,y=votes,fill=option), stat="identity") +
+  geom_text(aes(x=option,y=votes,label=votes), vjust=-0.5, color = "black", size = 3) +
+  labs(fill="",
+       x="",
+       y="Votes") +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+
