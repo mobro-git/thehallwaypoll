@@ -14,8 +14,15 @@ execute:
 library(tidyverse)
 
 df = readxl::read_xlsx("whiteboardpollresults.xlsx")
+
+pollsasked = length(unique(df$question))
+votescounted = sum(df$votes)
+mostvoted = unique((df %>% filter(votes == max(df$votes)))$option)
+mostvotes = max(df$votes)
 ```
 
-How many polling questions have been asked? `r length(unique(df$question))`
+>  ***`r pollsasked`*** polls conducted
 
-How many votes have been counted? `r sum(df$votes)`
+>  ***`r votescounted`*** votes counted
+
+> Highest vote count: ***`r mostvotes`*** for ***`r mostvoted`***
