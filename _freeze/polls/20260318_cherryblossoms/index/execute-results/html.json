@@ -1,8 +1,8 @@
 {
-  "hash": "db5223c31d8eaecad3a4115109d94a81",
+  "hash": "b7db4e482a28fc3ac16be6cc3b5c15e4",
   "result": {
     "engine": "knitr",
-    "markdown": "---\ntitle: \"Cherry Blossom Season\"\ndescription: |\n  How do you enjoy them?\ndate: '2025-12-08'\nimage: \"catsvdogs.jpg\"\ncategories:\n    - DC\n    - Adventure\nformat: html\ntoc: true\nlightbox: true\nexecute:\n  echo: false\n  warning: false\n  error: false\n  message: false\ndraft: true\n---\n\n::: {.cell}\n\n:::\n\n\n\n\n\nThe age old question, \"cats or dogs\", has long been debated. From ancient times, both have been revered as companions, utilized for their hunting prowess, and appreciated for their beauty. But...... how do we feel about them at EPA?\n\n\n\n\n\n::: {.cell}\n::: {.cell-output-display}\n![](index_files/figure-html/unnamed-chunk-2-1.png){width=672}\n:::\n:::\n\n\n\n\n\nUnfortunately, its a resounding vote for dogs. Cats, better luck next time.\n",
+    "markdown": "---\ntitle: \"Cherry Blossom Season\"\ndescription: |\n  How do you enjoy them?\ndate: '2025-12-08'\nimage: \"cherryblossoms.jpg\"\ncategories:\n    - DC\n    - Adventure\nformat: html\ntoc: true\nlightbox: true\nexecute:\n  echo: false\n  warning: false\n  error: false\n  message: false\ndraft: true\n---\n\n::: {.cell}\n\n:::\n\n::: {.cell}\n::: {.cell-output-display}\n![](index_files/figure-html/unnamed-chunk-2-1.png){width=672}\n:::\n:::\n\n::: {.cell}\n::: {.cell-output-display}\n![](index_files/figure-html/unnamed-chunk-3-1.png){width=672}\n:::\n:::\n\n::: {.cell}\n::: {.cell-output-display}\n![](index_files/figure-html/unnamed-chunk-4-1.png){width=672}\n:::\n:::\n\n::: {.cell}\n::: {.cell-output-display}\n![](index_files/figure-html/unnamed-chunk-5-1.png){width=672}\n:::\n:::\n\n::: {.cell}\n::: {.cell-output-display}\n![](index_files/figure-html/unnamed-chunk-6-1.png){width=672}\n:::\n:::\n",
     "supporting": [
       "index_files"
     ],

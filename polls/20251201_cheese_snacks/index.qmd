@@ -1,9 +1,9 @@
 ---
-title: "Holiday Beverages"
+title: "Cheesy Snacks"
 description: |
   What fill?
 date: '2025-12-01'
-image: "holidaydrinks.jpg"
+image: "cheese-01.jpg"
 categories:
     - Food
 format: html

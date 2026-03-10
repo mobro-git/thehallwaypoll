@@ -3,7 +3,7 @@ title: "Vacations"
 description: |
   Where and when?
 date: '2026-01-20'
-image: "vacation.jpg"
+image: "vacation.png"
 categories:
     - Adventure
 format: html

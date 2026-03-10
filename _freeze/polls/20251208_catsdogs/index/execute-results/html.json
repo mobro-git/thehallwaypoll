@@ -2,7 +2,7 @@
   "hash": "fc3ff840ae357a9c00c04d8b5eaac34c",
   "result": {
     "engine": "knitr",
-    "markdown": "---\ntitle: \"Cats vs. Dogs\"\ndescription: |\n  Woofs and meows, which will prevail?\ndate: '2025-12-08'\nimage: \"catsvdogs.jpg\"\ncategories:\n    - Pets\nformat: html\ntoc: true\nlightbox: true\nexecute:\n  echo: false\n  warning: false\n  error: false\n  message: false\n---\n\n::: {.cell}\n\n:::\n\n\n\n\n\nThe age old question, \"cats or dogs\", has long been debated. From ancient times, both have been revered as companions, utilized for their hunting prowess, and appreciated for their beauty. But...... how do we feel about them at EPA?\n\n\n\n\n\n::: {.cell}\n::: {.cell-output-display}\n![](index_files/figure-html/unnamed-chunk-2-1.png){width=672}\n:::\n:::\n\n\n\n\n\nUnfortunately, its a resounding vote for dogs. Cats, better luck next time.\n",
+    "markdown": "---\ntitle: \"Cats vs. Dogs\"\ndescription: |\n  Woofs and meows, which will prevail?\ndate: '2025-12-08'\nimage: \"catsvdogs.jpg\"\ncategories:\n    - Pets\nformat: html\ntoc: true\nlightbox: true\nexecute:\n  echo: false\n  warning: false\n  error: false\n  message: false\n---\n\n::: {.cell}\n\n:::\n\n\n\nThe age old question, \"cats or dogs\", has long been debated. From ancient times, both have been revered as companions, utilized for their hunting prowess, and appreciated for their beauty. But...... how do we feel about them at EPA?\n\n\n\n::: {.cell}\n::: {.cell-output-display}\n![](index_files/figure-html/unnamed-chunk-2-1.png){width=672}\n:::\n:::\n\n\n\nUnfortunately, its a resounding vote for dogs. Cats, better luck next time.\n",
     "supporting": [
       "index_files"
     ],
