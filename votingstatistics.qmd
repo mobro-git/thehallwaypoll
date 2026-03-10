@@ -21,8 +21,8 @@ mostvoted = unique((df %>% filter(votes == max(df$votes)))$option)
 mostvotes = max(df$votes)
 ```
 
->  ***`r pollsasked`*** polls conducted
+***`r pollsasked`{style="color: #2776F5"}*** polls conducted
 
->  ***`r votescounted`*** votes counted
+***`r votescounted`{style="color: #2776F5"}*** votes counted
 
-> Highest vote count: ***`r mostvotes`*** for ***`r mostvoted`***
+Highest vote count: ***`r mostvotes`{style="color: #2776F5"}*** for ***`r mostvoted`{style="color: #2776F5"}***
