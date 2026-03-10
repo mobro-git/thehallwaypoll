@@ -1,8 +1,8 @@
 {
-  "hash": "da8daaa9db70bb6b0db8e6eca31619dc",
+  "hash": "45351481cc61b956c941c61169ea0c39",
   "result": {
     "engine": "knitr",
-    "markdown": "---\ntitle: Voting Statistics\nformat:\n  dashboard:\n    orientation: rows\nexecute:\n  echo: false\n  warning: false\n  error: false\n  message: false\n---\n\n::: {.cell}\n\n:::\n\n\n\n\n>  ***29*** polls conducted\n\n>  ***805*** votes counted\n\n> Highest vote count: ***34*** for ***Escalator Walker***\n",
+    "markdown": "---\ntitle: Voting Statistics\nformat:\n  dashboard:\n    orientation: rows\nexecute:\n  echo: false\n  warning: false\n  error: false\n  message: false\n---\n\n::: {.cell}\n\n:::\n\n\n\n\n***29*** polls conducted\n\n***805*** votes counted\n\nHighest vote count: ***34*** for ***Escalator Walker***\n",
     "supporting": [],
     "filters": [
       "rmarkdown/pagebreak.lua"
