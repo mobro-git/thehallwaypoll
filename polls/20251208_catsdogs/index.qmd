@@ -225,7 +225,7 @@ waffle = tibble(
 waffle %>%
   ggplot(aes(x = col, y = rows - row + 1, fill = option)) +
   geom_tile(color = "white", linewidth = 0.5, width = 0.95, height = 0.95) +
-  scale_fill_manual(values = c("Cats" = "#f8766d", "Dogs" = "#00bfc4")) +
+  scale_fill_manual(values = c("Cats" = "#fa3814", "Dogs" = "#ba75ff")) +
   coord_equal() +
   labs(x = NULL, y = NULL, fill = NULL) +
   theme_void() +
