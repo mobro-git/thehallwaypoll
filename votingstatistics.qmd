@@ -2,7 +2,7 @@
 title: Voting Statistics
 format:
   dashboard:
-    orientation: rows
+    orientation: columns
 execute:
   echo: false
   warning: false
@@ -28,12 +28,24 @@ mostvoted = unique((data %>% filter(votes == max(data$votes)))$option)
 mostvotes = max(data$votes)
 mostunanimous = unique((data %>% filter(vote_share == max(data$vote_share)))$option)
 mostunanimous_pct = max(data$vote_share)
+leastvoted = unique((data %>% filter(votes == min(data$votes)))$option)
+fewestvotes = min(data$votes)
+leastunanimous = unique((data %>% filter(vote_share == min(data$vote_share)))$option)
+leastunanimous_pct = min(data$vote_share)
 ```
+
+## Summary Statistics
 
 ***`r pollsasked`*** polls conducted
 
 ***`r votescounted`*** votes counted
 
-Highest vote count: ***`r mostvotes`*** for ***`r mostvoted`***
+## Superlatives
 
-Most unanimous: ***`r mostunanimous`*** with ***`r mostunanimous_pct`*** % of the votes
+[Highest]{style="color: #4B824F"} vote count: ***`r mostvotes`*** for ***`r mostvoted`***
+
+[Most unanimous]{style="color: #4B824F"} vote: ***`r mostunanimous`*** with a *resounding* ***`r mostunanimous_pct`*** % of the votes
+
+[Lowest]{style="color: #824B4B"} vote count: ***`r fewestvotes`*** for ***`r leastvoted`***
+
+[Least unanimous]{style="color: #824B4B"} vote: ***`r leastunanimous`*** with ***`r leastunanimous_pct`*** % of the votes

@@ -1,8 +1,8 @@
 {
-  "hash": "af598c575af65494c98301586d0470a5",
+  "hash": "47601eb81f45a13fa73aecdc5a6b3a82",
   "result": {
     "engine": "knitr",
-    "markdown": "---\ntitle: Voting Statistics\nformat:\n  dashboard:\n    orientation: rows\nexecute:\n  echo: false\n  warning: false\n  error: false\n  message: false\n---\n\n::: {.cell}\n\n:::\n\n\n\n\n***29*** polls conducted\n\n***805*** votes counted\n\nHighest vote count: ***34*** for ***Escalator Walker***\n\nMost unanimous: ***Escalator Walker*** with ***85*** % of the votes\n",
+    "markdown": "---\ntitle: Voting Statistics\nformat:\n  dashboard:\n    orientation: columns\nexecute:\n  echo: false\n  warning: false\n  error: false\n  message: false\n---\n\n::: {.cell}\n\n:::\n\n\n\n\n## Summary Statistics\n\n***29*** polls conducted\n\n***805*** votes counted\n\n## Superlatives\n\n[Highest]{style=\"color: #4B824F\"} vote count: ***34*** for ***Escalator Walker***\n\n[Most unanimous]{style=\"color: #4B824F\"} vote: ***Escalator Walker*** with a *resounding* ***85*** % of the votes\n\n[Lowest]{style=\"color: #824B4B\"} vote count: ***1*** for ***Tidal Basin***\n\n[Least unanimous]{style=\"color: #824B4B\"} vote: ***Seasonal Beer*** with ***7.89*** % of the votes\n",
     "supporting": [],
     "filters": [
       "rmarkdown/pagebreak.lua"
