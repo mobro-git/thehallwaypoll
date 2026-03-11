@@ -1,8 +1,8 @@
 {
-  "hash": "69ba85d0f6b485dfc1596eafa9c1cdb5",
+  "hash": "89fdfd4b4d6f757dab022d7a0267ca94",
   "result": {
     "engine": "knitr",
-    "markdown": "---\ntitle: \"Toilet Paper Rolls: Over or Under\"\ndescription: |\n  Which way do you hang?\ndate: '2025-12-22'\nimage: \"tp_overunder.png\"\ncategories:\n    - Home\nformat: html\ntoc: true\nlightbox: true\nexecute:\n  echo: false\n  warning: false\n  error: false\n  message: false\n---\n\n::: {.cell}\n\n:::\n\n::: {.cell}\n::: {.cell-output-display}\n![](index_files/figure-html/unnamed-chunk-2-1.png){width=672}\n:::\n:::\n",
+    "markdown": "---\ntitle: \"Toilet Paper Rolls: Over or Under\"\ndescription: |\n  Which way do you hang?\ndate: '2025-12-22'\nimage: \"tp_overunder.png\"\ncategories:\n    - Home\nformat: html\ntoc: true\nlightbox: true\nexecute:\n  echo: false\n  warning: false\n  error: false\n  message: false\n---\n\n::: {.cell}\n\n:::\n\n\n\n![](tp_overunder.png)\n\n# WE GOT IT RIGHT! There is an objectively correct and incorrect answer here, and we resoundingly were on the right side of history.\n\n## Quick Look\n\nOver: 21 votes (84.0%) Under: 4 votes (16.0%) Margin: 17 votes (≈ 68.0% points)\n\n\n\n::: {.cell}\n::: {.cell-output-display}\n![Counts and shares.](index_files/figure-html/fig-bar-1.png){#fig-bar width=576}\n:::\n:::\n\n\n\n## Basic Stats\n\nIs this different from a 50/50 split? Yes. Exact binomial test p‑value = 9.11\\times 10^{-4}.\n\n“Over” share 95% CI: [0.64, 0.95].\n\nHow many voters would need to switch to change the winner? Because each switch changes the margin by 2, you’d need 9 people to switch from Over to Under to flip the result. A perfect tie isn’t possible with 25 voters.\n\n## Waffle Chart\n\n\n\n::: {.cell}\n::: {.cell-output-display}\n![Each square is one vote (25 total).](index_files/figure-html/fig-waffle-1.png){#fig-waffle width=576}\n:::\n:::\n",
     "supporting": [
       "index_files"
     ],

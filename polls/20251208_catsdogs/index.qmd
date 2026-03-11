@@ -18,25 +18,230 @@ execute:
 
 ```{r}
 library(tidyverse)
-library(ggpattern)
-library(here)
-library(kableExtra)
+library(scales)
 
-data = readxl::read_xlsx(here("whiteboardpollresults.xlsx")) %>%
-  filter(question == "2")
+results = readxl::read_xlsx(here::here("whiteboardpollresults.xlsx")) %>%
+  filter(question == "2") %>%
+  mutate(share = votes / sum(votes))
+
+N = sum(results$votes)
+p_cats = results$share[results$option == "Cats"]
+p_dogs = results$share[results$option == "Dogs"]
 ```
 
-The age old question, "cats or dogs", has long been debated. From ancient times, both have been revered as companions, utilized for their hunting prowess, and appreciated for their beauty. But...... how do we feel about them at EPA?
+# The age old question, "cats or dogs", has long been debated. From ancient times, both have been revered as companions, utilized for their hunting prowess, and appreciated for their beauty. But...... how do we feel about them at EPA?
+
+## Vote counts and shares
 
 ```{r}
-ggplot(data) +
-  geom_bar(aes(x=option,y=votes,fill=option), stat="identity") +
-  geom_text(aes(x=option,y=votes,label=votes), vjust=-0.5, color = "black", size = 3) +
-  labs(fill="",
-       x="",
-       y="Votes") +
-  theme_minimal() +
-  theme(legend.position = "none")
+#| label: fig-bar
+#| fig-cap: "Votes and shares for Cats vs Dogs."
+#| fig-width: 6
+#| fig-height: 4
+results %>%
+  ggplot(aes(x = fct_reorder(option, votes), y = votes, fill = option)) +
+  geom_col(width = 0.65, show.legend = FALSE) +
+  geom_text(aes(label = paste0(votes, " (", percent(share, accuracy = 0.1), ")")),
+            vjust = -0.5, size = 4) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
+  scale_fill_manual(values = c("Cats" = "#fa3814", "Dogs" = "#ba75ff")) +
+  labs(x = NULL, y = "Votes") +
+  theme_minimal(base_size = 13)
 ```
 
-Unfortunately, its a resounding vote for dogs. Cats, better luck next time.
+Dogs share: `r percent(p_dogs, accuracy = 0.1)`, Cats share: `r percent(p_cats, accuracy = 0.1)`.
+Vote margin (Dogs − Cats): `r max(results$votes) - min(results$votes)` votes = `r percent(p_dogs - p_cats, accuracy = 0.1)`.
+
+## Statistical difference from 50/50
+
+Testing Cats proportion p against 0.5 using an exact binomial test.
+
+```{r}
+bt = binom.test(x = 14, n = N, p = 0.5, alternative = "two.sided")
+bt
+```
+
+Two‑sided p‑value: `r signif(bt$p.value, 3)`
+95% exact CI for p(Cats): `r signif(bt$conf.int[1], 3)` to `r signif(bt$conf.int[2], 3)`
+
+Express the Dogs lead as a margin in share terms, margin = p(Dogs) − p(Cats) = 1 − 2p(Cats). The corresponding 95% CI:
+
+```{r}
+ci_p = bt$conf.int
+ci_margin = 1 - 2 * ci_p
+ci_margin
+```
+
+Even the lower bound of the margin is positive, indicating a clear preference for Dogs.
+
+How many flips would change the winner?
+
+To tie, you’d need `r (abs(28 - 14)/2)` votes to flip (7 Dogs → Cats).
+To give Cats a lead, you’d need `r (abs(28 - 14)/2 + 1)` flips (8 votes).
+
+## How unusual is 14-28 under a fair 50/50 world?
+
+Under p = 0.5 with N = 42, the probability to be at least this far from 50/50 (two‑sided) is the binomial test p‑value.
+
+We can also simulate the Cats counts under 50/50:
+
+```{r}
+#| label: fig-sim-null
+#| fig-cap: "Simulated Cats counts under a 50/50 world (10,000 polls, N = 42). The observed 14 is marked."
+#| fig-width: 7
+#| fig-height: 4
+M = 10000
+sim_cats_null = rbinom(M, size = N, prob = 0.5)
+
+tibble(cats_votes = sim_cats_null) %>%
+  ggplot(aes(x = cats_votes)) +
+  geom_histogram(binwidth = 1, fill = "#fa3814", color = "white", boundary = 0) +
+  geom_vline(xintercept = 14, linetype = "dashed", color = "black") +
+  geom_vline(xintercept = N - 14, linetype = "dashed", color = "black") +
+  labs(x = "Cats votes (under p = 0.5)", y = "Count of simulated polls") +
+  theme_minimal(base_size = 13)
+```
+
+Fraction of simulations at least as extreme (two‑sided):
+
+```{r}
+mean(sim_cats_null <= 14 | sim_cats_null >= (N - 14))
+```
+
+## Likelihood and Bayesian view for the Cats share
+
+Binomial likelihood for p(Cats) given 14 out of 42 votes:
+
+```{r}
+#| label: fig-likelihood
+#| fig-cap: "Binomial likelihood L(p) for p(Cats) given 14/42 (scaled to max = 1)."
+#| fig-width: 6
+#| fig-height: 4
+p_grid = seq(0, 1, length.out = 1001)
+lik = dbinom(14, size = N, prob = p_grid)
+lik = lik / max(lik)
+
+tibble(p = p_grid, likelihood = lik) %>%
+  ggplot(aes(p, likelihood)) +
+  geom_line(linewidth = 1) +
+  geom_vline(xintercept = 0.5, linetype = "dotted") +
+  labs(x = "p(Cats)", y = "Relative likelihood (scaled)") +
+  theme_minimal(base_size = 13)
+```
+
+With a flat prior Beta(1,1), the posterior is Beta(15,29). Credible interval and the probability Cats < 0.5 (i.e., Dogs lead):
+
+```{r}
+#| label: fig-posterior
+#| fig-cap: "Posterior for p(Cats) with Beta(1,1) prior (posterior = Beta(15,29))."
+#| fig-width: 6
+#| fig-height: 4
+post_a = 15
+post_b = 29
+post_ci = qbeta(c(0.025, 0.975), post_a, post_b)
+prob_dogs_lead = pbeta(0.5, post_a, post_b)   # Pr[p(Cats) < 0.5]
+
+tibble(p = p_grid, density = dbeta(p_grid, post_a, post_b)) %>%
+  ggplot(aes(p, density)) +
+  geom_area(fill = "#b2df8a", alpha = 0.5) +
+  geom_vline(xintercept = 0.5, linetype = "dotted") +
+  annotate("rect",
+           xmin = post_ci[1], xmax = post_ci[2],
+           ymin = 0, ymax = Inf, alpha = 0.15, fill = "#1b9e77") +
+  labs(x = "p(Cats)", y = "Posterior density") +
+  theme_minimal(base_size = 13)
+```
+
+95% credible interval for p(Cats): `r sprintf("[%.3f, %.3f]", post_ci[1], post_ci[2])`
+
+Posterior probability Dogs lead (p(Cats) < 0.5): `r round(prob_dogs_lead, 4)`
+
+Posterior predictive for a repeat poll of size 42: chance Cats win, tie, or Dogs win.
+
+```{r}
+M = 20000
+p_draws = rbeta(M, post_a, post_b)
+cats_next = rbinom(M, size = N, prob = p_draws)
+
+pp_cat_win = mean(cats_next > N/2)
+pp_tie = mean(cats_next == N/2)
+pp_dog_win = 1 - pp_cat_win - pp_tie
+
+c(pp_cat_win = pp_cat_win, pp_tie = pp_tie, pp_dog_win = pp_dog_win)
+```
+
+Bayes factor for “not 50/50” vs “p = 0.5” using Jeffreys prior Beta(0.5,0.5).
+
+```{r}
+# Jeffreys BF10 = [Beta(x+0.5, n-x+0.5)/Beta(0.5,0.5)] / (0.5^n)
+x = 14; n = N
+log_BF10 = lbeta(x + 0.5, n - x + 0.5) - lbeta(0.5, 0.5) + n * log(2)
+BF10 = exp(log_BF10)
+BF10
+```
+
+BF10 > 1 supports “not 50/50”; values around 3–10 are often called “moderate” evidence.
+
+## Effect sizes and ratios
+
+```{r}
+# Risk difference (share margin)
+rd = p_dogs - p_cats
+
+# Risk ratio (share ratio)
+rr = p_dogs / p_cats
+
+# Odds for Dogs (Dogs vs Cats)
+odds_dogs = p_dogs / (1 - p_dogs)  # equals 2
+
+# Cohen's h for proportions: 2*asin(sqrt(p1)) − 2*asin(sqrt(p2))
+cohens_h = 2*asin(sqrt(p_dogs)) - 2*asin(sqrt(p_cats))  # positive in favor of Dogs
+c(risk_difference = rd, risk_ratio = rr, odds_dogs = odds_dogs, cohens_h = cohens_h)
+```
+
+Dogs lead by `r percent(rd, accuracy = 0.1)` in share.
+Dogs have about `r round(rr, 2)`:1 the share of Cats and odds about `r round(odds_dogs, 2)`:1.
+Cohen’s h ≈ `r round(abs(cohens_h), 3)` (medium‑to‑large difference; 0.2 small, 0.5 medium, 0.8 large).
+
+## Waffle chart (one square per voter)
+
+```{r}
+#| label: fig-waffle
+#| fig-cap: "Waffle chart: 42 voters, Cats = 14, Dogs = 28."
+#| fig-width: 6
+#| fig-height: 4
+rows = 7
+cols = 6
+
+waffle = tibble(
+  id = 1:N,
+  option = c(rep("Dogs", 28), rep("Cats", 14))
+) %>%
+  mutate(
+    row = (id - 1) %/% cols + 1,
+    col = (id - 1) %% cols + 1
+  )
+
+waffle %>%
+  ggplot(aes(x = col, y = rows - row + 1, fill = option)) +
+  geom_tile(color = "white", linewidth = 0.5, width = 0.95, height = 0.95) +
+  scale_fill_manual(values = c("Cats" = "#f8766d", "Dogs" = "#00bfc4")) +
+  coord_equal() +
+  labs(x = NULL, y = NULL, fill = NULL) +
+  theme_void() +
+  theme(legend.position = "bottom")
+```
+
+# Takeaways
+
+Dogs win clearly: 28–14 yields a Dogs margin of `r percent(p_dogs - p_cats, accuracy = 0.1)`.
+
+Exact binomial test vs 50/50 is significant (p ≈ `r signif(bt$p.value, 3)`), and the 95% CI for p(Cats) lies below 0.5.
+
+A fair coin process would rarely produce a result this lopsided for N = 42.
+
+Bayesian analysis strongly favors a Dogs lead and predicts Dogs would likely win a same‑size repeat poll.
+
+To tie you’d need 7 flips; to flip the winner, 8 flips.
+
+# Unfortunately, its a resounding vote for dogs. Cats, better luck next time.
