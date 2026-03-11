@@ -20,18 +20,18 @@ execute:
 library(tidyverse)
 library(scales)
 
-results <- readxl::read_xlsx(here::here("whiteboardpollresults.xlsx")) %>%
+results = readxl::read_xlsx(here::here("whiteboardpollresults.xlsx")) %>%
   filter(question == "4") %>%
   mutate(share = votes / sum(votes))
 
-N <- sum(results$votes)
-over_share  <- results$share[results$option == "Over"]
-under_share <- results$share[results$option == "Under"]
-margin_votes <- results$votes[results$option == "Over"] - results$votes[results$option == "Under"]
-margin_share <- over_share - under_share
+N = sum(results$votes)
+over_share  = results$share[results$option == "Over"]
+under_share = results$share[results$option == "Under"]
+margin_votes = results$votes[results$option == "Over"] - results$votes[results$option == "Under"]
+margin_share = over_share - under_share
 
 # Basic test vs 50/50 for "Over"
-bt <- binom.test(x = results$votes[results$option == "Over"], n = N, p = 0.5)
+bt = binom.test(x = results$votes[results$option == "Over"], n = N, p = 0.5)
 ```
 
 ![](tp_overunder.png)
@@ -47,9 +47,9 @@ Over: `r results$votes[results$option == "Over"]` votes (`r percent(over_share, 
 #| fig-cap: "Counts and shares."
 #| fig-width: 6
 #| fig-height: 4
-pal <- c("Over" = "#4CAF50", "Under" = "#FA3737")
+pal = c("Over" = "#4CAF50", "Under" = "#FA3737")
 
-results |>
+results %>%
   ggplot(aes(x = fct_reorder(option, votes), y = votes, fill = option)) +
   geom_col(width = 0.65, show.legend = FALSE) +
   geom_text(aes(label = paste0(votes, " (", percent(share, accuracy = 0.1), ")")),
@@ -75,20 +75,20 @@ How many voters would need to switch to change the winner? Because each switch c
 #| fig-cap: "Each square is one vote (25 total)."
 #| fig-width: 6
 #| fig-height: 4
-rows <- 5
-cols <- 5  # 5 x 5 = 25 cells
+rows = 5
+cols = 5  # 5 x 5 = 25 cells
 
-waffle <- tibble(
+waffle = tibble(
   id = 1:N,
   option = c(rep("Over", results$votes[results$option == "Over"]),
              rep("Under", results$votes[results$option == "Under"]))
-) |>
+) %>%
   mutate(
     row = (id - 1) %/% cols + 1,
     col = (id - 1) %% cols + 1
   )
 
-waffle |>
+waffle %>%
   ggplot(aes(x = col, y = rows - row + 1, fill = option)) +
   geom_tile(color = "white", linewidth = 0.5, width = 0.95, height = 0.95) +
   scale_fill_manual(values = pal) +
