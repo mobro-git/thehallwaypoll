@@ -18,65 +18,203 @@ execute:
 
 ```{r}
 library(tidyverse)
-library(ggpattern)
-library(here)
-library(kableExtra)
+library(scales)
+
+polls = readxl::read_xlsx(here::here("whiteboardpollresults.xlsx")) %>%
+  filter(series == "vacation") %>%
+  mutate(question = case_when(
+    question == 7 ~ "Climate",
+    question == 8 ~ "Setting",
+    question == 9 ~ "Style",
+    question == 10 ~ "Destination")) %>%
+  select(question, option, votes) %>%
+  group_by(question) %>%
+  mutate(N = sum(votes),
+         share = votes / N) %>%
+  ungroup()
+
+# function to summarize a two-option question
+summarize_two_option <- function(df) {
+  stopifnot(nrow(df) == 2)
+  N <- unique(df$N)
+  lead <- df |> arrange(desc(votes)) |> slice(1)
+  trail <- df |> arrange(desc(votes)) |> slice(2)
+
+  bt <- binom.test(x = lead$votes, n = N, p = 0.5)  # exact test vs 50/50
+
+  tibble(
+    question      = df$question[1],
+    N             = N,
+    leader        = lead$option,
+    leader_votes  = lead$votes,
+    leader_share  = lead$share,
+    trailer       = trail$option,
+    trailer_votes = trail$votes,
+    trailer_share = trail$share,
+    margin_votes  = lead$votes - trail$votes,
+    margin_share  = lead$share - trail$share,
+    p_value_50_50 = bt$p.value,
+    ci_lower      = bt$conf.int[1],
+    ci_upper      = bt$conf.int[2],
+    flips_to_flip = floor((lead$votes - trail$votes)/2) + 1L
+  )
+}
+
+by_q = polls %>%
+  group_by(question) %>%
+  group_modify(~ summarize_two_option(.x)) %>%
+  ungroup()
+```
+
+![](vacation.png)
+
+# This week, we take a tour of our peers vacation preferences. 
+
+## Vote counts and shares
+
+```{r}
+#| label: fig-bars
+#| fig-cap: "Votes and shares for each question (faceted)."
+#| fig-width: 8
+#| fig-height: 6
+pal <- c(
+  "Hot" = "#F5871B", "Cold" = "#76AAB7",
+  "Nature" = "#59A14F", "Urban" = "#777f8f",
+  "Relaxation" = "#bd595a", "Exploration & Adventure" = "#edbe48",
+  "Domestic" = "#B07AA1", "International" = "#4E79A7"
+)
+
+polls %>%
+  ggplot(aes(x = fct_reorder(option, votes), y = votes, fill = option)) +
+  geom_col(width = 0.65, show.legend = FALSE) +
+  geom_text(aes(label = paste0(votes, " (", percent(share, accuracy = 0.1), ")")),
+            vjust = -0.5, size = 3.8) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
+  scale_fill_manual(values = pal) +
+  labs(x = NULL, y = "Votes") +
+  theme_minimal(base_size = 13) +
+  facet_wrap(~ question, scales = "free_x") +
+  theme(strip.text = element_text(face = "bold"))
+```
+
+## How clear are the leads?
+
+Is the lead clearly more than 50/50, and if so, by how much?
+
+```{r}
+#| label: summary-table
+by_q %>%
+  transmute(
+    question,
+    N,
+    `Leader (votes)` = sprintf("%s (%d)", leader, leader_votes),
+    `Trailer (votes)`= sprintf("%s (%d)", trailer, trailer_votes),
+    `Leader share`   = percent(leader_share, 0.1),
+    `Margin (votes)` = margin_votes,
+    `Margin (points)`= percent(margin_share, 0.1),
+    `p vs 50/50`     = signif(p_value_50_50, 3),
+    `Leader 95% CI`  = sprintf("[%.2f, %.2f]", ci_lower, ci_upper),
+    `Votes to flip winner` = flips_to_flip
+  ) %>%
+  kableExtra::kable()
 ```
 
 ```{r}
-data = readxl::read_xlsx(here("whiteboardpollresults.xlsx")) %>%
-  filter(question == "7")
-
-ggplot(data) +
-  geom_bar(aes(x=option,y=votes,fill=option), stat="identity") +
-  geom_text(aes(x=option,y=votes,label=votes), vjust=-0.5, color = "black", size = 3) +
-  labs(fill="",
-       x="",
-       y="Votes") +
-  theme_minimal() +
+#| label: fig-leader-ci
+#| fig-cap: "Leader shares with 95% confidence intervals."
+#| fig-width: 7
+#| fig-height: 3.8
+by_q %>%
+  ggplot(aes(y = fct_rev(question), x = leader_share, color = question)) +
+  geom_point(size = 2) +
+  geom_errorbarh(aes(xmin = ci_lower, xmax = ci_upper), height = 0.15) +
+  scale_x_continuous(labels = percent_format(accuracy = 1), limits = c(0.4, 1)) +
+  labs(x = "Leader's share of votes", y = NULL) +
+  theme_minimal(base_size = 13) +
   theme(legend.position = "none")
 ```
 
 ```{r}
-data = readxl::read_xlsx(here("whiteboardpollresults.xlsx")) %>%
-  filter(question == "8")
+#| label: connection-table
+#| fig-cap: "Overlap bounds and independence expectations for selected pairs."
+# Prepare a helper to compute min/max feasible overlap and independence expectation
+bounds_pair <- function(a, b, N) {
+  min_ov <- max(0, a + b - N)
+  max_ov <- min(a, b)
+  exp_ov <- N * (a / N) * (b / N)  # independence expectation
+  tibble(min_overlap = min_ov, expected_overlap = exp_ov, max_overlap = max_ov)
+}
 
-ggplot(data) +
-  geom_bar(aes(x=option,y=votes,fill=option), stat="identity") +
-  geom_text(aes(x=option,y=votes,label=votes), vjust=-0.5, color = "black", size = 3) +
-  labs(fill="",
-       x="",
-       y="Votes") +
-  theme_minimal() +
-  theme(legend.position = "none")
+# Extract counts
+N <- unique(polls$N); stopifnot(length(N) == 1)  # here N = 33
+count <- polls |>
+  select(question, option, votes) |>
+  pivot_wider(names_from = c(question, option), values_from = votes)
+
+pairs <- tribble(
+  ~pair,                               ~a, ~b,
+  "Hot & Nature",                       count$Climate_Hot,       count$Setting_Nature,
+  "Hot & Domestic",                     count$Climate_Hot,       count$Destination_Domestic,
+  "Nature & Domestic",                  count$Setting_Nature,    count$Destination_Domestic,
+  "Adventure & Hot",                    count$`Style_Exploration & Adventure`, count$Climate_Hot,
+  "Adventure & Nature",                 count$`Style_Exploration & Adventure`, count$Setting_Nature,
+  "Adventure & Domestic",               count$`Style_Exploration & Adventure`, count$Destination_Domestic
+) |>
+  rowwise() |>
+  mutate(tmp = list(bounds_pair(a, b, N))) |>
+  unnest(tmp) |>
+  ungroup() |>
+  mutate(
+    min_overlap = as.integer(min_overlap),
+    max_overlap = as.integer(max_overlap)
+  )
+
+pairs %>%
+  transmute(
+    pair,
+    `Min overlap` = min_overlap,
+    `Expected if independent` = sprintf("%.1f", expected_overlap),
+    `Max overlap` = max_overlap
+  ) %>%
+  kableExtra::kable()
 ```
 
 ```{r}
-data = readxl::read_xlsx(here("whiteboardpollresults.xlsx")) %>%
-  filter(question == "9")
+#| label: fig-waffles
+#| fig-cap: "Waffle charts (3×11 grid per question)."
+#| fig-width: 8
+#| fig-height: 7
+make_waffle <- function(df, rows = 3, cols = 11) {
+  stopifnot(nrow(df) == 2)
+  N <- unique(df$N)
+  tibble(
+    id = 1:N,
+    option = c(rep(df$option[1], df$votes[1]),
+               rep(df$option[2], df$votes[2])),
+    question = df$question[1]
+  ) |>
+    mutate(
+      row = (id - 1) %/% cols + 1,
+      col = (id - 1) %% cols + 1
+    )
+}
 
-ggplot(data) +
-  geom_bar(aes(x=option,y=votes,fill=option), stat="identity") +
-  geom_text(aes(x=option,y=votes,label=votes), vjust=-0.5, color = "black", size = 3) +
-  labs(fill="",
-       x="",
-       y="Votes") +
-  theme_minimal() +
-  theme(legend.position = "none")
+waffles <- polls |>
+  group_by(question) |>
+  group_modify(~ make_waffle(.x)) |>
+  ungroup() %>%
+  mutate(option = factor(option, levels = c("Hot","Cold",
+                                            "Domestic","International",
+                                            "Nature","Urban",
+                                            "Relaxation","Exploration & Adventure")))
+
+ggplot(waffles, aes(x = col, y = 3 - row + 1, fill = option)) +
+  geom_tile(color = "white", linewidth = 0.4, width = 0.95, height = 0.95) +
+  scale_fill_manual(values = pal) +
+  coord_equal() +
+  labs(x = NULL, y = NULL, fill = NULL) +
+  theme_void() +
+  theme(legend.position = "bottom") +
+  facet_wrap(~ question)
 ```
-
-```{r}
-data = readxl::read_xlsx(here("whiteboardpollresults.xlsx")) %>%
-  filter(question == "10")
-
-ggplot(data) +
-  geom_bar(aes(x=option,y=votes,fill=option), stat="identity") +
-  geom_text(aes(x=option,y=votes,label=votes), vjust=-0.5, color = "black", size = 3) +
-  labs(fill="",
-       x="",
-       y="Votes") +
-  theme_minimal() +
-  theme(legend.position = "none")
-```
-
 

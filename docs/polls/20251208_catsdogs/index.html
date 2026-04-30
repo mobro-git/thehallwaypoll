@@ -243,7 +243,7 @@ Figure&nbsp;2: Simulated Cats counts under a 50/50 world (10,000 polls, N = 42).
 <p>Fraction of simulations at least as extreme (two‑sided):</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.0467</code></pre>
+<pre><code>[1] 0.0426</code></pre>
 </div>
 </div>
 </section>
@@ -252,13 +252,25 @@ Figure&nbsp;2: Simulated Cats counts under a 50/50 world (10,000 polls, N = 42).
 <p>Binomial likelihood for p(Cats) given 14 out of 42 votes:</p>
 <div class="cell">
 <div class="cell-output-display">
-<div id="fig-likelihood" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-likelihood-1" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-likelihood-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div aria-describedby="fig-likelihood-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <a href="index_files/figure-html/fig-likelihood-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Figure&nbsp;3: Binomial likelihood L(p) for p(Cats) given 14/42 (scaled to max = 1)."><img src="index_files/figure-html/fig-likelihood-1.png" class="img-fluid figure-img" width="576"></a>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-likelihood-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-likelihood-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;3: Binomial likelihood L(p) for p(Cats) given 14/42 (scaled to max = 1).
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div id="fig-likelihood-2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-likelihood-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="index_files/figure-html/fig-likelihood-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="Figure&nbsp;4: Binomial likelihood L(p) for p(Cats) given 14/42 (scaled to max = 1)."><img src="index_files/figure-html/fig-likelihood-2.png" class="img-fluid figure-img" width="576"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-likelihood-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: Binomial likelihood L(p) for p(Cats) given 14/42 (scaled to max = 1).
 </figcaption>
 </figure>
 </div>
@@ -270,10 +282,10 @@ Figure&nbsp;3: Binomial likelihood L(p) for p(Cats) given 14/42 (scaled to max =
 <div id="fig-posterior" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-posterior-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="index_files/figure-html/fig-posterior-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="Figure&nbsp;4: Posterior for p(Cats) with Beta(1,1) prior (posterior = Beta(15,29))."><img src="index_files/figure-html/fig-posterior-1.png" class="img-fluid figure-img" width="576"></a>
+<a href="index_files/figure-html/fig-posterior-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="Figure&nbsp;5: Posterior for p(Cats) with Beta(1,1) prior (posterior = Beta(15,29))."><img src="index_files/figure-html/fig-posterior-1.png" class="img-fluid figure-img" width="576"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-posterior-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;4: Posterior for p(Cats) with Beta(1,1) prior (posterior = Beta(15,29)).
+Figure&nbsp;5: Posterior for p(Cats) with Beta(1,1) prior (posterior = Beta(15,29)).
 </figcaption>
 </figure>
 </div>
@@ -285,7 +297,7 @@ Figure&nbsp;4: Posterior for p(Cats) with Beta(1,1) prior (posterior = Beta(15,2
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>pp_cat_win     pp_tie pp_dog_win 
-   0.05205    0.02760    0.92035 </code></pre>
+   0.05130    0.02645    0.92225 </code></pre>
 </div>
 </div>
 <p>Bayes factor for “not 50/50” vs “p = 0.5” using Jeffreys prior Beta(0.5,0.5).</p>
@@ -313,10 +325,10 @@ Figure&nbsp;4: Posterior for p(Cats) with Beta(1,1) prior (posterior = Beta(15,2
 <div id="fig-waffle" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-waffle-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="index_files/figure-html/fig-waffle-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="Figure&nbsp;5: Waffle chart: 42 voters, Cats = 14, Dogs = 28."><img src="index_files/figure-html/fig-waffle-1.png" class="img-fluid figure-img" width="576"></a>
+<a href="index_files/figure-html/fig-waffle-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6" title="Figure&nbsp;6: Waffle chart: 42 voters, Cats = 14, Dogs = 28."><img src="index_files/figure-html/fig-waffle-1.png" class="img-fluid figure-img" width="576"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-waffle-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;5: Waffle chart: 42 voters, Cats = 14, Dogs = 28.
+Figure&nbsp;6: Waffle chart: 42 voters, Cats = 14, Dogs = 28.
 </figcaption>
 </figure>
 </div>
