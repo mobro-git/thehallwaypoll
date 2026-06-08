@@ -26,7 +26,7 @@ library(broom)
 
 # Data
 results = readxl::read_xlsx(here::here("whiteboardpollresults.xlsx")) %>%
-  filter(question == "1") %>%
+  filter(series_no == "1") %>%
   mutate(share = votes / sum(votes)) %>%
   select(option, votes, share)
 
@@ -203,7 +203,7 @@ waffle |>
   geom_tile(color = "white", linewidth = 0.5, width = 0.95, height = 0.95) +
   scale_fill_manual(values = c("#f8766d", "#00bfc4")) +
   coord_equal() +
-  labs(x = NULL, y = NULL) +
+  labs(x = NULL, y = NULL, fill = "") +
   theme_void() +
   theme(legend.position = "bottom")
 ```

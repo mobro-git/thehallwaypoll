@@ -12,26 +12,41 @@ execute:
 
 ```{r}
 library(tidyverse)
+source("functions.R")
 
-data_raw = readxl::read_xlsx("whiteboardpollresults.xlsx")
-
-vote_totals = data_raw %>%
-  group_by(question) %>%
-  summarise(q_total = sum(votes))
-
-data = left_join(data_raw, vote_totals, by = "question") %>%
-  mutate(vote_share = round( (votes/q_total) * 100, 2))
+data = readxl::read_xlsx(here::here("whiteboardpollresults.xlsx")) %>%
+  filter(status == "complete") %>%
+  mutate(
+    across(everything(), ~ replace_na(.x, 0)), 
+    votes = hq_votes + rtp_votes) %>%
+  group_by(series_no, series, week, question) %>%
+  mutate(
+    N = sum(votes), 
+    share = round( (votes/N) * 100, 2)) %>%
+  ungroup()
 
 pollsasked = length(unique(data$question))
 votescounted = sum(data$votes)
-mostvoted = unique((data %>% filter(votes == max(data$votes)))$option)
-mostvotes = max(data$votes)
-mostunanimous = unique((data %>% filter(vote_share == max(data$vote_share)))$option)
-mostunanimous_pct = max(data$vote_share)
-leastvoted = unique((data %>% filter(votes == min(data$votes)))$option)
-fewestvotes = min(data$votes)
-leastunanimous = unique((data %>% filter(vote_share == min(data$vote_share)))$option)
-leastunanimous_pct = min(data$vote_share)
+
+mostvoted = unique((data %>% filter(votes == max(data$votes, na.rm = TRUE)))$option)
+mostvotes = max(data$votes, na.rm = TRUE)
+mostvotes_poll = pull(filter(data, votes == mostvotes), series)
+mostvotes_question = pull(filter(data, votes == mostvotes), question)
+
+mostunanimous = unique((data %>% filter(share == max(data$share, na.rm = TRUE)))$option)
+mostunanimous_pct = max(data$share, na.rm = TRUE)
+mostunanimous_poll = pull(filter(data, share == mostunanimous_pct), series)
+mostunanimous_question = pull(filter(data, share == mostunanimous_pct), question)
+
+leastvoted = unique((data %>% filter(votes == min(data$votes, na.rm = TRUE)))$option)
+fewestvotes = min(data$votes, na.rm = TRUE)
+fewest_poll = pull(filter(data, votes == fewestvotes), series)
+fewest_question = pull(filter(data, votes == fewestvotes), question)
+
+leastunanimous = unique((data %>% filter(share == min(data$share, na.rm = TRUE)))$option)
+leastunanimous_pct = min(data$share, na.rm = TRUE)
+leastunanimous_poll = pull(filter(data, share == leastunanimous_pct), series)
+leastunanimous_question = pull(filter(data, share == leastunanimous_pct), question)
 ```
 
 ## Summary Statistics
@@ -43,9 +58,13 @@ leastunanimous_pct = min(data$vote_share)
 ## Superlatives
 
 [Highest]{style="color: #4B824F"} vote count: ***`r mostvotes`*** for ***`r mostvoted`***
+(Poll: `r mostvotes_poll`, Question: `r mostvotes_question`)
 
 [Most unanimous]{style="color: #4B824F"} vote: ***`r mostunanimous`*** with a *resounding* ***`r mostunanimous_pct`*** % of the votes
+(Poll: `r mostunanimous_poll`, Question: `r mostunanimous_question`)
 
 [Lowest]{style="color: #824B4B"} vote count: ***`r fewestvotes`*** for ***`r leastvoted`***
+(Poll: `r fewest_poll`, Question: `r fewest_question`)
 
 [Least unanimous]{style="color: #824B4B"} vote: ***`r leastunanimous`*** with ***`r leastunanimous_pct`*** % of the votes
+(Poll: `r leastunanimous_poll`, Question: `r leastunanimous_question`)

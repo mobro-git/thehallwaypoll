@@ -1,0 +1,60 @@
+---
+title: "NBA Finals"
+description: |
+  BASKETS!
+date: '2026-06-12'
+image: "nbafinals.jpg"
+categories:
+    - Sports
+    - Regional
+    - Food
+format: html
+toc: true
+lightbox: true
+execute:
+  echo: false
+  warning: false
+  error: false
+  message: false
+draft: false
+---
+
+```{r}
+library(here)
+source(here("packages.R"))
+source(here("functions.R"))
+
+series_filter = 15
+
+data = pollresults(series_filter)
+```
+
+# Results coming soon! 
+
+```{r}
+simple_bar_question(data, "Team")
+```
+
+```{r}
+simple_bar_question(data, "Breakfast")
+```
+
+```{r}
+simple_bar_question(data, "Meats")
+```
+
+```{r}
+simple_bar_question(data, "Transport")
+```
+
+```{r}
+simple_bar_question(data, "Seasons")
+```
+
+```{r}
+simple_bar_question(data, "Grocery")
+```
+
+```{r}
+simple_bar_question(data, "Catchphrase")
+```

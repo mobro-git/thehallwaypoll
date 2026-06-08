@@ -1,0 +1,49 @@
+---
+title: "Dessert Match-Ups: Part 1"
+description: |
+  The sweeter of the teeth
+date: '2026-06-05'
+image: "desserts.jpg"
+categories:
+    - Food
+format: html
+toc: true
+lightbox: true
+execute:
+  echo: false
+  warning: false
+  error: false
+  message: false
+draft: false
+---
+
+```{r}
+library(here)
+source(here("packages.R"))
+source(here("functions.R"))
+
+series_filter = 14
+
+data = pollresults(series_filter)
+```
+
+```{r}
+simple_bar_question(data, "Fruity")
+```
+
+```{r}
+simple_bar_question(data, "Creamy")
+```
+
+```{r}
+simple_bar_question(data, "Layered")
+```
+
+```{r}
+simple_bar_question(data, "Frozen")
+```
+
+```{r}
+simple_bar_question(data, "Stuffed")
+```
+

@@ -19,10 +19,32 @@ draft: false
 ---
 
 ```{r}
-library(tidyverse)
-library(ggpattern)
 library(here)
-library(kableExtra)
+source(here("packages.R"))
+source(here("functions.R"))
+
+series_filter = 10
+
+data = pollresults(series_filter)
 ```
 
-***`Get your votes in, poll results coming soon :)`***
+```{r}
+simple_bar_question(data, "Location")
+```
+
+```{r}
+simple_bar_question(data, "Vibe")
+```
+
+```{r}
+simple_bar_question(data, "Time")
+```
+
+```{r}
+simple_bar_question(data, "Color")
+```
+
+```{r}
+simple_bar_question(data, "Activity")
+```
+

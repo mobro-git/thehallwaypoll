@@ -1,24 +1,45 @@
 [
   {
-    "objectID": "polls/20251208_catsdogs/index.html",
-    "href": "polls/20251208_catsdogs/index.html",
-    "title": "Cats vs. Dogs",
+    "objectID": "polls/20260612_nbafinals/index.html",
+    "href": "polls/20260612_nbafinals/index.html",
+    "title": "NBA Finals",
     "section": "",
-    "text": "Figure 1: Votes and shares for Cats vs Dogs.\n\n\n\n\n\nDogs share: 66.7%, Cats share: 33.3%. Vote margin (Dogs − Cats): 14 votes = 33.3%.\n\n\n\nTesting Cats proportion p against 0.5 using an exact binomial test.\n\n\n\n    Exact binomial test\n\ndata:  14 and N\nnumber of successes = 14, number of trials = 42, p-value = 0.04356\nalternative hypothesis: true probability of success is not equal to 0.5\n95 percent confidence interval:\n 0.1956680 0.4954875\nsample estimates:\nprobability of success \n             0.3333333 \n\n\nTwo‑sided p‑value: 0.0436 95% exact CI for p(Cats): 0.196 to 0.495\nExpress the Dogs lead as a margin in share terms, margin = p(Dogs) − p(Cats) = 1 − 2p(Cats). The corresponding 95% CI:\n\n\n[1] 0.608663904 0.009025071\nattr(,\"conf.level\")\n[1] 0.95\n\n\nEven the lower bound of the margin is positive, indicating a clear preference for Dogs.\nHow many flips would change the winner?\nTo tie, you’d need 7 votes to flip (7 Dogs → Cats). To give Cats a lead, you’d need 8 flips (8 votes).\n\n\n\nUnder p = 0.5 with N = 42, the probability to be at least this far from 50/50 (two‑sided) is the binomial test p‑value.\nWe can also simulate the Cats counts under 50/50:\n\n\n\n\n\n\n\n\nFigure 2: Simulated Cats counts under a 50/50 world (10,000 polls, N = 42). The observed 14 is marked.\n\n\n\n\n\nFraction of simulations at least as extreme (two‑sided):\n\n\n[1] 0.0426\n\n\n\n\n\nBinomial likelihood for p(Cats) given 14 out of 42 votes:\n\n\n\n\n\n\n\n\nFigure 3: Binomial likelihood L(p) for p(Cats) given 14/42 (scaled to max = 1).\n\n\n\n\n\n\n\n\n\n\n\nFigure 4: Binomial likelihood L(p) for p(Cats) given 14/42 (scaled to max = 1).\n\n\n\n\n\nWith a flat prior Beta(1,1), the posterior is Beta(15,29). Credible interval and the probability Cats &lt; 0.5 (i.e., Dogs lead):\n\n\n\n\n\n\n\n\nFigure 5: Posterior for p(Cats) with Beta(1,1) prior (posterior = Beta(15,29)).\n\n\n\n\n\n95% credible interval for p(Cats): [0.210, 0.485]\nPosterior probability Dogs lead (p(Cats) &lt; 0.5): 0.9842\nPosterior predictive for a repeat poll of size 42: chance Cats win, tie, or Dogs win.\n\n\npp_cat_win     pp_tie pp_dog_win \n   0.05130    0.02645    0.92225 \n\n\nBayes factor for “not 50/50” vs “p = 0.5” using Jeffreys prior Beta(0.5,0.5).\n\n\n[1] 1.319843\n\n\nBF10 &gt; 1 supports “not 50/50”; values around 3–10 are often called “moderate” evidence.\n\n\n\n\n\nrisk_difference      risk_ratio       odds_dogs        cohens_h \n      0.3333333       2.0000000       2.0000000       0.6796738 \n\n\nDogs lead by 33.3% in share. Dogs have about 2:1 the share of Cats and odds about 2:1. Cohen’s h ≈ 0.68 (medium‑to‑large difference; 0.2 small, 0.5 medium, 0.8 large).\n\n\n\n\n\n\n\n\n\n\n\nFigure 6: Waffle chart: 42 voters, Cats = 14, Dogs = 28."
+    "text": "Results coming soon!"
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Hello there!",
-    "section": "",
-    "text": "This site hosts the results from and ruminations on The Hallway Poll. The Hallway Poll was developed to help bring joy and intrigue to the WJCS 4232 suite and all those who pass through it. Please explore the site by using the navigation bar to explore."
+    "objectID": "polls/20260105_breakfast_foods/index.html#pancakes-vs.-waffles",
+    "href": "polls/20260105_breakfast_foods/index.html#pancakes-vs.-waffles",
+    "title": "Breakfast Foods",
+    "section": "Pancakes vs. Waffles",
+    "text": "Pancakes vs. Waffles\n\n\n\n\n\n\n\n\nFigure 1: Waffles vs Pancakes — counts and shares (N = 27).\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 2: Waffle chart: one square per vote (3×9 grid)."
   },
   {
-    "objectID": "polls/20251201_cheese_snacks/index.html",
-    "href": "polls/20251201_cheese_snacks/index.html",
-    "title": "Cheesy Snacks",
-    "section": "",
-    "text": "# Packages\nlibrary(tidyverse)\nlibrary(scales)\nlibrary(broom)\n\nset.seed(2026)\n\n# Data\nresults &lt;- tibble(\n  option = c(\"Cheez-Its\", \"Goldfish\"),\n  votes  = c(21, 21)\n) |&gt;\n  mutate(share = votes / sum(votes))\n\nN &lt;- sum(results$votes)\n\nresults\n\n# A tibble: 2 × 3\n  option    votes share\n  &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;\n1 Cheez-Its    21   0.5\n2 Goldfish     21   0.5"
+    "objectID": "polls/20260105_breakfast_foods/index.html#sweet-vs.-savory",
+    "href": "polls/20260105_breakfast_foods/index.html#sweet-vs.-savory",
+    "title": "Breakfast Foods",
+    "section": "Sweet vs. Savory",
+    "text": "Sweet vs. Savory\n\n\n\n\n\n\n\n\nFigure 3: Sweet vs Savory — counts and shares (N = 21).\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 4: Waffle chart: one square per vote (3×7 grid)."
+  },
+  {
+    "objectID": "polls/20260105_breakfast_foods/index.html#poll-summary",
+    "href": "polls/20260105_breakfast_foods/index.html#poll-summary",
+    "title": "Breakfast Foods",
+    "section": "Poll Summary",
+    "text": "Poll Summary\nWaffles vs Pancakes (N = 27): Pancakes lead 17–10 (about 63.0% vs 37.0%).\nSweet vs Savory (N = 21): Savory leads 13–8 (about 61.9% vs 38.1%).\nIn this week’s group, both questions leaned roughly 60/40 toward Pancakes and toward Savory."
+  },
+  {
+    "objectID": "polls/20260105_breakfast_foods/index.html#basic-stats",
+    "href": "polls/20260105_breakfast_foods/index.html#basic-stats",
+    "title": "Breakfast Foods",
+    "section": "Basic Stats",
+    "text": "Basic Stats\nLets check “is this clearly more than 50/50?” and “how big is the lead?”\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nquestion\nN\nLeader (votes)\nTrailer (votes)\nLeader share\nMargin (votes)\nMargin (points)\np vs 50/50\nLeader 95% CI\nVotes to flip winner\n\n\n\n\nWaffles vs Pancakes\n27\nPancakes (17)\nWaffles (10)\n63.0%\n7\n25.9%\n0.248\n[0.42, 0.81]\n4\n\n\nSweet vs Savory\n21\nSavory (13)\nSweet (8)\n61.9%\n5\n23.8%\n0.383\n[0.38, 0.82]\n3\n\n\n\n\n\n\n“p vs 50/50” is the two‑sided p‑value from an exact test; small values (like &lt; 0.05) suggest the winner’s share is clearly above 50% in this sample.\n“Leader 95% CI” is a plausible range for the leader’s true share if you repeated this kind of poll many times.\n“Votes to flip winner” is the minimum number of people who’d need to switch from the leader to the trailer to change the outcome (a perfect tie isn’t possible here because both polls have an odd number of votes)."
+  },
+  {
+    "objectID": "polls/20260105_breakfast_foods/index.html#both-polls-at-a-glance",
+    "href": "polls/20260105_breakfast_foods/index.html#both-polls-at-a-glance",
+    "title": "Breakfast Foods",
+    "section": "Both polls at a glance",
+    "text": "Both polls at a glance\nHere’s a simple “leader share with 95% interval” for each question. It’s a quick way to see that both polls show a similar lean (roughly 60–65% for the winner).\n\n\n\n\n\n\n\n\nFigure 5: Leader share with 95% confidence intervals for each poll.\n\n\n\n\n\nIs there a connection between the two questions?\nShort answer: we can’t directly tell, because we didn’t collect matched responses (i.e., we don’t know which Pancakes voters also picked Savory). But we can say a couple of useful things:\n\nA quick bound, assuming the 21 Sweet/Savory voters were also among the 27 Waffles/Pancakes voters:\n\nPancakes + Savory overlap could be anywhere from 3 to 13 of those 21 people (14% to 62%).\nWaffles + Sweet could be anywhere from 0 to 8 of those 21 people (0% to 38%).\nWhy these ranges? They’re just the largest and smallest overlaps that are mathematically possible given the totals (17 Pancakes, 10 Waffles; 13 Savory, 8 Sweet).\n\nA “what‑if” check: If choices were independent (people pick Pancakes/Waffles and Sweet/Savory without a link), we’d expect roughly\n\nPancakes + Savory ≈ 39% of the overlapped voters (about 8 of 21)\nWaffles + Sweet ≈ 14% (about 3 of 21). These sit comfortably inside the feasible ranges above.\n\n\nHere’s a small visualization of those ranges, with a dot showing the “independent choices” expectation.\n\n\n\n\n\n\n\n\nFigure 6: Feasible ranges if the 21 Sweet/Savory voters are a subset of the 27 Waffles/Pancakes voters. Dots show a simple ‘independent choices’ expectation.\n\n\n\n\n\nBoth polls tilt toward Pancakes and toward Savory. If many people answered both, we’d expect “Pancakes + Savory” to be more common than “Waffles + Sweet,” but the exact relationship needs matched responses to confirm. These two polls were taken in succession, not simultaneously. Different people may have voted in each question"
   },
   {
     "objectID": "polls/20251215_holiday_drinks/index.html",
@@ -28,18 +49,46 @@
     "text": "I, myself, really love eggnog (you should really try Alton Browns Aged Eggnog Recipe)\n\n\n\n“Other” is the single most popular choice, with 19 out of 38 votes (50%)\nAll named drinks (non-“Other”) combined (Eggnog + Mulled Wine + Seasonal Beer) also add up to 19, so its a perfect split: Named = 19, Other = 19\nAmong the named drinks, Mulled Wine leads (10), followed by Eggnog (6), then Seasonal Beer (3)\n\nThis isnt a scientific poll, just a fun whiteboard vote, so think of these numbers as a snapshot of who happened to drop by the office this week. I’m going to hope that the other eggnog lovers at EPA were enjoying it on a holiday vacation somewhere.\n\n\n\n\n\n\n\n\n\n\n\nFigure 1: Votes and shares for each holiday drink.\n\n\n\n\n\nNow lets split the drinks into “named drinks” and “other”:\n\n\n\n\n\ngroup\nvotes\nshare\n\n\n\n\nNamed (Eggnog + Mulled Wine + Seasonal Beer)\n19\n0.5\n\n\nOther\n19\n0.5\n\n\n\n\n\nNamed drinks total: 19 (50.0%)\nOther: 19 (50.0%)\n\n\n\nIf people had no real preference and were equally likely to pick any option, would we often see a split as uneven as this?\n\nIf all four options were equally popular, we’d expect about 9–10 votes per option (38 total / 4 options).\nHere we saw 19 for “Other” and just 3 for “Seasonal Beer,” which is quite uneven.\n\nWe can run a simple check (called a chi‑square test) that asks: “Are these numbers more uneven than we’d expect from random chance under a 25%‑each world?” It returns a p‑value. Think of it as “how surprising is this, if there were truly no differences?”\n\n\n\n    Chi-squared test for given probabilities\n\ndata:  results$votes\nX-squared = 15.263, df = 3, p-value = 0.001605\n\n\nA small p‑value means “this pattern is hard to explain by chance if all options were equally liked.” If p is below about 0.05, most folks would say “there’s a real difference here.” In this poll, the p‑value is 0.001605, which suggests the preferences are not equal across the four options.\nWhich options were most “surprising” relative to equal splits? Compare what we saw to what we’d expect (9.5 per option):\n\n\n# A tibble: 4 × 4\n  drink         observed expected standardized_difference\n  &lt;chr&gt;            &lt;dbl&gt;    &lt;dbl&gt;                   &lt;dbl&gt;\n1 Other               19      9.5                    3.08\n2 Mulled Wine         10      9.5                    0.16\n3 Eggnog               6      9.5                   -1.14\n4 Seasonal Beer        3      9.5                   -2.11\n\n\n\nPositive numbers = above the equal‑share expectation (e.g., “Other”).\nNegative numbers = below the equal‑share expectation (e.g., “Seasonal Beer”).\n\n\n\n\nIf we repeated this whiteboard poll with a similar crowd, the exact numbers would bounce around. The dogs below show the observed share (%) for each drink. The horizontal lines show the 95% confidence interval (aka plausible ranges).\n\n\n\n\n\n\n\n\nFigure 2: Share estimates with 95% confidence intervals for each category.\n\n\n\n\n\n“Other” sits well above 25% and its plausible range stays high.\nSeasonal Beer sits well below 25%.\nMulled Wine and Eggnog are in the middle, with Mulled Wine ahead of Eggnog in this sample.\n\n\n\nTwo quick, approachable views:\n\nIf all options were truly equally popular, how often would “Other” land at 19 again? The chart below simulates many “equal‑preference” polls (everyone picks randomly among 4 options) and shows where “Other” would usually fall. The dashed line shows our observed 19.\n\n\n\n\n\n\n\n\n\nFigure 3: If all four options were equally popular (25% each), ‘Other’ would usually land near 9–10—not 19.\n\n\n\n\n\n\nIf people’s true preferences looked like this week’s percentages, how often would “Other” be the top choice again? Below we simulate many re‑runs using this week’s percentages as a rough guide.\n\n\n\n\n\n\n\n\n\nFigure 4: Simulating repeat polls using this week’s percentages. How often does each drink come out on top?\n\n\n\n\n\nIn words, with this week’s pattern, “Other” would win most of the time in a same‑size rerun. Mulled Wine would sometimes take the top spot, Eggnog and Seasonal Beer would rarely do so at this size.\nA handy “how many votes would need to change?” rule of thumb: to overtake the leader “Other” (19) with second‑place Mulled Wine (10), you’d need about 5 people to switch from “Other” to “Mulled Wine.” That would make “Other” 14 and “Mulled Wine” 15, flipping the lead.\n\n\n\n\n\n\n\n\n\n\n\nFigure 5: Each square is one vote. Colors show how the 38 votes are distributed."
   },
   {
-    "objectID": "polls/index.html",
-    "href": "polls/index.html",
-    "title": "Polls",
+    "objectID": "polls/20251215_holiday_drinks/index.html#poll-summary",
+    "href": "polls/20251215_holiday_drinks/index.html#poll-summary",
+    "title": "Holiday Drinks",
     "section": "",
-    "text": "Cherry Blossom Season\n\n\n\n\n\nHow do you enjoy them? \n\n\n\n\n\n2026-03-18\n\n\n\n\n\n\n\n\n\n\n\n\nCommute\n\n\n\n\n\nGetting from home to work, unfortunately \n\n\n\n\n\n2026-03-06\n\n\n\n\n\n\n\n\n\n\n\n\nEggs\n\n\n\n\n\nWhich came first, the chicken or the egg? \n\n\n\n\n\n2026-02-23\n\n\n\n\n\n\n\n\n\n\n\n\nHome Vibe\n\n\n\n\n\nHow do you live? \n\n\n\n\n\n2026-02-10\n\n\n\n\n\n\n\n\n\n\n\n\nVacations\n\n\n\n\n\nWhere and when? \n\n\n\n\n\n2026-01-20\n\n\n\n\n\n\n\n\n\n\n\n\nBreakfast Foods\n\n\n\n\n\nBattle of the griddle cakes \n\n\n\n\n\n2026-01-05\n\n\n\n\n\n\n\n\n\n\n\n\nToilet Paper Rolls: Over or Under\n\n\n\n\n\nWhich way do you hang? \n\n\n\n\n\n2025-12-22\n\n\n\n\n\n\n\n\n\n\n\n\nHoliday Drinks\n\n\n\n\n\nWhat fills your cup? \n\n\n\n\n\n2025-12-15\n\n\n\n\n\n\n\n\n\n\n\n\nCats vs. Dogs\n\n\n\n\n\nWoofs and meows, which will prevail? \n\n\n\n\n\n2025-12-08\n\n\n\n\n\n\n\n\n\n\n\n\nCheesy Snacks\n\n\n\n\n\nDairy filled crunches \n\n\n\n\n\n2025-12-01\n\n\n\n\n\n\nNo matching items"
+    "text": "“Other” is the single most popular choice, with 19 out of 38 votes (50%)\nAll named drinks (non-“Other”) combined (Eggnog + Mulled Wine + Seasonal Beer) also add up to 19, so its a perfect split: Named = 19, Other = 19\nAmong the named drinks, Mulled Wine leads (10), followed by Eggnog (6), then Seasonal Beer (3)\n\nThis isnt a scientific poll, just a fun whiteboard vote, so think of these numbers as a snapshot of who happened to drop by the office this week. I’m going to hope that the other eggnog lovers at EPA were enjoying it on a holiday vacation somewhere."
   },
   {
-    "objectID": "polls/20260318_cherryblossoms/index.html",
-    "href": "polls/20260318_cherryblossoms/index.html",
-    "title": "Cherry Blossom Season",
+    "objectID": "polls/20251215_holiday_drinks/index.html#vote-counts-and-shares",
+    "href": "polls/20251215_holiday_drinks/index.html#vote-counts-and-shares",
+    "title": "Holiday Drinks",
     "section": "",
-    "text": "Get your votes in, poll results coming soon :)"
+    "text": "Figure 1: Votes and shares for each holiday drink.\n\n\n\n\n\nNow lets split the drinks into “named drinks” and “other”:\n\n\n\n\n\ngroup\nvotes\nshare\n\n\n\n\nNamed (Eggnog + Mulled Wine + Seasonal Beer)\n19\n0.5\n\n\nOther\n19\n0.5\n\n\n\n\n\nNamed drinks total: 19 (50.0%)\nOther: 19 (50.0%)"
+  },
+  {
+    "objectID": "polls/20251215_holiday_drinks/index.html#random-wiggle-or-a-real-pattern",
+    "href": "polls/20251215_holiday_drinks/index.html#random-wiggle-or-a-real-pattern",
+    "title": "Holiday Drinks",
+    "section": "",
+    "text": "If people had no real preference and were equally likely to pick any option, would we often see a split as uneven as this?\n\nIf all four options were equally popular, we’d expect about 9–10 votes per option (38 total / 4 options).\nHere we saw 19 for “Other” and just 3 for “Seasonal Beer,” which is quite uneven.\n\nWe can run a simple check (called a chi‑square test) that asks: “Are these numbers more uneven than we’d expect from random chance under a 25%‑each world?” It returns a p‑value. Think of it as “how surprising is this, if there were truly no differences?”\n\n\n\n    Chi-squared test for given probabilities\n\ndata:  results$votes\nX-squared = 15.263, df = 3, p-value = 0.001605\n\n\nA small p‑value means “this pattern is hard to explain by chance if all options were equally liked.” If p is below about 0.05, most folks would say “there’s a real difference here.” In this poll, the p‑value is 0.001605, which suggests the preferences are not equal across the four options.\nWhich options were most “surprising” relative to equal splits? Compare what we saw to what we’d expect (9.5 per option):\n\n\n# A tibble: 4 × 4\n  drink         observed expected standardized_difference\n  &lt;chr&gt;            &lt;dbl&gt;    &lt;dbl&gt;                   &lt;dbl&gt;\n1 Other               19      9.5                    3.08\n2 Mulled Wine         10      9.5                    0.16\n3 Eggnog               6      9.5                   -1.14\n4 Seasonal Beer        3      9.5                   -2.11\n\n\n\nPositive numbers = above the equal‑share expectation (e.g., “Other”).\nNegative numbers = below the equal‑share expectation (e.g., “Seasonal Beer”)."
+  },
+  {
+    "objectID": "polls/20251215_holiday_drinks/index.html#how-sure-are-we-about-each-percentage",
+    "href": "polls/20251215_holiday_drinks/index.html#how-sure-are-we-about-each-percentage",
+    "title": "Holiday Drinks",
+    "section": "",
+    "text": "If we repeated this whiteboard poll with a similar crowd, the exact numbers would bounce around. The dogs below show the observed share (%) for each drink. The horizontal lines show the 95% confidence interval (aka plausible ranges).\n\n\n\n\n\n\n\n\nFigure 2: Share estimates with 95% confidence intervals for each category.\n\n\n\n\n\n“Other” sits well above 25% and its plausible range stays high.\nSeasonal Beer sits well below 25%.\nMulled Wine and Eggnog are in the middle, with Mulled Wine ahead of Eggnog in this sample."
+  },
+  {
+    "objectID": "polls/20251215_holiday_drinks/index.html#what-if-we-ran-the-poll-again-next-week",
+    "href": "polls/20251215_holiday_drinks/index.html#what-if-we-ran-the-poll-again-next-week",
+    "title": "Holiday Drinks",
+    "section": "",
+    "text": "Two quick, approachable views:\n\nIf all options were truly equally popular, how often would “Other” land at 19 again? The chart below simulates many “equal‑preference” polls (everyone picks randomly among 4 options) and shows where “Other” would usually fall. The dashed line shows our observed 19.\n\n\n\n\n\n\n\n\n\nFigure 3: If all four options were equally popular (25% each), ‘Other’ would usually land near 9–10—not 19.\n\n\n\n\n\n\nIf people’s true preferences looked like this week’s percentages, how often would “Other” be the top choice again? Below we simulate many re‑runs using this week’s percentages as a rough guide.\n\n\n\n\n\n\n\n\n\nFigure 4: Simulating repeat polls using this week’s percentages. How often does each drink come out on top?\n\n\n\n\n\nIn words, with this week’s pattern, “Other” would win most of the time in a same‑size rerun. Mulled Wine would sometimes take the top spot, Eggnog and Seasonal Beer would rarely do so at this size.\nA handy “how many votes would need to change?” rule of thumb: to overtake the leader “Other” (19) with second‑place Mulled Wine (10), you’d need about 5 people to switch from “Other” to “Mulled Wine.” That would make “Other” 14 and “Mulled Wine” 15, flipping the lead."
+  },
+  {
+    "objectID": "polls/20251215_holiday_drinks/index.html#weekly-waffle-chart",
+    "href": "polls/20251215_holiday_drinks/index.html#weekly-waffle-chart",
+    "title": "Holiday Drinks",
+    "section": "",
+    "text": "Figure 5: Each square is one vote. Colors show how the 38 votes are distributed."
   },
   {
     "objectID": "polls/20251201_cheese_snacks/index.html#counts-and-shares-of-votes",
@@ -91,8 +140,22 @@
     "text": "Lets try a waffle chart (one square per vote)\n\n\n\n\n\n\n\n\nFigure 5: Waffle chart: 42 voters, split evenly."
   },
   {
-    "objectID": "polls/20251208_catsdogs/index.html#counts-and-shares",
-    "href": "polls/20251208_catsdogs/index.html#counts-and-shares",
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Hello there!",
+    "section": "",
+    "text": "This site hosts the results from and ruminations on The Hallway Poll. The Hallway Poll was developed to help bring joy and intrigue to the WJCS 4232 suite and all those who pass through it. Please explore the site by using the navigation bar to explore."
+  },
+  {
+    "objectID": "polls/20251208_catsdogs/index.html",
+    "href": "polls/20251208_catsdogs/index.html",
+    "title": "Cats vs. Dogs",
+    "section": "",
+    "text": "Figure 1: Votes and shares for Cats vs Dogs.\n\n\n\n\n\nDogs share: 66.7%, Cats share: 33.3%. Vote margin (Dogs − Cats): 14 votes = 33.3%.\n\n\n\nTesting Cats proportion p against 0.5 using an exact binomial test.\n\n\n\n    Exact binomial test\n\ndata:  14 and N\nnumber of successes = 14, number of trials = 42, p-value = 0.04356\nalternative hypothesis: true probability of success is not equal to 0.5\n95 percent confidence interval:\n 0.1956680 0.4954875\nsample estimates:\nprobability of success \n             0.3333333 \n\n\nTwo‑sided p‑value: 0.0436 95% exact CI for p(Cats): 0.196 to 0.495\nExpress the Dogs lead as a margin in share terms, margin = p(Dogs) − p(Cats) = 1 − 2p(Cats). The corresponding 95% CI:\n\n\n[1] 0.608663904 0.009025071\nattr(,\"conf.level\")\n[1] 0.95\n\n\nEven the lower bound of the margin is positive, indicating a clear preference for Dogs.\nHow many flips would change the winner?\nTo tie, you’d need 7 votes to flip (7 Dogs → Cats). To give Cats a lead, you’d need 8 flips (8 votes).\n\n\n\nUnder p = 0.5 with N = 42, the probability to be at least this far from 50/50 (two‑sided) is the binomial test p‑value.\nWe can also simulate the Cats counts under 50/50:\n\n\n\n\n\n\n\n\nFigure 2: Simulated Cats counts under a 50/50 world (10,000 polls, N = 42). The observed 14 is marked.\n\n\n\n\n\nFraction of simulations at least as extreme (two‑sided):\n\n\n[1] 0.0487\n\n\n\n\n\nBinomial likelihood for p(Cats) given 14 out of 42 votes:\n\n\n\n\n\n\n\n\nFigure 3: Binomial likelihood L(p) for p(Cats) given 14/42 (scaled to max = 1).\n\n\n\n\n\nWith a flat prior Beta(1,1), the posterior is Beta(15,29). Credible interval and the probability Cats &lt; 0.5 (i.e., Dogs lead):\n\n\n\n\n\n\n\n\nFigure 4: Posterior for p(Cats) with Beta(1,1) prior (posterior = Beta(15,29)).\n\n\n\n\n\n95% credible interval for p(Cats): [0.210, 0.485]\nPosterior probability Dogs lead (p(Cats) &lt; 0.5): 0.9842\nPosterior predictive for a repeat poll of size 42: chance Cats win, tie, or Dogs win.\n\n\npp_cat_win     pp_tie pp_dog_win \n    0.0507     0.0294     0.9199 \n\n\nBayes factor for “not 50/50” vs “p = 0.5” using Jeffreys prior Beta(0.5,0.5).\n\n\n[1] 1.319843\n\n\nBF10 &gt; 1 supports “not 50/50”; values around 3–10 are often called “moderate” evidence.\n\n\n\n\n\nrisk_difference      risk_ratio       odds_dogs        cohens_h \n      0.3333333       2.0000000       2.0000000       0.6796738 \n\n\nDogs lead by 33.3% in share. Dogs have about 2:1 the share of Cats and odds about 2:1. Cohen’s h ≈ 0.68 (medium‑to‑large difference; 0.2 small, 0.5 medium, 0.8 large).\n\n\n\n\n\n\n\n\n\n\n\nFigure 5: Waffle chart: 42 voters, Cats = 14, Dogs = 28."
+  },
+  {
+    "objectID": "polls/20251208_catsdogs/index.html#vote-counts-and-shares",
+    "href": "polls/20251208_catsdogs/index.html#vote-counts-and-shares",
     "title": "Cats vs. Dogs",
     "section": "",
     "text": "Figure 1: Votes and shares for Cats vs Dogs.\n\n\n\n\n\nDogs share: 66.7%, Cats share: 33.3%. Vote margin (Dogs − Cats): 14 votes = 33.3%."
@@ -109,14 +172,14 @@
     "href": "polls/20251208_catsdogs/index.html#how-unusual-is-14-28-under-a-fair-5050-world",
     "title": "Cats vs. Dogs",
     "section": "",
-    "text": "Under p = 0.5 with N = 42, the probability to be at least this far from 50/50 (two‑sided) is the binomial test p‑value.\nWe can also simulate the Cats counts under 50/50:\n\n\n\n\n\n\n\n\nFigure 2: Simulated Cats counts under a 50/50 world (10,000 polls, N = 42). The observed 14 is marked.\n\n\n\n\n\nFraction of simulations at least as extreme (two‑sided):\n\n\n[1] 0.0426"
+    "text": "Under p = 0.5 with N = 42, the probability to be at least this far from 50/50 (two‑sided) is the binomial test p‑value.\nWe can also simulate the Cats counts under 50/50:\n\n\n\n\n\n\n\n\nFigure 2: Simulated Cats counts under a 50/50 world (10,000 polls, N = 42). The observed 14 is marked.\n\n\n\n\n\nFraction of simulations at least as extreme (two‑sided):\n\n\n[1] 0.0487"
   },
   {
     "objectID": "polls/20251208_catsdogs/index.html#likelihood-and-bayesian-view-for-the-cats-share",
     "href": "polls/20251208_catsdogs/index.html#likelihood-and-bayesian-view-for-the-cats-share",
     "title": "Cats vs. Dogs",
     "section": "",
-    "text": "Binomial likelihood for p(Cats) given 14 out of 42 votes:\n\n\n\n\n\n\n\n\nFigure 3: Binomial likelihood L(p) for p(Cats) given 14/42 (scaled to max = 1).\n\n\n\n\n\n\n\n\n\n\n\nFigure 4: Binomial likelihood L(p) for p(Cats) given 14/42 (scaled to max = 1).\n\n\n\n\n\nWith a flat prior Beta(1,1), the posterior is Beta(15,29). Credible interval and the probability Cats &lt; 0.5 (i.e., Dogs lead):\n\n\n\n\n\n\n\n\nFigure 5: Posterior for p(Cats) with Beta(1,1) prior (posterior = Beta(15,29)).\n\n\n\n\n\n95% credible interval for p(Cats): [0.210, 0.485]\nPosterior probability Dogs lead (p(Cats) &lt; 0.5): 0.9842\nPosterior predictive for a repeat poll of size 42: chance Cats win, tie, or Dogs win.\n\n\npp_cat_win     pp_tie pp_dog_win \n   0.05130    0.02645    0.92225 \n\n\nBayes factor for “not 50/50” vs “p = 0.5” using Jeffreys prior Beta(0.5,0.5).\n\n\n[1] 1.319843\n\n\nBF10 &gt; 1 supports “not 50/50”; values around 3–10 are often called “moderate” evidence."
+    "text": "Binomial likelihood for p(Cats) given 14 out of 42 votes:\n\n\n\n\n\n\n\n\nFigure 3: Binomial likelihood L(p) for p(Cats) given 14/42 (scaled to max = 1).\n\n\n\n\n\nWith a flat prior Beta(1,1), the posterior is Beta(15,29). Credible interval and the probability Cats &lt; 0.5 (i.e., Dogs lead):\n\n\n\n\n\n\n\n\nFigure 4: Posterior for p(Cats) with Beta(1,1) prior (posterior = Beta(15,29)).\n\n\n\n\n\n95% credible interval for p(Cats): [0.210, 0.485]\nPosterior probability Dogs lead (p(Cats) &lt; 0.5): 0.9842\nPosterior predictive for a repeat poll of size 42: chance Cats win, tie, or Dogs win.\n\n\npp_cat_win     pp_tie pp_dog_win \n    0.0507     0.0294     0.9199 \n\n\nBayes factor for “not 50/50” vs “p = 0.5” using Jeffreys prior Beta(0.5,0.5).\n\n\n[1] 1.319843\n\n\nBF10 &gt; 1 supports “not 50/50”; values around 3–10 are often called “moderate” evidence."
   },
   {
     "objectID": "polls/20251208_catsdogs/index.html#effect-sizes-and-ratios",
@@ -130,56 +193,7 @@
     "href": "polls/20251208_catsdogs/index.html#waffle-chart-one-square-per-voter",
     "title": "Cats vs. Dogs",
     "section": "",
-    "text": "Figure 6: Waffle chart: 42 voters, Cats = 14, Dogs = 28."
-  },
-  {
-    "objectID": "polls/20251215_holiday_drinks/index.html#poll-summary",
-    "href": "polls/20251215_holiday_drinks/index.html#poll-summary",
-    "title": "Holiday Drinks",
-    "section": "",
-    "text": "“Other” is the single most popular choice, with 19 out of 38 votes (50%)\nAll named drinks (non-“Other”) combined (Eggnog + Mulled Wine + Seasonal Beer) also add up to 19, so its a perfect split: Named = 19, Other = 19\nAmong the named drinks, Mulled Wine leads (10), followed by Eggnog (6), then Seasonal Beer (3)\n\nThis isnt a scientific poll, just a fun whiteboard vote, so think of these numbers as a snapshot of who happened to drop by the office this week. I’m going to hope that the other eggnog lovers at EPA were enjoying it on a holiday vacation somewhere."
-  },
-  {
-    "objectID": "polls/20251215_holiday_drinks/index.html#vote-counts-and-shares",
-    "href": "polls/20251215_holiday_drinks/index.html#vote-counts-and-shares",
-    "title": "Holiday Drinks",
-    "section": "",
-    "text": "Figure 1: Votes and shares for each holiday drink.\n\n\n\n\n\nNow lets split the drinks into “named drinks” and “other”:\n\n\n\n\n\ngroup\nvotes\nshare\n\n\n\n\nNamed (Eggnog + Mulled Wine + Seasonal Beer)\n19\n0.5\n\n\nOther\n19\n0.5\n\n\n\n\n\nNamed drinks total: 19 (50.0%)\nOther: 19 (50.0%)"
-  },
-  {
-    "objectID": "polls/20251215_holiday_drinks/index.html#random-wiggle-or-a-real-pattern",
-    "href": "polls/20251215_holiday_drinks/index.html#random-wiggle-or-a-real-pattern",
-    "title": "Holiday Drinks",
-    "section": "",
-    "text": "If people had no real preference and were equally likely to pick any option, would we often see a split as uneven as this?\n\nIf all four options were equally popular, we’d expect about 9–10 votes per option (38 total / 4 options).\nHere we saw 19 for “Other” and just 3 for “Seasonal Beer,” which is quite uneven.\n\nWe can run a simple check (called a chi‑square test) that asks: “Are these numbers more uneven than we’d expect from random chance under a 25%‑each world?” It returns a p‑value. Think of it as “how surprising is this, if there were truly no differences?”\n\n\n\n    Chi-squared test for given probabilities\n\ndata:  results$votes\nX-squared = 15.263, df = 3, p-value = 0.001605\n\n\nA small p‑value means “this pattern is hard to explain by chance if all options were equally liked.” If p is below about 0.05, most folks would say “there’s a real difference here.” In this poll, the p‑value is 0.001605, which suggests the preferences are not equal across the four options.\nWhich options were most “surprising” relative to equal splits? Compare what we saw to what we’d expect (9.5 per option):\n\n\n# A tibble: 4 × 4\n  drink         observed expected standardized_difference\n  &lt;chr&gt;            &lt;dbl&gt;    &lt;dbl&gt;                   &lt;dbl&gt;\n1 Other               19      9.5                    3.08\n2 Mulled Wine         10      9.5                    0.16\n3 Eggnog               6      9.5                   -1.14\n4 Seasonal Beer        3      9.5                   -2.11\n\n\n\nPositive numbers = above the equal‑share expectation (e.g., “Other”).\nNegative numbers = below the equal‑share expectation (e.g., “Seasonal Beer”)."
-  },
-  {
-    "objectID": "polls/20251215_holiday_drinks/index.html#how-sure-are-we-about-each-percentage",
-    "href": "polls/20251215_holiday_drinks/index.html#how-sure-are-we-about-each-percentage",
-    "title": "Holiday Drinks",
-    "section": "",
-    "text": "If we repeated this whiteboard poll with a similar crowd, the exact numbers would bounce around. The dogs below show the observed share (%) for each drink. The horizontal lines show the 95% confidence interval (aka plausible ranges).\n\n\n\n\n\n\n\n\nFigure 2: Share estimates with 95% confidence intervals for each category.\n\n\n\n\n\n“Other” sits well above 25% and its plausible range stays high.\nSeasonal Beer sits well below 25%.\nMulled Wine and Eggnog are in the middle, with Mulled Wine ahead of Eggnog in this sample."
-  },
-  {
-    "objectID": "polls/20251215_holiday_drinks/index.html#what-if-we-ran-the-poll-again-next-week",
-    "href": "polls/20251215_holiday_drinks/index.html#what-if-we-ran-the-poll-again-next-week",
-    "title": "Holiday Drinks",
-    "section": "",
-    "text": "Two quick, approachable views:\n\nIf all options were truly equally popular, how often would “Other” land at 19 again? The chart below simulates many “equal‑preference” polls (everyone picks randomly among 4 options) and shows where “Other” would usually fall. The dashed line shows our observed 19.\n\n\n\n\n\n\n\n\n\nFigure 3: If all four options were equally popular (25% each), ‘Other’ would usually land near 9–10—not 19.\n\n\n\n\n\n\nIf people’s true preferences looked like this week’s percentages, how often would “Other” be the top choice again? Below we simulate many re‑runs using this week’s percentages as a rough guide.\n\n\n\n\n\n\n\n\n\nFigure 4: Simulating repeat polls using this week’s percentages. How often does each drink come out on top?\n\n\n\n\n\nIn words, with this week’s pattern, “Other” would win most of the time in a same‑size rerun. Mulled Wine would sometimes take the top spot, Eggnog and Seasonal Beer would rarely do so at this size.\nA handy “how many votes would need to change?” rule of thumb: to overtake the leader “Other” (19) with second‑place Mulled Wine (10), you’d need about 5 people to switch from “Other” to “Mulled Wine.” That would make “Other” 14 and “Mulled Wine” 15, flipping the lead."
-  },
-  {
-    "objectID": "polls/20251215_holiday_drinks/index.html#weekly-waffle-chart",
-    "href": "polls/20251215_holiday_drinks/index.html#weekly-waffle-chart",
-    "title": "Holiday Drinks",
-    "section": "",
-    "text": "Figure 5: Each square is one vote. Colors show how the 38 votes are distributed."
-  },
-  {
-    "objectID": "polls/20251222_toiletpaper/index.html",
-    "href": "polls/20251222_toiletpaper/index.html",
-    "title": "Toilet Paper Rolls: Over or Under",
-    "section": "",
-    "text": "Over: 21 votes (84.0%) Under: 4 votes (16.0%) Margin: 17 votes (≈ 68.0% points)\n\n\n\n\n\n\n\n\nFigure 1: Counts and shares.\n\n\n\n\n\n\n\n\nIs this different from a 50/50 split? Yes. Exact binomial test p‑value = 9.11^{-4}.\n“Over” share 95% CI: [0.64, 0.95].\nHow many voters would need to switch to change the winner? Because each switch changes the margin by 2, you’d need 9 people to switch from Over to Under to flip the result. A perfect tie isn’t possible with 25 voters.\n\n\n\n\n\n\n\n\n\n\n\nFigure 2: Each square is one vote (25 total)."
+    "text": "Figure 5: Waffle chart: 42 voters, Cats = 14, Dogs = 28."
   },
   {
     "objectID": "polls/20251222_toiletpaper/index.html#quick-look",
@@ -203,76 +217,6 @@
     "text": "Waffle Chart\n\n\n\n\n\n\n\n\nFigure 2: Each square is one vote (25 total)."
   },
   {
-    "objectID": "polls/20251208_catsdogs/index.html#vote-counts-and-shares",
-    "href": "polls/20251208_catsdogs/index.html#vote-counts-and-shares",
-    "title": "Cats vs. Dogs",
-    "section": "",
-    "text": "Figure 1: Votes and shares for Cats vs Dogs.\n\n\n\n\n\nDogs share: 66.7%, Cats share: 33.3%. Vote margin (Dogs − Cats): 14 votes = 33.3%."
-  },
-  {
-    "objectID": "polls/20260105_breakfast_foods/index.html",
-    "href": "polls/20260105_breakfast_foods/index.html",
-    "title": "Breakfast Foods",
-    "section": "",
-    "text": "# A tibble: 2 × 14\n  question              N leader leader_votes leader_share trailer trailer_votes\n  &lt;chr&gt;             &lt;dbl&gt; &lt;chr&gt;         &lt;dbl&gt;        &lt;dbl&gt; &lt;chr&gt;           &lt;dbl&gt;\n1 Waffles vs Panca…    27 Panca…           17        0.630 Waffles            10\n2 Sweet vs Savory      21 Savory           13        0.619 Sweet               8\n# ℹ 7 more variables: trailer_share &lt;dbl&gt;, margin_votes &lt;dbl&gt;,\n#   margin_share &lt;dbl&gt;, p_value_50_50 &lt;dbl&gt;, ci_lower &lt;dbl&gt;, ci_upper &lt;dbl&gt;,\n#   flips_to_flip &lt;dbl&gt;"
-  },
-  {
-    "objectID": "polls/20260105_breakfast_foods/index.html#pancakes-or-waffles-and-2-sweet-or-savory",
-    "href": "polls/20260105_breakfast_foods/index.html#pancakes-or-waffles-and-2-sweet-or-savory",
-    "title": "Breakfast Foods",
-    "section": "(1) Pancakes or Waffles and (2) Sweet or Savory?",
-    "text": "(1) Pancakes or Waffles and (2) Sweet or Savory?"
-  },
-  {
-    "objectID": "polls/20260105_breakfast_foods/index.html#poll-summary",
-    "href": "polls/20260105_breakfast_foods/index.html#poll-summary",
-    "title": "Breakfast Foods",
-    "section": "Poll Summary",
-    "text": "Poll Summary\nWaffles vs Pancakes (N = 27): Pancakes lead 17–10 (about 63.0% vs 37.0%).\nSweet vs Savory (N = 21): Savory leads 13–8 (about 61.9% vs 38.1%).\nIn this week’s group, both questions leaned roughly 60/40 toward Pancakes and toward Savory."
-  },
-  {
-    "objectID": "polls/20260105_breakfast_foods/index.html#basic-stats",
-    "href": "polls/20260105_breakfast_foods/index.html#basic-stats",
-    "title": "Breakfast Foods",
-    "section": "Basic Stats",
-    "text": "Basic Stats\nLets check “is this clearly more than 50/50?” and “how big is the lead?”\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nquestion\nN\nLeader (votes)\nTrailer (votes)\nLeader share\nMargin (votes)\nMargin (points)\np vs 50/50\nLeader 95% CI\nVotes to flip winner\n\n\n\n\nWaffles vs Pancakes\n27\nPancakes (17)\nWaffles (10)\n63.0%\n7\n25.9%\n0.248\n[0.42, 0.81]\n4\n\n\nSweet vs Savory\n21\nSavory (13)\nSweet (8)\n61.9%\n5\n23.8%\n0.383\n[0.38, 0.82]\n3\n\n\n\n\n\n\n“p vs 50/50” is the two‑sided p‑value from an exact test; small values (like &lt; 0.05) suggest the winner’s share is clearly above 50% in this sample.\n“Leader 95% CI” is a plausible range for the leader’s true share if you repeated this kind of poll many times.\n“Votes to flip winner” is the minimum number of people who’d need to switch from the leader to the trailer to change the outcome (a perfect tie isn’t possible here because both polls have an odd number of votes)."
-  },
-  {
-    "objectID": "polls/20260105_breakfast_foods/index.html#waffles-vs.-pancakes",
-    "href": "polls/20260105_breakfast_foods/index.html#waffles-vs.-pancakes",
-    "title": "Breakfast Foods",
-    "section": "Waffles vs. Pancakes",
-    "text": "Waffles vs. Pancakes\n\n\n\n\n\n\n\n\nFigure 1: Waffles vs Pancakes — counts and shares (N = 27).\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 2: Waffle chart: one square per vote (3×9 grid)."
-  },
-  {
-    "objectID": "polls/20260105_breakfast_foods/index.html#sweet-vs.-savory",
-    "href": "polls/20260105_breakfast_foods/index.html#sweet-vs.-savory",
-    "title": "Breakfast Foods",
-    "section": "Sweet vs. Savory",
-    "text": "Sweet vs. Savory\n\n\n\n\n\n\n\n\nFigure 3: Sweet vs Savory — counts and shares (N = 21).\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 4: Waffle chart: one square per vote (3×7 grid)."
-  },
-  {
-    "objectID": "polls/20260105_breakfast_foods/index.html#both-polls-at-a-glance",
-    "href": "polls/20260105_breakfast_foods/index.html#both-polls-at-a-glance",
-    "title": "Breakfast Foods",
-    "section": "Both polls at a glance",
-    "text": "Both polls at a glance\nHere’s a simple “leader share with 95% interval” for each question. It’s a quick way to see that both polls show a similar lean (roughly 60–65% for the winner).\n\n\n\n\n\n\n\n\nFigure 5: Leader share with 95% confidence intervals for each poll.\n\n\n\n\n\nIs there a connection between the two questions?\nShort answer: we can’t directly tell, because we didn’t collect matched responses (i.e., we don’t know which Pancakes voters also picked Savory). But we can say a couple of useful things:\n\nA quick bound, assuming the 21 Sweet/Savory voters were also among the 27 Waffles/Pancakes voters:\n\nPancakes + Savory overlap could be anywhere from 3 to 13 of those 21 people (14% to 62%).\nWaffles + Sweet could be anywhere from 0 to 8 of those 21 people (0% to 38%).\nWhy these ranges? They’re just the largest and smallest overlaps that are mathematically possible given the totals (17 Pancakes, 10 Waffles; 13 Savory, 8 Sweet).\n\nA “what‑if” check: If choices were independent (people pick Pancakes/Waffles and Sweet/Savory without a link), we’d expect roughly\n\nPancakes + Savory ≈ 39% of the overlapped voters (about 8 of 21)\nWaffles + Sweet ≈ 14% (about 3 of 21). These sit comfortably inside the feasible ranges above.\n\n\nHere’s a small visualization of those ranges, with a dot showing the “independent choices” expectation.\n\n\n\n\n\n\n\n\nFigure 6: Feasible ranges if the 21 Sweet/Savory voters are a subset of the 27 Waffles/Pancakes voters. Dots show a simple ‘independent choices’ expectation.\n\n\n\n\n\nBoth polls tilt toward Pancakes and toward Savory. If many people answered both, we’d expect “Pancakes + Savory” to be more common than “Waffles + Sweet,” but the exact relationship needs matched responses to confirm. These two polls were taken in succession, not simultaneously. Different people may have voted in each question"
-  },
-  {
-    "objectID": "polls/20260105_breakfast_foods/index.html#notes-on-interpretation",
-    "href": "polls/20260105_breakfast_foods/index.html#notes-on-interpretation",
-    "title": "Breakfast Foods",
-    "section": "Notes on interpretation",
-    "text": "Notes on interpretation\nThese two polls were taken in succession, not simultaneously. Different people may have voted in each question"
-  },
-  {
-    "objectID": "polls/20260105_breakfast_foods/index.html#pancakes-vs.-waffles",
-    "href": "polls/20260105_breakfast_foods/index.html#pancakes-vs.-waffles",
-    "title": "Breakfast Foods",
-    "section": "Pancakes vs. Waffles",
-    "text": "Pancakes vs. Waffles\n\n\n\n\n\n\n\n\nFigure 1: Waffles vs Pancakes — counts and shares (N = 27).\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 2: Waffle chart: one square per vote (3×9 grid)."
-  },
-  {
     "objectID": "polls/20260120_vacation/index.html#vote-counts-and-shares",
     "href": "polls/20260120_vacation/index.html#vote-counts-and-shares",
     "title": "Vacations",
@@ -285,5 +229,12 @@
     "title": "Vacations",
     "section": "How clear are the leads?",
     "text": "How clear are the leads?\nIs the lead clearly more than 50/50, and if so, by how much?\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nquestion\nN\nLeader (votes)\nTrailer (votes)\nLeader share\nMargin (votes)\nMargin (points)\np vs 50/50\nLeader 95% CI\nVotes to flip winner\n\n\n\n\nClimate\n33\nHot (24)\nCold (9)\n72.7%\n15\n45.5%\n0.0135\n[0.54, 0.87]\n8\n\n\nDestination\n33\nDomestic (24)\nInternational (9)\n72.7%\n15\n45.5%\n0.0135\n[0.54, 0.87]\n8\n\n\nSetting\n33\nNature (24)\nUrban (9)\n72.7%\n15\n45.5%\n0.0135\n[0.54, 0.87]\n8\n\n\nStyle\n33\nExploration & Adventure (23)\nRelaxation (10)\n69.7%\n13\n39.4%\n0.0351\n[0.51, 0.84]\n7\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 2: Leader shares with 95% confidence intervals.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\npair\nMin overlap\nExpected if independent\nMax overlap\n\n\n\n\nHot & Nature\n15\n17.5\n24\n\n\nHot & Domestic\n15\n17.5\n24\n\n\nNature & Domestic\n15\n17.5\n24\n\n\nAdventure & Hot\n14\n16.7\n23\n\n\nAdventure & Nature\n14\n16.7\n23\n\n\nAdventure & Domestic\n14\n16.7\n23\n\n\n\nOverlap bounds and independence expectations for selected pairs.\n\n\n\n\n\n\n\n\n\n\nFigure 3: Waffle charts (3×11 grid per question)."
+  },
+  {
+    "objectID": "polls/index.html",
+    "href": "polls/index.html",
+    "title": "Polls",
+    "section": "",
+    "text": "NBA Finals\n\n\n\n\n\nBASKETS!\n\n\n\n\n\n2026-06-12\n\n\n\n\n\n\n\n\n\n\n\n\nDessert Match-Ups: Part 1\n\n\n\n\n\nThe sweeter of the teeth\n\n\n\n\n\n2026-06-05\n\n\n\n\n\n\n\n\n\n\n\n\nAnimal Match-Ups\n\n\n\n\n\nCreatures of the world\n\n\n\n\n\n2026-05-22\n\n\n\n\n\n\n\n\n\n\n\n\nEarth Day\n\n\n\n\n\nOur Power, Our Planet\n\n\n\n\n\n2026-05-08\n\n\n\n\n\n\n\n\n\n\n\n\nFood Face-offs\n\n\n\n\n\nGet them yums!\n\n\n\n\n\n2026-04-13\n\n\n\n\n\n\n\n\n\n\n\n\nCherry Blossom Season\n\n\n\n\n\nHow do you enjoy them?\n\n\n\n\n\n2026-03-18\n\n\n\n\n\n\n\n\n\n\n\n\nCommute\n\n\n\n\n\nGetting from home to work, unfortunately\n\n\n\n\n\n2026-03-06\n\n\n\n\n\n\n\n\n\n\n\n\nEggs\n\n\n\n\n\nWhich came first, the chicken or the egg?\n\n\n\n\n\n2026-02-23\n\n\n\n\n\n\n\n\n\n\n\n\nHome Vibe\n\n\n\n\n\nHow do you live?\n\n\n\n\n\n2026-02-10\n\n\n\n\n\n\n\n\n\n\n\n\nVacations\n\n\n\n\n\nWhere and when?\n\n\n\n\n\n2026-01-20\n\n\n\n\n\n\n\n\n\n\n\n\nBreakfast Foods\n\n\n\n\n\nBattle of the griddle cakes\n\n\n\n\n\n2026-01-05\n\n\n\n\n\n\n\n\n\n\n\n\nToilet Paper Rolls: Over or Under\n\n\n\n\n\nWhich way do you hang?\n\n\n\n\n\n2025-12-22\n\n\n\n\n\n\n\n\n\n\n\n\nHoliday Drinks\n\n\n\n\n\nWhat fills your cup?\n\n\n\n\n\n2025-12-15\n\n\n\n\n\n\n\n\n\n\n\n\nCats vs. Dogs\n\n\n\n\n\nWoofs and meows, which will prevail?\n\n\n\n\n\n2025-12-08\n\n\n\n\n\n\n\n\n\n\n\n\nCheesy Snacks\n\n\n\n\n\nDairy filled crunches\n\n\n\n\n\n2025-12-01\n\n\n\n\n\nNo matching items"
   }
 ]

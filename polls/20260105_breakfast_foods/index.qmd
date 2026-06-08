@@ -17,11 +17,13 @@ execute:
 ---
 
 ```{r}
-library(tidyverse)
-library(scales)
+library(here)
+source(here("packages.R"))
+source(here("functions.R"))
 
-results = readxl::read_xlsx(here::here("whiteboardpollresults.xlsx")) %>%
-  filter(question %in% c("5","6"))
+series_filter = 5
+
+results = pollresults(series_filter)
 
 # Data
 poll_wp = tibble(
@@ -134,7 +136,7 @@ wp_waffle %>%
 #| fig-cap: "Sweet vs Savory — counts and shares (N = 21)."
 #| fig-width: 6
 #| fig-height: 4
-pal_ss = c("Sweet" = "#ff70aa", "Savory" = "#734730")
+pal_ss = c("Sweet" = "#ffe5b4", "Savory" = "#5C6B37")
 
 poll_ss %>%
   ggplot(aes(x = fct_reorder(option, votes), y = votes, fill = option)) +

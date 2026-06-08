@@ -17,12 +17,13 @@ execute:
 ---
 
 ```{r}
-library(tidyverse)
-library(scales)
+library(here)
+source(here("packages.R"))
+source(here("functions.R"))
 
-results = readxl::read_xlsx(here::here("whiteboardpollresults.xlsx")) %>%
-  filter(question == "4") %>%
-  mutate(share = votes / sum(votes))
+series_filter = 4
+
+results = pollresults(series_filter) 
 
 N = sum(results$votes)
 over_share  = results$share[results$option == "Over"]

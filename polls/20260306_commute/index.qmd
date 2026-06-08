@@ -18,78 +18,32 @@ execute:
 ---
 
 ```{r}
-library(tidyverse)
-library(ggpattern)
 library(here)
-library(kableExtra)
+source(here("packages.R"))
+source(here("functions.R"))
+
+series_filter = 9
+
+data = pollresults(series_filter)
 ```
 
 ```{r}
-data = readxl::read_xlsx(here("whiteboardpollresults.xlsx")) %>%
-  filter(question == "20")
-
-ggplot(data) +
-  geom_bar(aes(x=option,y=votes,fill=option), stat="identity") +
-  geom_text(aes(x=option,y=votes,label=votes), vjust=-0.5, color = "black", size = 3) +
-  labs(fill="",
-       x="",
-       y="Votes") +
-  theme_minimal() +
-  theme(legend.position = "none")
+simple_bar_question(data, "Mode")
 ```
 
 ```{r}
-data = readxl::read_xlsx(here("whiteboardpollresults.xlsx")) %>%
-  filter(question == "21")
-
-ggplot(data) +
-  geom_bar(aes(x=option,y=votes,fill=option), stat="identity") +
-  geom_text(aes(x=option,y=votes,label=votes), vjust=-0.5, color = "black", size = 3) +
-  labs(fill="",
-       x="",
-       y="Votes") +
-  theme_minimal() +
-  theme(legend.position = "none")
+simple_bar_question(data, "Audio")
 ```
 
 ```{r}
-data = readxl::read_xlsx(here("whiteboardpollresults.xlsx")) %>%
-  filter(question == "22")
-
-ggplot(data) +
-  geom_bar(aes(x=option,y=votes,fill=option), stat="identity") +
-  geom_text(aes(x=option,y=votes,label=votes), vjust=-0.5, color = "black", size = 3) +
-  labs(fill="",
-       x="",
-       y="Votes") +
-  theme_minimal() +
-  theme(legend.position = "none")
+simple_bar_question(data, "Route")
 ```
 
 ```{r}
-data = readxl::read_xlsx(here("whiteboardpollresults.xlsx")) %>%
-  filter(question == "23")
-
-ggplot(data) +
-  geom_bar(aes(x=option,y=votes,fill=option), stat="identity") +
-  geom_text(aes(x=option,y=votes,label=votes), vjust=-0.5, color = "black", size = 3) +
-  labs(fill="",
-       x="",
-       y="Votes") +
-  theme_minimal() +
-  theme(legend.position = "none")
+simple_bar_question(data, "Biking")
 ```
 
 ```{r}
-data = readxl::read_xlsx(here("whiteboardpollresults.xlsx")) %>%
-  filter(question == "24")
-
-ggplot(data) +
-  geom_bar(aes(x=option,y=votes,fill=option), stat="identity") +
-  geom_text(aes(x=option,y=votes,label=votes), vjust=-0.5, color = "black", size = 3) +
-  labs(fill="",
-       x="",
-       y="Votes") +
-  theme_minimal() +
-  theme(legend.position = "none")
+simple_bar_question(data, "Escalators")
 ```
+

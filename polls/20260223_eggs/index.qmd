@@ -16,79 +16,33 @@ execute:
   message: false
 ---
 
+
 ```{r}
-library(tidyverse)
-library(ggpattern)
 library(here)
-library(kableExtra)
+source(here("packages.R"))
+source(here("functions.R"))
+
+series_filter = 8
+
+data = pollresults(series_filter)
 ```
 
 ```{r}
-data = readxl::read_xlsx(here("whiteboardpollresults.xlsx")) %>%
-  filter(question == "15")
-
-ggplot(data) +
-  geom_bar(aes(x=option,y=votes,fill=option), stat="identity") +
-  geom_text(aes(x=option,y=votes,label=votes), vjust=-0.5, color = "black", size = 3) +
-  labs(fill="",
-       x="",
-       y="Votes") +
-  theme_minimal() +
-  theme(legend.position = "none")
+simple_bar_question(data, "In a pan")
 ```
 
 ```{r}
-data = readxl::read_xlsx(here("whiteboardpollresults.xlsx")) %>%
-  filter(question == "16")
-
-ggplot(data) +
-  geom_bar(aes(x=option,y=votes,fill=option), stat="identity") +
-  geom_text(aes(x=option,y=votes,label=votes), vjust=-0.5, color = "black", size = 3) +
-  labs(fill="",
-       x="",
-       y="Votes") +
-  theme_minimal() +
-  theme(legend.position = "none")
+simple_bar_question(data, "In a pot")
 ```
 
 ```{r}
-data = readxl::read_xlsx(here("whiteboardpollresults.xlsx")) %>%
-  filter(question == "17")
-
-ggplot(data) +
-  geom_bar(aes(x=option,y=votes,fill=option), stat="identity") +
-  geom_text(aes(x=option,y=votes,label=votes), vjust=-0.5, color = "black", size = 3) +
-  labs(fill="",
-       x="",
-       y="Votes") +
-  theme_minimal() +
-  theme(legend.position = "none")
+simple_bar_question(data, "Yolk")
 ```
 
 ```{r}
-data = readxl::read_xlsx(here("whiteboardpollresults.xlsx")) %>%
-  filter(question == "18")
-
-ggplot(data) +
-  geom_bar(aes(x=option,y=votes,fill=option), stat="identity") +
-  geom_text(aes(x=option,y=votes,label=votes), vjust=-0.5, color = "black", size = 3) +
-  labs(fill="",
-       x="",
-       y="Votes") +
-  theme_minimal() +
-  theme(legend.position = "none")
+simple_bar_question(data, "Condiment")
 ```
 
 ```{r}
-data = readxl::read_xlsx(here("whiteboardpollresults.xlsx")) %>%
-  filter(question == "19")
-
-ggplot(data) +
-  geom_bar(aes(x=option,y=votes,fill=option), stat="identity") +
-  geom_text(aes(x=option,y=votes,label=votes), vjust=-0.5, color = "black", size = 3) +
-  labs(fill="",
-       x="",
-       y="Votes") +
-  theme_minimal() +
-  theme(legend.position = "none")
+simple_bar_question(data, "Sandwich")
 ```

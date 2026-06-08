@@ -6,6 +6,7 @@ date: '2026-01-20'
 image: "vacation.png"
 categories:
     - Adventure
+    - Regional
 format: html
 toc: true
 lightbox: true
@@ -17,20 +18,15 @@ execute:
 ---
 
 ```{r}
-library(tidyverse)
-library(scales)
+library(here)
+source(here("packages.R"))
+source(here("functions.R"))
 
-polls = readxl::read_xlsx(here::here("whiteboardpollresults.xlsx")) %>%
-  filter(series == "vacation") %>%
-  mutate(question = case_when(
-    question == 7 ~ "Climate",
-    question == 8 ~ "Setting",
-    question == 9 ~ "Style",
-    question == 10 ~ "Destination")) %>%
-  select(question, option, votes) %>%
+series_filter = 6
+
+polls = pollresults(6) %>%
   group_by(question) %>%
-  mutate(N = sum(votes),
-         share = votes / N) %>%
+  mutate(N = sum(votes)) %>%
   ungroup()
 
 # function to summarize a two-option question
@@ -217,4 +213,98 @@ ggplot(waffles, aes(x = col, y = 3 - row + 1, fill = option)) +
   theme(legend.position = "bottom") +
   facet_wrap(~ question)
 ```
+```{r}
+#| label: setup
+#| include: true
+library(tidyverse)
+library(scales)
+library(knitr)
+
+# Poll results -------------------------------------------------------------
+results <- tribble(
+  ~question,     ~option,                       ~votes,
+  "Climate",     "Cold",                        9,
+  "Climate",     "Hot",                        24,
+  "Destination", "International",               9,
+  "Destination", "Domestic",                   24,
+  "Setting",     "Urban",                       9,
+  "Setting",     "Nature",                     24,
+  "Style",       "Relaxation",                 10,
+  "Style",       "Exploration & Adventure",    23
+)
+
+# Summaries for convenience ------------------------------------------------
+majorities <- results |>
+  group_by(question) |>
+  mutate(n = sum(votes)) |>
+  slice_max(votes, n = 1, with_ties = FALSE) |>
+  ungroup() |>
+  transmute(
+    question,
+    fav = option,
+    votes = votes,
+    n = n,
+    prop = votes / n,
+    margin = votes - (n - votes)
+  )
+
+# Exact binomial tests vs 50/50, and effect size (Cohen's h)
+stats <- majorities |>
+  rowwise() |>
+  mutate(
+    bt = list(binom.test(votes, n, p = 0.5, alternative = "two.sided")),
+    p_value  = bt$p.value,
+    conf_low = bt$conf.int[1],
+    conf_high= bt$conf.int[2],
+    cohen_h  = abs(2*asin(sqrt(prop)) - 2*asin(sqrt(0.5)))
+  ) |>
+  ungroup() |>
+  select(-bt)
+
+# A helper to pull values inline
+pull_stat <- function(q, col) {
+  stats |>
+    filter(question == q) |>
+    pull({{ col }})
+}
+
+pull_majority <- function(q, col) {
+  majorities |>
+    filter(question == q) |>
+    pull({{ col }})
+}
+```
+
+# TL;DR
+
+Climate: `r pull_majority("Climate", fav)` wins with `r percent(pull_majority("Climate", prop), accuracy = 1)` (`r pull_majority("Climate", votes)` of `r pull_majority("Climate", n)` votes; margin `r pull_majority("Climate", margin)`).
+
+Destination: `r pull_majority("Destination", fav)` wins with `r percent(pull_majority("Destination", prop), accuracy = 1)` (`r pull_majority("Destination", votes)` of `r pull_majority("Destination", n)`).
+
+Setting: `r pull_majority("Setting", fav)` wins with `r percent(pull_majority("Setting", prop), accuracy = 1)` (`r pull_majority("Setting", votes)` of `r pull_majority("Setting", n)`).
+
+Style: `r pull_majority("Style", fav)` wins with `r percent(pull_majority("Style", prop), accuracy = 1)` (`r pull_majority("Style", votes)` of `r pull_majority("Style", n)`).
+
+Fun finding: the first three questions all landed on the exact same split (24 vs 9) so roughly 73% vs 27% across climate, destination, and setting. That’s impressively consistent!
+
+# Visualizing the results
+
+```{r}
+#| label: fig-share
+#| fig-cap: "Share of votes by question and option (dashed line marks 50/50)."
+#| fig-alt: "Stacked bars showing the share of votes per question for each option. A dashed line at 50% shows the midpoint."
+#| fig-width: 8
+#| fig-height: 5
+
+ggplot(results, aes(x = fct_rev(question), y = votes, fill = option)) +
+  geom_col(position = "fill", width = 0.6) +
+  geom_hline(yintercept = 0.5, linetype = 2, color = "gray50") +
+  scale_y_continuous(labels = percent_format()) +
+  scale_fill_brewer(palette = "Set2", name = NULL) +
+  coord_flip() +
+  labs(x = NULL, y = "Share of votes", title = "Vacation poll preferences by question (share of votes)") +
+  theme_minimal(base_size = 13) +
+  theme(legend.position = "bottom")
+```
+
 
