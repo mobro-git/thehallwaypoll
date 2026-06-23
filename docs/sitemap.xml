@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.thehallwaypoll.org/votingstatistics.html</loc>
-    <lastmod>2026-05-11T19:01:17.143Z</lastmod>
+    <lastmod>2026-06-09T17:37:39.305Z</lastmod>
   </url>
   <url>
     <loc>https://www.thehallwaypoll.org/polls/20260612_nbafinals/index.html</loc>
@@ -71,5 +71,17 @@
   <url>
     <loc>https://www.thehallwaypoll.org/polls/index.html</loc>
     <lastmod>2026-05-08T14:47:26.610Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.thehallwaypoll.org/data.html</loc>
+    <lastmod>2026-06-09T17:04:04.008Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.thehallwaypoll.org/polls/20260622_dessert_matchups_part2/index.html</loc>
+    <lastmod>2026-06-23T13:59:49.666Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.thehallwaypoll.org/polls/20260704_sunprotection/index.html</loc>
+    <lastmod>2026-06-23T14:02:19.713Z</lastmod>
   </url>
 </urlset>

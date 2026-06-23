@@ -17,10 +17,12 @@ website:
     left:
       - text: "About"
         href: index.qmd
-      - text: "Voting Statistics"
-        href: votingstatistics.qmd
       - text: "Polls"
         href: polls/index.qmd
+      - text: "Voting Statistics"
+        href: votingstatistics.qmd
+      - text: "Data"
+        href: data.qmd
       
     tools:
       - icon: github

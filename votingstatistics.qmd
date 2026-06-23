@@ -12,6 +12,7 @@ execute:
 
 ```{r}
 library(tidyverse)
+library(DT)
 source("functions.R")
 
 data = readxl::read_xlsx(here::here("whiteboardpollresults.xlsx")) %>%
@@ -19,7 +20,7 @@ data = readxl::read_xlsx(here::here("whiteboardpollresults.xlsx")) %>%
   mutate(
     across(everything(), ~ replace_na(.x, 0)), 
     votes = hq_votes + rtp_votes) %>%
-  group_by(series_no, series, week, question) %>%
+  group_by(series_no, series, date, question) %>%
   mutate(
     N = sum(votes), 
     share = round( (votes/N) * 100, 2)) %>%
@@ -49,13 +50,13 @@ leastunanimous_poll = pull(filter(data, share == leastunanimous_pct), series)
 leastunanimous_question = pull(filter(data, share == leastunanimous_pct), question)
 ```
 
-## Summary Statistics
+## Overview
 
-***`r pollsasked`*** polls conducted
+### Totals
 
-***`r votescounted`*** votes counted
+***`r pollsasked`*** polls conducted & ***`r votescounted`*** votes counted
 
-## Superlatives
+### Superlatives
 
 [Highest]{style="color: #4B824F"} vote count: ***`r mostvotes`*** for ***`r mostvoted`***
 (Poll: `r mostvotes_poll`, Question: `r mostvotes_question`)
@@ -68,3 +69,4 @@ leastunanimous_question = pull(filter(data, share == leastunanimous_pct), questi
 
 [Least unanimous]{style="color: #824B4B"} vote: ***`r leastunanimous`*** with ***`r leastunanimous_pct`*** % of the votes
 (Poll: `r leastunanimous_poll`, Question: `r leastunanimous_question`)
+

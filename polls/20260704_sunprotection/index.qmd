@@ -1,0 +1,36 @@
+---
+title: "Sun Protection"
+description: |
+  Crispy is not always better
+date: '2026-07-14'
+image: "dontfryday.jpg"
+categories:
+    - Adventure
+format: html
+toc: true
+lightbox: true
+execute:
+  echo: false
+  warning: false
+  error: false
+  message: false
+draft: false
+---
+
+```{r}
+library(here)
+source(here("packages.R"))
+source(here("functions.R"))
+
+series_filter = 17
+
+data = pollresults(series_filter)
+```
+
+# Results coming soon!
+
+```{r}
+for (q in unique(data$question)) {
+  print(simple_bar_question(data, q))
+}
+```

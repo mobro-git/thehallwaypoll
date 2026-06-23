@@ -1,0 +1,38 @@
+---
+title: Data
+format: html
+execute:
+  echo: false
+  warning: false
+  error: false
+  message: false
+---
+
+```{r}
+library(tidyverse)
+library(DT)
+source("functions.R")
+
+data = readxl::read_xlsx(here::here("whiteboardpollresults.xlsx")) %>%
+  filter(status == "complete") %>%
+  mutate(
+    across(everything(), ~ replace_na(.x, 0)), 
+    votes = hq_votes + rtp_votes) %>%
+  group_by(series_no, series, date, question) %>%
+  mutate(
+    N = sum(votes), 
+    share = round( (votes/N) * 100, 2)) %>%
+  ungroup()
+```
+
+## Data Explorer
+
+```{r}
+data %>%
+  select(-c(series_no, status)) %>%
+  mutate(share = paste0(round(share,1),"%")) %>%
+  datatable(rownames = FALSE,
+            colnames = c("Series", "Date", "Question", "Option", "HQ Votes", "RTP Votes", "Total Votes", "N", "Share")) %>%
+  formatDate(columns = "date", method = "toLocaleDateString")
+```
+

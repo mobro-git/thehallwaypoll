@@ -1,0 +1,34 @@
+---
+title: "Dessert Match-ups: Part II"
+description: |
+  Sweets on sweets on sweets
+date: '2026-06-22'
+image: "cookies.jpg"
+categories:
+    - Food
+format: html
+toc: true
+lightbox: true
+execute:
+  echo: false
+  warning: false
+  error: false
+  message: false
+draft: false
+---
+
+```{r}
+library(here)
+source(here("packages.R"))
+source(here("functions.R"))
+
+series_filter = 16
+
+data = pollresults(series_filter)
+```
+
+```{r}
+for (q in unique(data$question)) {
+  print(simple_bar_question(data, q))
+}
+```

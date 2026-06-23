@@ -1,13 +1,13 @@
 
 # quickly filter poll results to a specific series_no
-pollresults = function(no) {
+pollresults = function(series_filter) {
   
   results = readxl::read_xlsx(here::here("whiteboardpollresults.xlsx")) %>%
-    filter(series_no == no) %>%
+    filter(series_no == series_filter) %>%
     mutate(
       across(everything(), ~replace_na(.x, 0)),
       votes = hq_votes+rtp_votes) %>%
-    group_by(series_no,series,week,question) %>%
+    group_by(series_no,series,date,question) %>%
     mutate(
       N = sum(votes),
       share = votes / N

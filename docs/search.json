@@ -231,17 +231,31 @@
     "text": "How clear are the leads?\nIs the lead clearly more than 50/50, and if so, by how much?\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nquestion\nN\nLeader (votes)\nTrailer (votes)\nLeader share\nMargin (votes)\nMargin (points)\np vs 50/50\nLeader 95% CI\nVotes to flip winner\n\n\n\n\nClimate\n33\nHot (24)\nCold (9)\n72.7%\n15\n45.5%\n0.0135\n[0.54, 0.87]\n8\n\n\nDestination\n33\nDomestic (24)\nInternational (9)\n72.7%\n15\n45.5%\n0.0135\n[0.54, 0.87]\n8\n\n\nSetting\n33\nNature (24)\nUrban (9)\n72.7%\n15\n45.5%\n0.0135\n[0.54, 0.87]\n8\n\n\nStyle\n33\nExploration & Adventure (23)\nRelaxation (10)\n69.7%\n13\n39.4%\n0.0351\n[0.51, 0.84]\n7\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 2: Leader shares with 95% confidence intervals.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\npair\nMin overlap\nExpected if independent\nMax overlap\n\n\n\n\nHot & Nature\n15\n17.5\n24\n\n\nHot & Domestic\n15\n17.5\n24\n\n\nNature & Domestic\n15\n17.5\n24\n\n\nAdventure & Hot\n14\n16.7\n23\n\n\nAdventure & Nature\n14\n16.7\n23\n\n\nAdventure & Domestic\n14\n16.7\n23\n\n\n\nOverlap bounds and independence expectations for selected pairs.\n\n\n\n\n\n\n\n\n\n\nFigure 3: Waffle charts (3×11 grid per question)."
   },
   {
-    "objectID": "polls/index.html",
-    "href": "polls/index.html",
-    "title": "Polls",
-    "section": "",
-    "text": "NBA Finals\n\n\n\n\n\nBASKETS!\n\n\n\n\n\n2026-06-12\n\n\n\n\n\n\n\n\n\n\n\n\nDessert Match-Ups: Part 1\n\n\n\n\n\nThe sweeter of the teeth\n\n\n\n\n\n2026-06-05\n\n\n\n\n\n\n\n\n\n\n\n\nAnimal Match-Ups\n\n\n\n\n\nCreatures of the world\n\n\n\n\n\n2026-05-22\n\n\n\n\n\n\n\n\n\n\n\n\nEarth Day\n\n\n\n\n\nOur Power, Our Planet\n\n\n\n\n\n2026-05-08\n\n\n\n\n\n\n\n\n\n\n\n\nFood Face-offs\n\n\n\n\n\nGet them yums!\n\n\n\n\n\n2026-04-13\n\n\n\n\n\n\n\n\n\n\n\n\nCherry Blossom Season\n\n\n\n\n\nHow do you enjoy them?\n\n\n\n\n\n2026-03-18\n\n\n\n\n\n\n\n\n\n\n\n\nCommute\n\n\n\n\n\nGetting from home to work, unfortunately\n\n\n\n\n\n2026-03-06\n\n\n\n\n\n\n\n\n\n\n\n\nEggs\n\n\n\n\n\nWhich came first, the chicken or the egg?\n\n\n\n\n\n2026-02-23\n\n\n\n\n\n\n\n\n\n\n\n\nHome Vibe\n\n\n\n\n\nHow do you live?\n\n\n\n\n\n2026-02-10\n\n\n\n\n\n\n\n\n\n\n\n\nVacations\n\n\n\n\n\nWhere and when?\n\n\n\n\n\n2026-01-20\n\n\n\n\n\n\n\n\n\n\n\n\nBreakfast Foods\n\n\n\n\n\nBattle of the griddle cakes\n\n\n\n\n\n2026-01-05\n\n\n\n\n\n\n\n\n\n\n\n\nToilet Paper Rolls: Over or Under\n\n\n\n\n\nWhich way do you hang?\n\n\n\n\n\n2025-12-22\n\n\n\n\n\n\n\n\n\n\n\n\nHoliday Drinks\n\n\n\n\n\nWhat fills your cup?\n\n\n\n\n\n2025-12-15\n\n\n\n\n\n\n\n\n\n\n\n\nCats vs. Dogs\n\n\n\n\n\nWoofs and meows, which will prevail?\n\n\n\n\n\n2025-12-08\n\n\n\n\n\n\n\n\n\n\n\n\nCheesy Snacks\n\n\n\n\n\nDairy filled crunches\n\n\n\n\n\n2025-12-01\n\n\n\n\n\nNo matching items"
-  },
-  {
     "objectID": "polls/20260508_earthday/index.html",
     "href": "polls/20260508_earthday/index.html",
     "title": "Earth Day",
     "section": "",
     "text": "Welcome to our first poll including results from the RTP campus! Previously, our poll was collecting data from but ONE geographic region. Thankfully, we have been able to expand our reach to the EPA RTP campus, both diversifying our pool of respondents and upping our N. We can now include an exploration of geographic differences in our polling results where we find points of interest."
+  },
+  {
+    "objectID": "polls/index.html",
+    "href": "polls/index.html",
+    "title": "Polls",
+    "section": "",
+    "text": "Sun Protection\n\n\n\n\n\nCrispy is not always better\n\n\n\n\n\n2026-07-14\n\n\n\n\n\n\n\n\n\n\n\n\nDessert Match-ups: Part II\n\n\n\n\n\nSweets on sweets on sweets\n\n\n\n\n\n2026-06-22\n\n\n\n\n\n\n\n\n\n\n\n\nNBA Finals\n\n\n\n\n\nBASKETS!\n\n\n\n\n\n2026-06-12\n\n\n\n\n\n\n\n\n\n\n\n\nDessert Match-Ups: Part 1\n\n\n\n\n\nThe sweeter of the teeth\n\n\n\n\n\n2026-06-05\n\n\n\n\n\n\n\n\n\n\n\n\nAnimal Match-Ups\n\n\n\n\n\nCreatures of the world\n\n\n\n\n\n2026-05-22\n\n\n\n\n\n\n\n\n\n\n\n\nEarth Day\n\n\n\n\n\nOur Power, Our Planet\n\n\n\n\n\n2026-05-08\n\n\n\n\n\n\n\n\n\n\n\n\nFood Face-offs\n\n\n\n\n\nGet them yums!\n\n\n\n\n\n2026-04-13\n\n\n\n\n\n\n\n\n\n\n\n\nCherry Blossom Season\n\n\n\n\n\nHow do you enjoy them?\n\n\n\n\n\n2026-03-18\n\n\n\n\n\n\n\n\n\n\n\n\nCommute\n\n\n\n\n\nGetting from home to work, unfortunately\n\n\n\n\n\n2026-03-06\n\n\n\n\n\n\n\n\n\n\n\n\nEggs\n\n\n\n\n\nWhich came first, the chicken or the egg?\n\n\n\n\n\n2026-02-23\n\n\n\n\n\n\n\n\n\n\n\n\nHome Vibe\n\n\n\n\n\nHow do you live?\n\n\n\n\n\n2026-02-10\n\n\n\n\n\n\n\n\n\n\n\n\nVacations\n\n\n\n\n\nWhere and when?\n\n\n\n\n\n2026-01-20\n\n\n\n\n\n\n\n\n\n\n\n\nBreakfast Foods\n\n\n\n\n\nBattle of the griddle cakes\n\n\n\n\n\n2026-01-05\n\n\n\n\n\n\n\n\n\n\n\n\nToilet Paper Rolls: Over or Under\n\n\n\n\n\nWhich way do you hang?\n\n\n\n\n\n2025-12-22\n\n\n\n\n\n\n\n\n\n\n\n\nHoliday Drinks\n\n\n\n\n\nWhat fills your cup?\n\n\n\n\n\n2025-12-15\n\n\n\n\n\n\n\n\n\n\n\n\nCats vs. Dogs\n\n\n\n\n\nWoofs and meows, which will prevail?\n\n\n\n\n\n2025-12-08\n\n\n\n\n\n\n\n\n\n\n\n\nCheesy Snacks\n\n\n\n\n\nDairy filled crunches\n\n\n\n\n\n2025-12-01\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "polls/20260622_dessert_matchups_part2/index.html",
+    "href": "polls/20260622_dessert_matchups_part2/index.html",
+    "title": "Dessert Match-ups: Part II",
+    "section": "",
+    "text": "Cookie\n\n\n\n\n\n\n\n\n\n\n\nTart/Torte\n\n\n\n\n\n\n\n\n\n\n\nCinnamon\n\n\n\n\n\n\n\n\n\n\n\nChilled and Molded\n\n\n\n\n\n\n\n\n\n\n\nSummer Treat"
+  },
+  {
+    "objectID": "polls/20260704_sunprotection/index.html",
+    "href": "polls/20260704_sunprotection/index.html",
+    "title": "Sun Protection",
+    "section": "",
+    "text": "Results coming soon!"
   }
 ]
