@@ -2,7 +2,7 @@
 title: "Sun Protection"
 description: |
   Crispy is not always better
-date: '2026-07-14'
+date: '2026-07-04'
 image: "dontfryday.png"
 categories:
     - Adventure
