@@ -1,11 +1,11 @@
 ---
-title: "Sun Protection"
+title: "Polarizing Provisions"
 description: |
-  Crispy is not always better
+  Where do you stand?
 date: '2026-07-14'
-image: "dontfryday.png"
+image: "sandwich.jpg"
 categories:
-    - Adventure
+    - Food
 format: html
 toc: true
 lightbox: true
@@ -22,7 +22,7 @@ library(here)
 source(here("packages.R"))
 source(here("functions.R"))
 
-series_filter = 17
+series_filter = 18
 
 data = pollresults(series_filter)
 ```

@@ -1,0 +1,17 @@
+{
+  "hash": "d6f8eda9a856ff9ba488c46366103139",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Sun Protection\"\ndescription: |\n  Crispy is not always better\ndate: '2026-07-14'\nimage: \"dontfryday.jpg\"\ncategories:\n    - Adventure\nformat: html\ntoc: true\nlightbox: true\nexecute:\n  echo: false\n  warning: false\n  error: false\n  message: false\ndraft: false\n---\n\n\n::: {.cell}\n\n:::\n\n\n\n::: {.cell}\n::: {.cell-output-display}\n![](index_files/figure-html/unnamed-chunk-2-1.png){width=672}\n:::\n\n::: {.cell-output-display}\n![](index_files/figure-html/unnamed-chunk-2-2.png){width=672}\n:::\n\n::: {.cell-output-display}\n![](index_files/figure-html/unnamed-chunk-2-3.png){width=672}\n:::\n\n::: {.cell-output-display}\n![](index_files/figure-html/unnamed-chunk-2-4.png){width=672}\n:::\n\n::: {.cell-output-display}\n![](index_files/figure-html/unnamed-chunk-2-5.png){width=672}\n:::\n:::\n\n",
+    "supporting": [
+      "index_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
