@@ -305,14 +305,14 @@
     "href": "polls/20260704_sunprotection/index.html",
     "title": "Sun Protection",
     "section": "",
-    "text": "Figure 1: Votes and shares for each question (faceted).\nRTP sat this one out — no votes logged from that office this round, so this week is an HQ-only story. We’ll pick the office comparison back up next time RTP checks in."
+    "text": "Figure 1: Votes and shares for each question (faceted)."
   },
   {
     "objectID": "polls/20260704_sunprotection/index.html#the-three-way-race-hat",
     "href": "polls/20260704_sunprotection/index.html#the-three-way-race-hat",
     "title": "Sun Protection",
     "section": "The three-way race: Hat",
-    "text": "The three-way race: Hat\n\n\n\n\n\noption\nvotes\nshare\n\n\n\n\nBaseball Cap\n50\n63.3%\n\n\nWide-brimmed Floppy Hat\n18\n22.8%\n\n\nBucket Hat\n11\n13.9%\n\n\n\n\n\nBaseball Cap isn’t just the leader, it’s the clear favorite: 63% of the vote versus Bucket Hat and Wide-brimmed Floppy Hat splitting the rest evenly. A chi-square goodness-of-fit test against “all three hats equally popular” gives p = 7.41^{-8} — nowhere close to what we’d expect if hat preference were random. This office has a type."
+    "text": "The three-way race: Hat\n\n\n\n\n\noption\nvotes\nshare\n\n\n\n\nBaseball Cap\n50\n63.3%\n\n\nWide-brimmed Floppy Hat\n18\n22.8%\n\n\nBucket Hat\n11\n13.9%\n\n\n\n\n\nBaseball Cap isn’t just the leader, it’s the clear favorite: 63% of the vote. Wide-brimmed Floppy Hat (23%) pulls ahead of Bucket Hat (14%) for a distant second, no longer the even split it looked like before RTP weighed in. A chi-square goodness-of-fit test against “all three hats equally popular” gives p = 7.41^{-8} — nowhere close to what we’d expect if hat preference were random. Both offices have a type, too: HQ and RTP each independently put Baseball Cap on top."
   },
   {
     "objectID": "polls/index.html",

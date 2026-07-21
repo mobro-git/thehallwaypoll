@@ -130,6 +130,7 @@ ul.task-list li input[type="checkbox"] {
   <ul class="collapse">
   <li><a href="#the-three-way-race-hat" id="toc-the-three-way-race-hat" class="nav-link" data-scroll-target="#the-three-way-race-hat">The three-way race: Hat</a></li>
   </ul></li>
+  <li><a href="#does-hq-agree-with-rtp" id="toc-does-hq-agree-with-rtp" class="nav-link" data-scroll-target="#does-hq-agree-with-rtp">Does HQ agree with RTP?</a></li>
   <li><a href="#do-the-sun-safety-conscious-cluster-together" id="toc-do-the-sun-safety-conscious-cluster-together" class="nav-link" data-scroll-target="#do-the-sun-safety-conscious-cluster-together">Do the sun-safety-conscious cluster together?</a></li>
   </ul>
 </nav>
@@ -184,11 +185,10 @@ Figure&nbsp;1: Votes and shares for each question (faceted).
 </div>
 </div>
 </div>
-<p>RTP sat this one out — no votes logged from that office this round, so this week is an HQ-only story. We’ll pick the office comparison back up next time RTP checks in.</p>
 <section id="how-decisive-were-these-results" class="level1">
 <h1>How decisive were these results?</h1>
 <p>Hat is the odd one out this week with three options, so it gets its own test; everything else is a straight two-way race.</p>
-<p><strong>TL;DR:</strong> Lotion trounced Spray (57–15, 79%) for the most one-sided call of the week. Shades was the real toss-up: Wayfarer edged Aviator 38–34, barely distinguishable from a coin flip.</p>
+<p><strong>TL;DR:</strong> Burn Care was the most one-sided call of the week — Aloe beat Moisturizing Lotion 57–15 (79%), with Sunscreen right behind it. Shades was the real toss-up: Aviator edged Wayfarer 38–34, about as close to a coin flip as it gets.</p>
 <div class="cell">
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
@@ -331,8 +331,86 @@ Figure&nbsp;3: One square per vote: Sunscreen.
 </table>
 </div>
 </div>
-<p>Baseball Cap isn’t just the leader, it’s the clear favorite: 63% of the vote versus Bucket Hat and Wide-brimmed Floppy Hat splitting the rest evenly. A chi-square goodness-of-fit test against “all three hats equally popular” gives p = 7.41^{-8} — nowhere close to what we’d expect if hat preference were random. This office has a type.</p>
+<p>Baseball Cap isn’t just the leader, it’s the clear favorite: 63% of the vote. Wide-brimmed Floppy Hat (23%) pulls ahead of Bucket Hat (14%) for a distant second, no longer the even split it looked like before RTP weighed in. A chi-square goodness-of-fit test against “all three hats equally popular” gives p = 7.41^{-8} — nowhere close to what we’d expect if hat preference were random. Both offices have a type, too: HQ and RTP each independently put Baseball Cap on top.</p>
 </section>
+</section>
+<section id="does-hq-agree-with-rtp" class="level1">
+<h1>Does HQ agree with RTP?</h1>
+<p>RTP’s votes are in for this poll, and it’s the most eventful HQ/RTP comparison we’ve had yet.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 25%">
+<col style="width: 17%">
+<col style="width: 17%">
+<col style="width: 14%">
+<col style="width: 11%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">question</th>
+<th style="text-align: left;">Leader (overall)</th>
+<th style="text-align: left;">HQ share</th>
+<th style="text-align: left;">RTP share</th>
+<th style="text-align: left;">Gap (pts)</th>
+<th style="text-align: right;">p-value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Burn Care</td>
+<td style="text-align: left;">Aloe</td>
+<td style="text-align: left;">83% (35/42)</td>
+<td style="text-align: left;">73% (22/30)</td>
+<td style="text-align: left;">10%</td>
+<td style="text-align: right;">0.4620</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Method</td>
+<td style="text-align: left;">Reapply Sunscreen</td>
+<td style="text-align: left;">70% (32/46)</td>
+<td style="text-align: left;">52% (16/31)</td>
+<td style="text-align: left;">18%</td>
+<td style="text-align: right;">0.1760</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Shades</td>
+<td style="text-align: left;">Aviator</td>
+<td style="text-align: left;">48% (21/44)</td>
+<td style="text-align: left;">61% (17/28)</td>
+<td style="text-align: left;">13%</td>
+<td style="text-align: right;">0.4040</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Sunscreen</td>
+<td style="text-align: left;">Lotion</td>
+<td style="text-align: left;">86% (43/50)</td>
+<td style="text-align: left;">63% (19/30)</td>
+<td style="text-align: left;">23%</td>
+<td style="text-align: right;">0.0381</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-hq-rtp" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-hq-rtp-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="index_files/figure-html/fig-hq-rtp-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="Figure&nbsp;4: HQ vs RTP support for each question’s overall winner."><img src="index_files/figure-html/fig-hq-rtp-1.png" class="img-fluid figure-img" width="672"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-hq-rtp-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: HQ vs RTP support for each question’s overall winner.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Two milestones this week. First, Sunscreen clears p &lt; 0.05 for the first time since RTP joined the poll — HQ went 86% for Lotion, RTP only 63% (p = 0.038). Every office gap before this one had a p-value comfortably above 0.1 — this is the first one we can call a real difference rather than noise.</p>
+<p>Second, the Alignment Index drops to <strong>0.43</strong> this week, its lowest reading yet (cumulative across the whole RTP era: <strong>0.81</strong>, so the long-run picture is still solidly aligned — one rough week doesn’t undo five good ones). And Shades flipped outright: HQ’s real preference was Wayfarer, RTP’s was Aviator, and the combined total ended up siding with RTP. That brings the running tally to <strong>8 questions</strong> since RTP joined where the two offices would have crowned different winners on their own.</p>
 </section>
 <section id="do-the-sun-safety-conscious-cluster-together" class="level1">
 <h1>Do the sun-safety-conscious cluster together?</h1>
