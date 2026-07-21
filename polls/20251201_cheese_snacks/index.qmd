@@ -19,16 +19,15 @@ execute:
 # ![](cheese-01.jpg){width="1000"}
 
 ```{r}
-# Packages
-library(tidyverse)
-library(scales)
-library(broom)
+library(here)
+source(here("packages.R"))
+source(here("functions.R"))
 
-# Data
-results = readxl::read_xlsx(here::here("whiteboardpollresults.xlsx")) %>%
-  filter(series_no == "1") %>%
-  mutate(share = votes / sum(votes)) %>%
-  select(option, votes, share)
+series_filter = 1
+
+data = pollresults(series_filter)
+
+results = data %>% select(option, votes, share)
 
 N = sum(results$votes)
 ```
@@ -170,7 +169,7 @@ The posterior probability that Cheez-Its leads (p > 0.5) under this symmetric pr
 Cohen’s h = 2asin(sqrt(p1)) − 2asin(sqrt(p2)). With p1 = p2 = 0.5, h = 0 (no effect).
 
 ```{r}
-p1 <- results$share[results$option == "Cheez-Its"]
+p1 <- results$share[results$option == "Cheez-It"]
 p2 <- results$share[results$option == "Goldfish"]
 cohens_h <- 2*asin(sqrt(p1)) - 2*asin(sqrt(p2))
 cohens_h
@@ -180,39 +179,17 @@ cohens_h
 
 ```{r}
 #| label: fig-waffle
-#| fig-cap: "Waffle chart: 42 voters, split evenly."
+#| fig-cap: "Waffle chart: one square per vote."
 #| fig-width: 6
 #| fig-height: 4
-
-# Build a simple waffle without extra packages
-# 7 x 6 grid (42 cells)
-rows <- 7
-cols <- 6
-
-waffle <- tibble(
-  id = 1:N,
-  option = rep(c("Cheez-Its", "Goldfish"), times = c(21, 21))
-) |>
-  mutate(
-    row = (id - 1) %/% cols + 1,
-    col = (id - 1) %% cols + 1
-  )
-
-waffle |>
-  ggplot(aes(x = col, y = rows - row + 1, fill = option)) +
-  geom_tile(color = "white", linewidth = 0.5, width = 0.95, height = 0.95) +
-  scale_fill_manual(values = c("#f8766d", "#00bfc4")) +
-  coord_equal() +
-  labs(x = NULL, y = NULL, fill = "") +
-  theme_void() +
-  theme(legend.position = "bottom")
+waffle_question(data, "cheese snacks", cols = 6)
 ```
 
 # Takeaways
 
 It’s a dead heat: 21–21 gives no evidence of a lead.
 
-With N = 42 and a true 50/50 split, ties happen about r percent(p_tie, accuracy = 0.1) of the time.
+With N = 42 and a true 50/50 split, ties happen about `r percent(p_tie, accuracy = 0.1)` of the time.
 
 The 95% interval for the Cheez-Its share is wide (reflecting a small sample).
 
