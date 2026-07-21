@@ -32,3 +32,73 @@ for (q in unique(data$question)) {
   print(simple_bar_question(data, q))
 }
 ```
+
+# How decisive were these results, combined?
+
+```{r}
+#| label: summary-stats
+summary_d2 = summarize_two_option(data)
+lopsided_d2 = summary_d2 %>% arrange(p_value_50_50)
+closest_d2  = summary_d2 %>% arrange(desc(p_value_50_50)) %>% slice(1)
+```
+
+**TL;DR:** Ice Cream Sandwich buried Popsicle (`r lopsided_d2$leader_votes[1]`–`r lopsided_d2$trailer_votes[1]`, `r percent(lopsided_d2$leader_share[1],1)`), the most decisive result of this dessert round. Cinnamon, meanwhile, ended in a flat-out tie: Churro `r closest_d2$leader_votes[1]`, Cinnamon Bun `r closest_d2$trailer_votes[1]` — you can't get closer to a coin flip than that.
+
+```{r}
+#| label: summary-table
+binom_summary_table(summary_d2)
+```
+
+```{r}
+#| label: fig-leader-ci
+#| fig-cap: "Leader shares with 95% confidence intervals."
+#| fig-width: 7
+#| fig-height: 4
+leader_ci_plot(summary_d2)
+```
+
+# Does HQ agree with RTP?
+
+```{r}
+#| label: hq-rtp-stats
+hq_rtp_d2 = hq_rtp_compare(data)
+alignment_d2 = cor(hq_rtp_d2$hq_share, hq_rtp_d2$rtp_share)
+cumulative_d2 = cumulative_alignment(16)
+
+flips_d2 = data %>%
+  group_by(question) %>%
+  filter(n() == 2, sum(rtp_votes) > 0) %>%
+  group_modify(~ {
+    hq_winner  = .x$option[which.max(.x$hq_votes)]
+    rtp_winner = .x$option[which.max(.x$rtp_votes)]
+    tibble(hq_winner, rtp_winner, flipped = hq_winner != rtp_winner)
+  }) %>%
+  ungroup() %>%
+  filter(flipped)
+
+flip_count_d2 = flip_count_so_far(16)
+```
+
+```{r}
+#| label: hq-rtp-table
+hq_rtp_d2 %>%
+  transmute(
+    question,
+    `Leader (overall)` = option,
+    `HQ share`  = sprintf("%s (%d/%d)", percent(hq_share, 1), hq_votes, hq_N),
+    `RTP share` = sprintf("%s (%d/%d)", percent(rtp_share, 1), rtp_votes, rtp_N),
+    `Gap (pts)` = percent(abs(gap), 1),
+    `p-value`   = signif(p_value, 3)
+  ) %>%
+  kableExtra::kable()
+```
+
+```{r}
+#| label: fig-hq-rtp
+#| fig-cap: "HQ vs RTP support for each question's overall winner."
+#| fig-width: 7
+#| fig-height: 4
+hq_rtp_plot(hq_rtp_d2)
+```
+
+The Alignment Index itself is unremarkable this week — **`r round(alignment_d2, 2)`**, basically flat versus last time, with the cumulative number at **`r round(cumulative_d2, 2)`**. But look at the flip count instead of the correlation: `r nrow(flips_d2)` of this poll's `r nrow(hq_rtp_d2)` questions — `r flips_d2$question %>% paste(collapse = ", ")` — saw HQ and RTP prefer genuinely different desserts. That's a majority of this week's questions, the most we've seen split by office in a single poll, and it brings the running tally to **`r flip_count_d2` flips** since RTP joined. Still nothing here clears statistical significance on its own (these are small offices, and small offices are noisy) — but a correlation coefficient can look perfectly fine while more than half the individual questions quietly disagree underneath it, which is exactly what's happening this week.

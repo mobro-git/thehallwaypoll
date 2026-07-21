@@ -41,3 +41,43 @@ simple_bar_question(data, "Vibe")
 ```{r}
 simple_bar_question(data, "Atmosphere")
 ```
+
+# How decisive were these results?
+
+For each question we treat it as a coin flip (50/50) and ask: is the actual split far enough from a tie that we'd call it a real preference, or could it just be noise?
+
+```{r}
+#| label: summary-stats
+summary_hv = summarize_two_option(data)
+```
+
+**TL;DR:** the loudest signal this week is Vibe — `r summary_hv %>% filter(question == "Vibe") %>% pull(leader)` beat `r summary_hv %>% filter(question == "Vibe") %>% pull(trailer)` `r summary_hv %>% filter(question == "Vibe") %>% pull(leader_votes)`–`r summary_hv %>% filter(question == "Vibe") %>% pull(trailer_votes)` (`r summary_hv %>% filter(question == "Vibe") %>% pull(leader_share) %>% percent(1)`), a result that's about as far from a coin flip as this poll gets. Meanwhile Utility was a literal coin flip: Minimalist edged Cozy by a single vote, `r summary_hv %>% filter(question == "Utility") %>% pull(leader_votes)`–`r summary_hv %>% filter(question == "Utility") %>% pull(trailer_votes)`.
+
+```{r}
+#| label: summary-table
+binom_summary_table(summary_hv)
+```
+
+```{r}
+#| label: fig-leader-ci
+#| fig-cap: "Leader shares with 95% confidence intervals. Anything hugging the dashed line is basically a coin flip."
+#| fig-width: 7
+#| fig-height: 3.5
+leader_ci_plot(summary_hv)
+```
+
+# Do minimalists also want function over form?
+
+We never ask people to link their answers across questions, so we can't say for certain who picked what on both — but we can bound it. If we assume the 28 people who weighed in on Décor are a subset of the 37 who weighed in on Utility, here's how many "Minimalist *and* Functional" people could plausibly be hiding in that overlap.
+
+```{r}
+#| label: overlap-utility-decor
+ov_min_func = overlap_bounds(
+  a_total = data %>% filter(question == "Utility", option == "Minimalist") %>% pull(votes),
+  N_a     = data %>% filter(question == "Utility") %>% pull(N) %>% unique(),
+  b_total = data %>% filter(question == "Décor", option == "Functional") %>% pull(votes),
+  N_b     = data %>% filter(question == "Décor") %>% pull(N) %>% unique()
+)
+```
+
+Out of the `r ov_min_func$m` overlapping voters, the Minimalist + Functional crowd could be as few as `r ov_min_func$min_overlap` or as many as `r ov_min_func$max_overlap` people (`r percent(ov_min_func$min_overlap/ov_min_func$m, 1)`–`r percent(ov_min_func$max_overlap/ov_min_func$m, 1)`), with about `r round(ov_min_func$expected_overlap)` (`r percent(ov_min_func$expected_overlap/ov_min_func$m, 1)`) expected if the two preferences have nothing to do with each other. Not a tight bound, but it's a start — we'd need paired responses to actually pin down whether "minimalist" and "functional" travel together.

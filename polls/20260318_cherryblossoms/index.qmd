@@ -48,3 +48,41 @@ simple_bar_question(data, "Color")
 simple_bar_question(data, "Activity")
 ```
 
+# How decisive were these results?
+
+```{r}
+#| label: summary-stats
+summary_cb = summarize_two_option(data)
+```
+
+**TL;DR:** this crowd wants a peaceful walk, not a photo-op scrum — Activity (`r summary_cb %>% filter(question == "Activity") %>% pull(leader)` over `r summary_cb %>% filter(question == "Activity") %>% pull(trailer)`, `r summary_cb %>% filter(question == "Activity") %>% pull(leader_votes)`–`r summary_cb %>% filter(question == "Activity") %>% pull(trailer_votes)`) and Vibe (Less Busy over Peak Bloom, `r summary_cb %>% filter(question == "Vibe") %>% pull(leader_votes)`–`r summary_cb %>% filter(question == "Vibe") %>% pull(trailer_votes)`) are this week's two biggest blowouts. Time of day was the softest opinion — Morning Enjoyment led Golden Hour `r summary_cb %>% filter(question == "Time") %>% pull(leader_votes)`–`r summary_cb %>% filter(question == "Time") %>% pull(trailer_votes)`, the only question that isn't clearly distinguishable from a 50/50 split.
+
+```{r}
+#| label: summary-table
+binom_summary_table(summary_cb)
+```
+
+```{r}
+#| label: fig-leader-ci
+#| fig-cap: "Leader shares with 95% confidence intervals."
+#| fig-width: 7
+#| fig-height: 4
+leader_ci_plot(summary_cb)
+```
+
+# Do the crowd-avoiders and the strollers overlap?
+
+"I'd rather come before or after peak bloom" and "I'd rather walk than picnic" both sound like the same peaceful, less-crowded kind of cherry blossom outing. Let's bound the overlap.
+
+```{r}
+#| label: overlap-vibe-activity
+ov_calm_walk = overlap_bounds(
+  a_total = data %>% filter(question == "Vibe", option == "Less Busy/Before or after peak") %>% pull(votes),
+  N_a     = data %>% filter(question == "Vibe") %>% pull(N) %>% unique(),
+  b_total = data %>% filter(question == "Activity", option == "Walk or Stroll") %>% pull(votes),
+  N_b     = data %>% filter(question == "Activity") %>% pull(N) %>% unique()
+)
+```
+
+Out of `r ov_calm_walk$m` overlapping voters, the "peaceful stroller" contingent could be as small as `r ov_calm_walk$min_overlap` or as large as `r ov_calm_walk$max_overlap` people (`r percent(ov_calm_walk$min_overlap/ov_calm_walk$m, 1)`–`r percent(ov_calm_walk$max_overlap/ov_calm_walk$m, 1)`), versus roughly `r round(ov_calm_walk$expected_overlap)` (`r percent(ov_calm_walk$expected_overlap/ov_calm_walk$m, 1)`) expected if the two preferences were unrelated. Since both options are already crowd favorites on their own, the floor stays high — there's a good chance most of our peers just want a quiet walk among the blossoms, crowds be damned.
+

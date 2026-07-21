@@ -47,3 +47,75 @@ simple_bar_question(data, "Frozen")
 simple_bar_question(data, "Stuffed")
 ```
 
+# How decisive were these results, combined?
+
+```{r}
+#| label: summary-stats
+summary_d1 = summarize_two_option(data)
+lopsided_d1 = summary_d1 %>% arrange(p_value_50_50)
+closest_d1  = summary_d1 %>% arrange(desc(p_value_50_50)) %>% slice(1)
+```
+
+**TL;DR:** Ice Cream demolished Frozen Yogurt (`r lopsided_d1$leader_votes[1]`–`r lopsided_d1$trailer_votes[1]`, `r percent(lopsided_d1$leader_share[1],1)`) — the most lopsided result of any dessert this series. `r closest_d1$question[1]` was a nail-biter: `r closest_d1$leader[1]` over `r closest_d1$trailer[1]` by just `r closest_d1$margin_votes[1]` votes.
+
+```{r}
+#| label: summary-table
+binom_summary_table(summary_d1)
+```
+
+```{r}
+#| label: fig-leader-ci
+#| fig-cap: "Leader shares with 95% confidence intervals."
+#| fig-width: 7
+#| fig-height: 4
+leader_ci_plot(summary_d1)
+```
+
+# Does HQ agree with RTP?
+
+```{r}
+#| label: hq-rtp-stats
+hq_rtp_d1 = hq_rtp_compare(data)
+alignment_d1 = cor(hq_rtp_d1$hq_share, hq_rtp_d1$rtp_share)
+cumulative_d1 = cumulative_alignment(14)
+biggest_gap_d1 = hq_rtp_d1 %>% arrange(desc(abs(gap))) %>% slice(1)
+
+# Did either office actually prefer a *different* dessert than the overall winner?
+flips_d1 = data %>%
+  group_by(question) %>%
+  filter(n() == 2, sum(rtp_votes) > 0) %>%
+  group_modify(~ {
+    overall_winner = .x$option[which.max(.x$votes)]
+    rtp_winner     = .x$option[which.max(.x$rtp_votes)]
+    tibble(overall_winner, rtp_winner, flipped = overall_winner != rtp_winner)
+  }) %>%
+  ungroup() %>%
+  filter(flipped)
+```
+
+```{r}
+#| label: hq-rtp-table
+hq_rtp_d1 %>%
+  transmute(
+    question,
+    `Leader (overall)` = option,
+    `HQ share`  = sprintf("%s (%d/%d)", percent(hq_share, 1), hq_votes, hq_N),
+    `RTP share` = sprintf("%s (%d/%d)", percent(rtp_share, 1), rtp_votes, rtp_N),
+    `Gap (pts)` = percent(abs(gap), 1),
+    `p-value`   = signif(p_value, 3)
+  ) %>%
+  kableExtra::kable()
+```
+
+```{r}
+#| label: fig-hq-rtp
+#| fig-cap: "HQ vs RTP support for each question's overall winner."
+#| fig-width: 7
+#| fig-height: 4
+hq_rtp_plot(hq_rtp_d1)
+```
+
+The Alignment Index bounces back a bit this week to **`r round(alignment_d1, 2)`** — still below Earth Day's opening 0.90, but a recovery from last week's dip — with the cumulative number at **`r round(cumulative_d1, 2)`**. `r biggest_gap_d1$question[1]` produced the widest single-question office gap we've seen yet, `r percent(abs(biggest_gap_d1$gap[1]),1)` — both offices preferred `r biggest_gap_d1$option[1]`, RTP just felt more strongly about it.
+
+The more interesting story is in `r flips_d1$question[1]`. RTP's votes actually crowned a *different* winner than the whiteboard as a whole: while the combined total favored `r flips_d1$overall_winner[1]`, RTP alone preferred `r flips_d1$rtp_winner[1]`. It's not statistically significant with these sample sizes, but it's the first time in the RTP era that the two offices would have crowned different desserts if they'd each voted alone.
+

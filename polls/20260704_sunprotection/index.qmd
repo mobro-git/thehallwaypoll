@@ -32,3 +32,72 @@ for (q in unique(data$question)) {
   print(simple_bar_question(data, q))
 }
 ```
+
+RTP sat this one out — no votes logged from that office this round, so this week is an HQ-only story. We'll pick the office comparison back up next time RTP checks in.
+
+# How decisive were these results?
+
+Hat is the odd one out this week with three options, so it gets its own test; everything else is a straight two-way race.
+
+```{r}
+#| label: summary-stats
+summary_sp = summarize_two_option(data)
+lopsided_sp = summary_sp %>% arrange(p_value_50_50)
+closest_sp  = summary_sp %>% arrange(desc(p_value_50_50)) %>% slice(1)
+```
+
+**TL;DR:** Lotion trounced Spray (`r lopsided_sp$leader_votes[1]`–`r lopsided_sp$trailer_votes[1]`, `r percent(lopsided_sp$leader_share[1],1)`) for the most one-sided call of the week. Shades was the real toss-up: Wayfarer edged Aviator `r closest_sp$leader_votes[1]`–`r closest_sp$trailer_votes[1]`, barely distinguishable from a coin flip.
+
+```{r}
+#| label: summary-table
+binom_summary_table(summary_sp)
+```
+
+```{r}
+#| label: fig-leader-ci
+#| fig-cap: "Leader shares with 95% confidence intervals (two-option questions only)."
+#| fig-width: 7
+#| fig-height: 3.5
+leader_ci_plot(summary_sp)
+```
+
+```{r}
+#| label: fig-waffle-sunscreen
+#| fig-cap: "One square per vote: Sunscreen."
+#| fig-width: 6
+#| fig-height: 4
+waffle_question(data, "Sunscreen")
+```
+
+## The three-way race: Hat
+
+```{r}
+#| label: hat-chisq
+hat = data %>% filter(question == "Hat") %>% arrange(desc(votes))
+hat_chisq = chisq.test(hat$votes)
+```
+
+```{r}
+#| label: hat-table
+hat %>%
+  transmute(option, votes, share = percent(share, 0.1)) %>%
+  kableExtra::kable()
+```
+
+Baseball Cap isn't just the leader, it's the clear favorite: `r percent(hat$share[1], 1)` of the vote versus Bucket Hat and Wide-brimmed Floppy Hat splitting the rest evenly. A chi-square goodness-of-fit test against "all three hats equally popular" gives p = `r signif(hat_chisq$p.value, 3)` — nowhere close to what we'd expect if hat preference were random. This office has a type.
+
+# Do the sun-safety-conscious cluster together?
+
+Reapplying sunscreen and reaching for aloe after a burn both sound like the habits of the same sun-safety-minded person. Let's bound the overlap.
+
+```{r}
+#| label: overlap-method-burncare
+ov_safe = overlap_bounds(
+  a_total = data %>% filter(question == "Method", option == "Reapply Sunscreen") %>% pull(votes),
+  N_a     = data %>% filter(question == "Method") %>% pull(N) %>% unique(),
+  b_total = data %>% filter(question == "Burn Care", option == "Aloe") %>% pull(votes),
+  N_b     = data %>% filter(question == "Burn Care") %>% pull(N) %>% unique()
+)
+```
+
+Of the `r ov_safe$m` overlapping voters, somewhere between `r ov_safe$min_overlap` and `r ov_safe$max_overlap` (`r percent(ov_safe$min_overlap/ov_safe$m, 1)`–`r percent(ov_safe$max_overlap/ov_safe$m, 1)`) could be both Reapply-Sunscreen *and* Aloe people, versus about `r round(ov_safe$expected_overlap)` (`r percent(ov_safe$expected_overlap/ov_safe$m, 1)`) expected if the two habits were unrelated. Given how popular both options already are on their own, there's a good floor under the "actually sun-safe" coalition — good news for everyone's skin.

@@ -54,3 +54,54 @@ simple_bar_question(data, "Chocolate Chip Cookies")
 ```{r}
 simple_bar_question(data, "Pickles")
 ```
+
+# How decisive were these results?
+
+Seven face-offs this week, which means seven chances to see who has actual opinions and who's basically flipping a coin.
+
+```{r}
+#| label: summary-stats
+summary_ffo = summarize_two_option(data)
+lopsided = summary_ffo %>% arrange(p_value_50_50)
+closest  = summary_ffo %>% arrange(desc(p_value_50_50)) %>% slice(1)
+```
+
+**TL;DR:** `r lopsided$question[1]` was the most one-sided fight in the building — `r lopsided$leader[1]` demolished `r lopsided$trailer[1]` `r lopsided$leader_votes[1]`–`r lopsided$trailer_votes[1]` (`r percent(lopsided$leader_share[1],1)`), just barely out-landsliding `r lopsided$question[2]`'s `r lopsided$leader[2]` (`r lopsided$leader_votes[2]`–`r lopsided$trailer_votes[2]`). The most genuine toss-up was `r closest$question[1]`: `r closest$leader[1]` over `r closest$trailer[1]`, `r closest$leader_votes[1]`–`r closest$trailer_votes[1]` (p = `r signif(closest$p_value_50_50[1], 2)`) — statistically indistinguishable from a coin flip.
+
+```{r}
+#| label: summary-table
+binom_summary_table(summary_ffo)
+```
+
+```{r}
+#| label: fig-leader-ci
+#| fig-cap: "Leader shares with 95% confidence intervals, ranked from most lopsided to closest."
+#| fig-width: 8
+#| fig-height: 5
+summary_ffo %>%
+  mutate(question = fct_reorder(question, leader_share)) %>%
+  ggplot(aes(y = question, x = leader_share, color = question)) +
+  geom_point(size = 2) +
+  geom_errorbarh(aes(xmin = ci_lower, xmax = ci_upper), height = 0.15) +
+  geom_vline(xintercept = 0.5, linetype = 2, color = "gray60") +
+  scale_x_continuous(labels = percent_format(accuracy = 1), limits = c(0, 1)) +
+  labs(x = "Leader's share of votes", y = NULL) +
+  theme_minimal(base_size = 13) +
+  theme(legend.position = "none")
+```
+
+# Do New York pizza people also love a dill pickle?
+
+Both are tangy, no-nonsense, East Coast-coded choices. Let's see how much the crowds could overlap.
+
+```{r}
+#| label: overlap-pizza-pickle
+ov_ny_dill = overlap_bounds(
+  a_total = data %>% filter(question == "Pizza Style", option == "New York") %>% pull(votes),
+  N_a     = data %>% filter(question == "Pizza Style") %>% pull(N) %>% unique(),
+  b_total = data %>% filter(question == "Pickles", option == "Dill") %>% pull(votes),
+  N_b     = data %>% filter(question == "Pickles") %>% pull(N) %>% unique()
+)
+```
+
+Of the `r ov_ny_dill$m` overlapping voters, somewhere between `r ov_ny_dill$min_overlap` and `r ov_ny_dill$max_overlap` (`r percent(ov_ny_dill$min_overlap/ov_ny_dill$m, 1)`–`r percent(ov_ny_dill$max_overlap/ov_ny_dill$m, 1)`) are Team New York *and* Team Dill, versus about `r round(ov_ny_dill$expected_overlap)` (`r percent(ov_ny_dill$expected_overlap/ov_ny_dill$m, 1)`) expected if the two tastes were unrelated. Both options win so convincingly on their own that the "tangy and no-nonsense" coalition is large no matter how the overlap actually shakes out.
