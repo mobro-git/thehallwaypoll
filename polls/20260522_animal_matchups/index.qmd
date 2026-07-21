@@ -54,3 +54,78 @@ simple_bar_question(data, "Lepidoptera")
 ```{r}
 simple_bar_question(data, "Anura")
 ```
+
+# How decisive were these results, combined?
+
+Seven animal kingdom grudge matches this week.
+
+```{r}
+#| label: summary-stats
+summary_am = summarize_two_option(data)
+lopsided_am = summary_am %>% arrange(p_value_50_50)
+closest_am  = summary_am %>% arrange(desc(p_value_50_50)) %>% slice(1)
+```
+
+**TL;DR:** Hedgehogs steamrolled Porcupines (`r lopsided_am$leader_votes[1]`–`r lopsided_am$trailer_votes[1]`, `r percent(lopsided_am$leader_share[1],1)`), the most one-sided result of the week. `r closest_am$question[1]` was the nail-biter: `r closest_am$leader[1]` over `r closest_am$trailer[1]` by just `r closest_am$margin_votes[1]` votes (p = `r signif(closest_am$p_value_50_50[1],2)`) — essentially a coin flip between the two reptiles.
+
+```{r}
+#| label: summary-table
+binom_summary_table(summary_am)
+```
+
+```{r}
+#| label: fig-leader-ci
+#| fig-cap: "Leader shares with 95% confidence intervals, ranked from most lopsided to closest."
+#| fig-width: 8
+#| fig-height: 5
+summary_am %>%
+  mutate(question = fct_reorder(question, leader_share)) %>%
+  ggplot(aes(y = question, x = leader_share, color = question)) +
+  geom_point(size = 2) +
+  geom_errorbarh(aes(xmin = ci_lower, xmax = ci_upper), height = 0.15) +
+  geom_vline(xintercept = 0.5, linetype = 2, color = "gray60") +
+  scale_x_continuous(labels = percent_format(accuracy = 1), limits = c(0, 1)) +
+  labs(x = "Leader's share of votes", y = NULL) +
+  theme_minimal(base_size = 13) +
+  theme(legend.position = "none")
+```
+
+# Does HQ agree with RTP?
+
+```{r}
+#| label: hq-rtp-stats
+hq_rtp_am = hq_rtp_compare(data)
+alignment_am = cor(hq_rtp_am$hq_share, hq_rtp_am$rtp_share)
+biggest_gap_am = hq_rtp_am %>% arrange(desc(abs(gap))) %>% slice(1)
+```
+
+```{r}
+#| label: hq-rtp-table
+hq_rtp_am %>%
+  transmute(
+    question,
+    `Leader (overall)` = option,
+    `HQ share`  = sprintf("%s (%d/%d)", percent(hq_share, 1), hq_votes, hq_N),
+    `RTP share` = sprintf("%s (%d/%d)", percent(rtp_share, 1), rtp_votes, rtp_N),
+    `Gap (pts)` = percent(abs(gap), 1),
+    `p-value`   = signif(p_value, 3)
+  ) %>%
+  kableExtra::kable()
+```
+
+```{r}
+#| label: fig-hq-rtp
+#| fig-cap: "HQ vs RTP support for each question's overall winner."
+#| fig-width: 7
+#| fig-height: 4
+hq_rtp_plot(hq_rtp_am)
+```
+
+```{r}
+#| label: cumulative-alignment
+cumulative_am = cumulative_alignment(13)
+```
+
+None of the individual gaps clear statistical significance this week (all p > 0.28) — but the week-over-week Alignment Index takes its biggest tumble yet, down to **`r round(alignment_am, 2)`** (cumulative, smoothed over both RTP-era polls so far: **`r round(cumulative_am, 2)`**). No single matchup is a smoking gun; it looks more like everything drifted slightly in the same direction at once.
+
+The widest gap belongs to `r biggest_gap_am$question[1]`, where HQ leaned toward `r biggest_gap_am$option[1]` (`r percent(biggest_gap_am$hq_share[1],1)`) while RTP was almost perfectly torn — RTP's raw vote on that question split exactly down the middle. It's a good reminder that "the office average" can paper over a genuine local difference of opinion, even when it's not big enough to call statistically significant yet.

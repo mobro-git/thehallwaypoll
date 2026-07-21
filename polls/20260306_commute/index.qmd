@@ -47,3 +47,49 @@ simple_bar_question(data, "Biking")
 simple_bar_question(data, "Escalators")
 ```
 
+# How decisive were these results?
+
+```{r}
+#| label: summary-stats
+summary_commute = summarize_two_option(data)
+```
+
+**TL;DR:** Escalators produced the most lopsided result of the series so far — Escalator Walkers stomped Escalator Standers `r summary_commute %>% filter(question == "Escalators") %>% pull(leader_votes)`–`r summary_commute %>% filter(question == "Escalators") %>% pull(trailer_votes)` (`r summary_commute %>% filter(question == "Escalators") %>% pull(leader_share) %>% percent(1)`), with a p-value so small it barely fits on the table below. Audio, on the other hand, was basically a coin flip: Podcasts & Audiobooks edged Music by a single vote, `r summary_commute %>% filter(question == "Audio") %>% pull(leader_votes)`–`r summary_commute %>% filter(question == "Audio") %>% pull(trailer_votes)`.
+
+```{r}
+#| label: summary-table
+binom_summary_table(summary_commute)
+```
+
+```{r}
+#| label: fig-leader-ci
+#| fig-cap: "Leader shares with 95% confidence intervals."
+#| fig-width: 7
+#| fig-height: 4
+leader_ci_plot(summary_commute)
+```
+
+```{r}
+#| label: fig-waffle-escalators
+#| fig-cap: "One square per vote: Escalators."
+#| fig-width: 6
+#| fig-height: 4
+waffle_question(data, "Escalators")
+```
+
+# Are escalator walkers also the multi-modal commuters?
+
+Both "walk the escalator" and "use more than one mode" sound like the choices of someone optimizing their commute down to the minute. Let's see how much those two groups could overlap.
+
+```{r}
+#| label: overlap-escalator-mode
+ov_walk_multi = overlap_bounds(
+  a_total = data %>% filter(question == "Escalators", option == "Escalator Walker") %>% pull(votes),
+  N_a     = data %>% filter(question == "Escalators") %>% pull(N) %>% unique(),
+  b_total = data %>% filter(question == "Mode", option == "Multi-modal") %>% pull(votes),
+  N_b     = data %>% filter(question == "Mode") %>% pull(N) %>% unique()
+)
+```
+
+Of the `r ov_walk_multi$m` overlapping voters, somewhere between `r ov_walk_multi$min_overlap` and `r ov_walk_multi$max_overlap` (`r percent(ov_walk_multi$min_overlap/ov_walk_multi$m, 1)`–`r percent(ov_walk_multi$max_overlap/ov_walk_multi$m, 1)`) could be both Escalator Walkers *and* Multi-modal commuters, versus about `r round(ov_walk_multi$expected_overlap)` (`r percent(ov_walk_multi$expected_overlap/ov_walk_multi$m, 1)`) expected under independence. Given how dominant Escalator Walker already is on its own, the "efficient commuter" coalition is large no matter how you slice it — we just can't say exactly how large without matched responses.
+

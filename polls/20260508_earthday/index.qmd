@@ -45,3 +45,64 @@ simple_bar_question(data, "Animal Scoping")
 ```{r}
 simple_bar_question(data, "Volunteering")
 ```
+
+# How decisive were these results, combined?
+
+```{r}
+#| label: summary-stats
+summary_ed = summarize_two_option(data)
+```
+
+**TL;DR:** Hiking crushed Picnicking (`r summary_ed %>% filter(question == "Enjoying Nature") %>% pull(leader_votes)`–`r summary_ed %>% filter(question == "Enjoying Nature") %>% pull(trailer_votes)`, `r summary_ed %>% filter(question == "Enjoying Nature") %>% pull(leader_share) %>% percent(1)`) — the strongest signal of the week by far. Volunteering was the closest thing to a coin flip: Trash Pickup edged Invasive Species Removal by just `r summary_ed %>% filter(question == "Volunteering") %>% pull(margin_votes)` vote(s), `r summary_ed %>% filter(question == "Volunteering") %>% pull(leader_votes)`–`r summary_ed %>% filter(question == "Volunteering") %>% pull(trailer_votes)`.
+
+```{r}
+#| label: summary-table
+binom_summary_table(summary_ed)
+```
+
+```{r}
+#| label: fig-leader-ci
+#| fig-cap: "Leader shares with 95% confidence intervals (combined HQ + RTP)."
+#| fig-width: 7
+#| fig-height: 3.5
+leader_ci_plot(summary_ed)
+```
+
+# Does HQ agree with RTP?
+
+Now for the fun part: with two offices voting, we can finally ask whether HQ and RTP actually see things the same way, instead of just assuming it. For each question we run a two-proportion test comparing the two offices' support for the overall winning option.
+
+```{r}
+#| label: hq-rtp-stats
+hq_rtp_ed = hq_rtp_compare(data)
+alignment_ed = cor(hq_rtp_ed$hq_share, hq_rtp_ed$rtp_share)
+```
+
+```{r}
+#| label: hq-rtp-table
+hq_rtp_ed %>%
+  transmute(
+    question,
+    `Leader (overall)` = option,
+    `HQ share`  = sprintf("%s (%d/%d)", percent(hq_share, 1), hq_votes, hq_N),
+    `RTP share` = sprintf("%s (%d/%d)", percent(rtp_share, 1), rtp_votes, rtp_N),
+    `Gap (pts)` = percent(abs(gap), 1),
+    `p-value`   = signif(p_value, 3)
+  ) %>%
+  kableExtra::kable()
+```
+
+```{r}
+#| label: fig-hq-rtp
+#| fig-cap: "HQ vs RTP support for each question's overall winner."
+#| fig-width: 7
+#| fig-height: 3.5
+hq_rtp_plot(hq_rtp_ed)
+```
+
+None of the four gaps clear statistical significance (all p > 0.2) — with samples this size we shouldn't expect them to. But two results stand out:
+
+-   **Enjoying Nature** is where the offices agree almost perfectly: HQ went `r hq_rtp_ed %>% filter(question == "Enjoying Nature") %>% pull(hq_share) %>% percent(1)` for Hiking and RTP went `r hq_rtp_ed %>% filter(question == "Enjoying Nature") %>% pull(rtp_share) %>% percent(1)` — a gap of well under a point.
+-   **Volunteering** is the sneaky one. The combined total above looked like a coin flip, but that's actually two offices confidently disagreeing and canceling each other out: HQ leaned toward Invasive Species Removal while RTP leaned toward Trash Pickup, the widest office gap of the day. A "toss-up" in the combined numbers can quietly be hiding a real split underneath.
+
+Since this is the first week with two offices, let's define a running **HQ–RTP Alignment Index**: the correlation between HQ's and RTP's vote shares across every option this week. Right now it's **`r round(alignment_ed, 2)`** — pretty well aligned, Volunteering's split aside. We'll track this number as more polls come in from both offices.

@@ -29,8 +29,6 @@ series_filter = 15
 data = pollresults(series_filter)
 ```
 
-# Results coming soon! 
-
 ```{r}
 simple_bar_question(data, "Team")
 ```
@@ -58,3 +56,88 @@ simple_bar_question(data, "Grocery")
 ```{r}
 simple_bar_question(data, "Catchphrase")
 ```
+
+# How decisive were these results, combined?
+
+Seven questions, and only one of them actually about basketball.
+
+```{r}
+#| label: summary-stats
+summary_nba = summarize_two_option(data)
+lopsided_nba = summary_nba %>% arrange(p_value_50_50)
+closest_nba  = summary_nba %>% arrange(desc(p_value_50_50)) %>% slice(1)
+```
+
+**TL;DR:** Subway beat Pickup Truck so badly (`r lopsided_nba$leader_votes[1]`–`r lopsided_nba$trailer_votes[1]`, `r percent(lopsided_nba$leader_share[1],1)`) that it barely edged out Smoked Brisket's equally dominant win over Hot Pastrami for "least controversial opinion of the week." The Knicks-vs-Spurs matchup that actually gave this poll its name wasn't even the closest race — that honor goes to `r closest_nba$question[1]`, which landed `r closest_nba$leader_votes[1]`–`r closest_nba$trailer_votes[1]`, about as close to a coin flip as it gets.
+
+```{r}
+#| label: summary-table
+binom_summary_table(summary_nba)
+```
+
+```{r}
+#| label: fig-leader-ci
+#| fig-cap: "Leader shares with 95% confidence intervals, ranked from most lopsided to closest."
+#| fig-width: 8
+#| fig-height: 5
+summary_nba %>%
+  mutate(question = fct_reorder(question, leader_share)) %>%
+  ggplot(aes(y = question, x = leader_share, color = question)) +
+  geom_point(size = 2) +
+  geom_errorbarh(aes(xmin = ci_lower, xmax = ci_upper), height = 0.15) +
+  geom_vline(xintercept = 0.5, linetype = 2, color = "gray60") +
+  scale_x_continuous(labels = percent_format(accuracy = 1), limits = c(0, 1)) +
+  labs(x = "Leader's share of votes", y = NULL) +
+  theme_minimal(base_size = 13) +
+  theme(legend.position = "none")
+```
+
+# Does HQ agree with RTP?
+
+```{r}
+#| label: hq-rtp-stats
+hq_rtp_nba = hq_rtp_compare(data)
+alignment_nba = cor(hq_rtp_nba$hq_share, hq_rtp_nba$rtp_share)
+cumulative_nba = cumulative_alignment(15)
+biggest_gap_nba = hq_rtp_nba %>% arrange(desc(abs(gap))) %>% slice(1)
+
+flips_nba = data %>%
+  group_by(question) %>%
+  filter(n() == 2, sum(rtp_votes) > 0) %>%
+  group_modify(~ {
+    overall_winner = .x$option[which.max(.x$votes)]
+    hq_winner      = .x$option[which.max(.x$hq_votes)]
+    rtp_winner     = .x$option[which.max(.x$rtp_votes)]
+    tibble(overall_winner, hq_winner, rtp_winner, flipped = hq_winner != rtp_winner)
+  }) %>%
+  ungroup() %>%
+  filter(flipped)
+
+flip_count_nba = flip_count_so_far(15)
+```
+
+```{r}
+#| label: hq-rtp-table
+hq_rtp_nba %>%
+  transmute(
+    question,
+    `Leader (overall)` = option,
+    `HQ share`  = sprintf("%s (%d/%d)", percent(hq_share, 1), hq_votes, hq_N),
+    `RTP share` = sprintf("%s (%d/%d)", percent(rtp_share, 1), rtp_votes, rtp_N),
+    `Gap (pts)` = percent(abs(gap), 1),
+    `p-value`   = signif(p_value, 3)
+  ) %>%
+  kableExtra::kable()
+```
+
+```{r}
+#| label: fig-hq-rtp
+#| fig-cap: "HQ vs RTP support for each question's overall winner."
+#| fig-width: 7
+#| fig-height: 4
+hq_rtp_plot(hq_rtp_nba)
+```
+
+The Alignment Index keeps climbing back toward Earth Day levels — **`r round(alignment_nba, 2)`** this week (cumulative: **`r round(cumulative_nba, 2)`**) — which makes it a little surprising that `r biggest_gap_nba$question[1]` produced this week's widest office gap, `r percent(abs(biggest_gap_nba$gap[1]),1)`. The topline number recovering doesn't mean individual questions stop splitting; look closely and this one's a repeat of Earth Day's Volunteering trick: the combined total for `r biggest_gap_nba$question[1]` looked almost exactly tied (`r summary_nba %>% filter(question == biggest_gap_nba$question[1]) %>% pull(leader_votes)`–`r summary_nba %>% filter(question == biggest_gap_nba$question[1]) %>% pull(trailer_votes)`), but that's because the offices actually disagree: HQ's real preference was `r flips_nba %>% filter(question == biggest_gap_nba$question[1]) %>% pull(hq_winner)`, while RTP's was `r flips_nba %>% filter(question == biggest_gap_nba$question[1]) %>% pull(rtp_winner)`.
+
+It happened twice this week, actually — Catchphrase told the same story (HQ leaned `r flips_nba %>% filter(question == "Catchphrase") %>% pull(hq_winner)`, RTP leaned `r flips_nba %>% filter(question == "Catchphrase") %>% pull(rtp_winner)`, and the combined total again looked like a near-tie). That brings the running count to **`r flip_count_nba` questions** since RTP joined where the topline "winner" only held up because two offices leaning in opposite directions happened to cancel each other out.

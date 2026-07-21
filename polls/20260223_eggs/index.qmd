@@ -46,3 +46,41 @@ simple_bar_question(data, "Condiment")
 ```{r}
 simple_bar_question(data, "Sandwich")
 ```
+
+# How decisive were these results?
+
+```{r}
+#| label: summary-stats
+summary_eggs = summarize_two_option(data)
+```
+
+**TL;DR:** the least controversial opinion of the week is that Egg Salad Sandwiches lose — Breakfast Sandwich won `r summary_eggs %>% filter(question == "Sandwich") %>% pull(leader_votes)`–`r summary_eggs %>% filter(question == "Sandwich") %>% pull(trailer_votes)` (`r summary_eggs %>% filter(question == "Sandwich") %>% pull(leader_share) %>% percent(1)`). On the flip side, "In a pot" was a genuine dead heat: Poached and Hard/Soft Boiled tied `r summary_eggs %>% filter(question == "In a pot") %>% pull(leader_votes)`–`r summary_eggs %>% filter(question == "In a pot") %>% pull(trailer_votes)`, which is as close to a coin flip as poll math allows.
+
+```{r}
+#| label: summary-table
+binom_summary_table(summary_eggs)
+```
+
+```{r}
+#| label: fig-leader-ci
+#| fig-cap: "Leader shares with 95% confidence intervals."
+#| fig-width: 7
+#| fig-height: 3.8
+leader_ci_plot(summary_eggs)
+```
+
+# Do the spice-and-mess people cluster together?
+
+Runny yolks are messier, and hot sauce is a mess-tolerant condiment — so do the same people gravitate toward both? We didn't ask people to link their two answers, but Yolk and Condiment happened to draw the exact same number of respondents (`r data %>% filter(question == "Yolk") %>% pull(N) %>% unique()` each), so the overlap bound is unusually tight this week.
+
+```{r}
+#| label: overlap-yolk-condiment
+ov_yolk_sauce = overlap_bounds(
+  a_total = data %>% filter(question == "Yolk", option == "Runny Yolk") %>% pull(votes),
+  N_a     = data %>% filter(question == "Yolk") %>% pull(N) %>% unique(),
+  b_total = data %>% filter(question == "Condiment", option == "with Hot Sauce") %>% pull(votes),
+  N_b     = data %>% filter(question == "Condiment") %>% pull(N) %>% unique()
+)
+```
+
+Somewhere between `r ov_yolk_sauce$min_overlap` and `r ov_yolk_sauce$max_overlap` of the `r ov_yolk_sauce$m` overlapping voters (`r percent(ov_yolk_sauce$min_overlap/ov_yolk_sauce$m, 1)`–`r percent(ov_yolk_sauce$max_overlap/ov_yolk_sauce$m, 1)`) are both Runny Yolk *and* Hot Sauce people, versus about `r round(ov_yolk_sauce$expected_overlap)` (`r percent(ov_yolk_sauce$expected_overlap/ov_yolk_sauce$m, 1)`) expected if yolk texture and condiment choice are unrelated. Since both options are individually so popular, the floor on their overlap is high no matter what — the "messy egg" coalition is large by construction.
