@@ -16,22 +16,18 @@ pollresults = function(series_filter) {
   
 }
 
-# make a scale_fill_manual with a set of distinct, high-contrast colors.
-# Hues are spaced evenly around the color wheel instead of sampled uniformly
-# at random -- random sampling too often placed two options right next to
-# each other in hue. Lightness alternates between two levels on top of that,
-# so even hard cases (lots of options, or hues that land close together)
-# still read as visually distinct.
+# make a scale_fill_manual of a specified number of random colors
 scale_fill_random = function(number) {
-
+  
   number <- as.integer(number)
-
+  
+  # Generate random hues for distinct colors; keep chroma/luminance moderate
   hues <- seq(15, 375, length.out = number + 1)[seq_len(number)]
   lums <- rep(c(55, 70), length.out = number)
   cols <- grDevices::hcl(h = sample(hues), c = 80, l = lums, fixup = TRUE)
-
+  
   ggplot2::scale_fill_manual(values = cols)
-
+  
 }
 
 # Faceted overview of every question in a poll: one panel per question, one
@@ -42,6 +38,7 @@ faceted_bar_plot = function(data, ncol = 2) {
     mutate(question = factor(question, levels = unique(question)))
 
   n_options = length(unique(data$option))
+  palette <- palette.colors(n = n_options, palette = "Polychrome")
 
   ggplot(data, aes(x = fct_reorder(option, votes), y = votes, fill = option)) +
     geom_col(width = 0.65, show.legend = FALSE) +
@@ -49,6 +46,7 @@ faceted_bar_plot = function(data, ncol = 2) {
               vjust = -0.5, size = 3.3) +
     scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
     scale_fill_random(n_options) +
+    # scale_color_manual(values = palette) +
     labs(x = NULL, y = "Votes") +
     theme_minimal(base_size = 13) +
     facet_wrap(~ question, scales = "free_x", ncol = ncol) +

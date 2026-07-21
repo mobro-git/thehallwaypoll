@@ -1,0 +1,17 @@
+{
+  "hash": "1ef8695ceecd64a15ace2f45ceec31e6",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Commute\"\ndescription: |\n  Getting from home to work, unfortunately\ndate: '2026-03-06'\nimage: \"commute.jpg\"\ncategories:\n    - DC\n    - Adventure\nformat: html\ntoc: true\nlightbox: true\nexecute:\n  echo: false\n  warning: false\n  error: false\n  message: false\n---\n\n\n::: {.cell}\n\n:::\n\n\n\n::: {.cell}\n::: {.cell-output-display}\n![Votes and shares for each question (faceted).](index_files/figure-html/fig-overview-1.png){#fig-overview width=864}\n:::\n:::\n\n\n# How decisive were these results?\n\n\n::: {.cell}\n\n:::\n\n\n**TL;DR:** Escalators produced the most lopsided result of the series so far — Escalator Walkers stomped Escalator Standers 34–6 (85%), with a p-value so small it barely fits on the table below. Audio, on the other hand, was basically a coin flip: Podcasts & Audiobooks edged Music by a single vote, 21–20.\n\n\n::: {.cell}\n::: {.cell-output-display}\n\n\n|question   |  N|Leader (votes)             |Trailer (votes)       |Leader share | Margin (votes)|Margin (points) | p vs 50/50|Leader 95% CI | Votes to flip|\n|:----------|--:|:--------------------------|:---------------------|:------------|--------------:|:---------------|----------:|:-------------|-------------:|\n|Audio      | 41|Podcasts & Audiobooks (21) |Music (20)            |51.2%        |              1|2.4%            |   1.00e+00|[0.35, 0.67]  |             1|\n|Biking     | 20|Personal Bike (14)         |Capital Bikeshare (6) |70.0%        |              8|40.0%           |   1.15e-01|[0.46, 0.88]  |             5|\n|Escalators | 40|Escalator Walker (34)      |Escalator Stander (6) |85.0%        |             28|70.0%           |   8.40e-06|[0.70, 0.94]  |            15|\n|Mode       | 38|Multi-modal (23)           |Single mode (15)      |60.5%        |              8|21.1%           |   2.56e-01|[0.43, 0.76]  |             5|\n|Route      | 30|Fewest Headaches (20)      |Shortest Time (10)    |66.7%        |             10|33.3%           |   9.87e-02|[0.47, 0.83]  |             6|\n\n\n:::\n:::\n\n\n\n::: {.cell}\n::: {.cell-output-display}\n![Leader shares with 95% confidence intervals.](index_files/figure-html/fig-leader-ci-1.png){#fig-leader-ci width=672}\n:::\n:::\n\n\n\n::: {.cell}\n::: {.cell-output-display}\n![One square per vote: Escalators.](index_files/figure-html/fig-waffle-escalators-1.png){#fig-waffle-escalators width=576}\n:::\n:::\n\n\n# Are escalator walkers also the multi-modal commuters?\n\nBoth \"walk the escalator\" and \"use more than one mode\" sound like the choices of someone optimizing their commute down to the minute. Let's see how much those two groups could overlap.\n\n\n::: {.cell}\n\n:::\n\n\nOf the 38 overlapping voters, somewhere between 17 and 23 (45%–61%) could be both Escalator Walkers *and* Multi-modal commuters, versus about 20 (51%) expected under independence. Given how dominant Escalator Walker already is on its own, the \"efficient commuter\" coalition is large no matter how you slice it — we just can't say exactly how large without matched responses.\n\n",
+    "supporting": [
+      "index_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

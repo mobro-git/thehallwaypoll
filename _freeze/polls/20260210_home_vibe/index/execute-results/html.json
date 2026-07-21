@@ -1,0 +1,17 @@
+{
+  "hash": "946cb787021c5ff2255a0330034de70c",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Home Vibe\"\ndescription: |\n  How do you live?\ndate: '2026-02-10'\nimage: \"home.jpg\"\ncategories:\n    - Home\nformat: html\ntoc: true\nlightbox: true\nexecute:\n  echo: false\n  warning: false\n  error: false\n  message: false\n---\n\n\n::: {.cell}\n\n:::\n\n\n\n::: {.cell}\n::: {.cell-output-display}\n![Votes and shares for each question (faceted).](index_files/figure-html/fig-overview-1.png){#fig-overview width=864}\n:::\n:::\n\n\n# How decisive were these results?\n\nFor each question we treat it as a coin flip (50/50) and ask: is the actual split far enough from a tie that we'd call it a real preference, or could it just be noise?\n\n\n::: {.cell}\n\n:::\n\n\n**TL;DR:** the loudest signal this week is Vibe — Bright & Airy beat Dim and Moody 25–7 (78%), a result that's about as far from a coin flip as this poll gets. Meanwhile Utility was a literal coin flip: Minimalist edged Cozy by a single vote, 19–18.\n\n\n::: {.cell}\n::: {.cell-output-display}\n\n\n|question   |  N|Leader (votes)     |Trailer (votes)       |Leader share | Margin (votes)|Margin (points) | p vs 50/50|Leader 95% CI | Votes to flip|\n|:----------|--:|:------------------|:---------------------|:------------|--------------:|:---------------|----------:|:-------------|-------------:|\n|Atmosphere | 30|Quiet (18)         |Background Noise (12) |60.0%        |              6|20.0%           |     0.3620|[0.41, 0.77]  |             4|\n|Décor      | 28|Functional (20)    |Decorative (8)        |71.4%        |             12|42.9%           |     0.0357|[0.51, 0.87]  |             7|\n|Utility    | 37|Minimalist (19)    |Cozy (18)             |51.4%        |              1|2.7%            |     1.0000|[0.34, 0.68]  |             1|\n|Vibe       | 32|Bright & Airy (25) |Dim and Moody (7)     |78.1%        |             18|56.2%           |     0.0021|[0.60, 0.91]  |            10|\n\n\n:::\n:::\n\n\n\n::: {.cell}\n::: {.cell-output-display}\n![Leader shares with 95% confidence intervals. Anything hugging the dashed line is basically a coin flip.](index_files/figure-html/fig-leader-ci-1.png){#fig-leader-ci width=672}\n:::\n:::\n\n\n# Do minimalists also want function over form?\n\nWe never ask people to link their answers across questions, so we can't say for certain who picked what on both — but we can bound it. If we assume the 28 people who weighed in on Décor are a subset of the 37 who weighed in on Utility, here's how many \"Minimalist *and* Functional\" people could plausibly be hiding in that overlap.\n\n\n::: {.cell}\n\n:::\n\n\nOut of the 28 overlapping voters, the Minimalist + Functional crowd could be as few as 2 or as many as 19 people (7%–68%), with about 10 (37%) expected if the two preferences have nothing to do with each other. Not a tight bound, but it's a start — we'd need paired responses to actually pin down whether \"minimalist\" and \"functional\" travel together.",
+    "supporting": [
+      "index_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

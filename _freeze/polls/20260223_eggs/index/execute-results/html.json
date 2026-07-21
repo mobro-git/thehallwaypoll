@@ -1,0 +1,17 @@
+{
+  "hash": "82bb9d502e86f0a01322751e9119b0c8",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Eggs\"\ndescription: |\n  Which came first, the chicken or the egg?\ndate: '2026-02-23'\nimage: \"egg.jpg\"\ncategories:\n    - Food\nformat: html\ntoc: true\nlightbox: true\nexecute:\n  echo: false\n  warning: false\n  error: false\n  message: false\n---\n\n\n\n::: {.cell}\n\n:::\n\n\n\n::: {.cell}\n::: {.cell-output-display}\n![Votes and shares for each question (faceted).](index_files/figure-html/fig-overview-1.png){#fig-overview width=864}\n:::\n:::\n\n\n# How decisive were these results?\n\n\n::: {.cell}\n\n:::\n\n\n**TL;DR:** the least controversial opinion of the week is that Egg Salad Sandwiches lose — Breakfast Sandwich won 18–4 (82%). On the flip side, \"In a pot\" was a genuine dead heat: Poached and Hard/Soft Boiled tied 13–13, which is as close to a coin flip as poll math allows.\n\n\n::: {.cell}\n::: {.cell-output-display}\n\n\n|question  |  N|Leader (votes)               |Trailer (votes)        |Leader share | Margin (votes)|Margin (points) | p vs 50/50|Leader 95% CI | Votes to flip|\n|:---------|--:|:----------------------------|:----------------------|:------------|--------------:|:---------------|----------:|:-------------|-------------:|\n|Condiment | 24|with Hot Sauce (18)          |with Ketchup (6)       |75.0%        |             12|50.0%           |    0.02270|[0.53, 0.90]  |             7|\n|In a pan  | 31|Scrambled (20)               |Fried (11)             |64.5%        |              9|29.0%           |    0.15000|[0.45, 0.81]  |             5|\n|In a pot  | 26|Poached (13)                 |Hard/Soft Boiled (13)  |50.0%        |              0|0.0%            |    1.00000|[0.30, 0.70]  |             1|\n|Sandwich  | 22|In a Breakfast Sandwich (18) |Egg Salad Sandwich (4) |81.8%        |             14|63.6%           |    0.00434|[0.60, 0.95]  |             8|\n|Yolk      | 24|Runny Yolk (17)              |Hard Yolk (7)          |70.8%        |             10|41.7%           |    0.06390|[0.49, 0.87]  |             6|\n\n\n:::\n:::\n\n\n\n::: {.cell}\n::: {.cell-output-display}\n![Leader shares with 95% confidence intervals.](index_files/figure-html/fig-leader-ci-1.png){#fig-leader-ci width=672}\n:::\n:::\n\n\n# Do the spice-and-mess people cluster together?\n\nRunny yolks are messier, and hot sauce is a mess-tolerant condiment — so do the same people gravitate toward both? We didn't ask people to link their two answers, but Yolk and Condiment happened to draw the exact same number of respondents (24 each), so the overlap bound is unusually tight this week.\n\n\n::: {.cell}\n\n:::\n\n\nSomewhere between 11 and 17 of the 24 overlapping voters (46%–71%) are both Runny Yolk *and* Hot Sauce people, versus about 13 (53%) expected if yolk texture and condiment choice are unrelated. Since both options are individually so popular, the floor on their overlap is high no matter what — the \"messy egg\" coalition is large by construction.\n",
+    "supporting": [
+      "index_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

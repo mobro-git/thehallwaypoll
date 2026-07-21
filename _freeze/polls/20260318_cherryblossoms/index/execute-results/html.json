@@ -1,0 +1,17 @@
+{
+  "hash": "daf3fff4eef5dc1925cf1c90df00896a",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Cherry Blossom Season\"\ndescription: |\n  How do you enjoy them?\ndate: '2026-03-18'\nimage: \"cherryblossoms.jpg\"\ncategories:\n    - DC\n    - Adventure\nformat: html\ntoc: true\nlightbox: true\nexecute:\n  echo: false\n  warning: false\n  error: false\n  message: false\ndraft: false\n---\n\n\n::: {.cell}\n\n:::\n\n\n\n::: {.cell}\n::: {.cell-output-display}\n![Votes and shares for each question (faceted).](index_files/figure-html/fig-overview-1.png){#fig-overview width=864}\n:::\n:::\n\n\n# How decisive were these results?\n\n\n::: {.cell}\n\n:::\n\n\n**TL;DR:** this crowd wants a peaceful walk, not a photo-op scrum — Activity (Walk or Stroll over Picnic, 28–7) and Vibe (Less Busy over Peak Bloom, 29–8) are this week's two biggest blowouts. Time of day was the softest opinion — Morning Enjoyment led Golden Hour 21–14, the only question that isn't clearly distinguishable from a 50/50 split.\n\n\n::: {.cell}\n::: {.cell-output-display}\n\n\n|question |  N|Leader (votes)                      |Trailer (votes)            |Leader share | Margin (votes)|Margin (points) | p vs 50/50|Leader 95% CI | Votes to flip|\n|:--------|--:|:-----------------------------------|:--------------------------|:------------|--------------:|:---------------|----------:|:-------------|-------------:|\n|Activity | 35|Walk or Stroll (28)                 |Picnic (7)                 |80.0%        |             21|60.0%           |   0.000508|[0.63, 0.92]  |            11|\n|Color    | 30|Classic Pink Blossoms (22)          |White Yoshino Blossoms (8) |73.3%        |             14|46.7%           |   0.016100|[0.54, 0.88]  |             8|\n|Location | 38|Tidal Basin (25)                    |National Arboretum (13)    |65.8%        |             12|31.6%           |   0.073000|[0.49, 0.80]  |             7|\n|Time     | 35|Morning Enjoyment (21)              |Golden Hour (14)           |60.0%        |              7|20.0%           |   0.311000|[0.42, 0.76]  |             4|\n|Vibe     | 37|Less Busy/Before or after peak (29) |Peak Color/Bloom (8)       |78.4%        |             21|56.8%           |   0.000753|[0.62, 0.90]  |            11|\n\n\n:::\n:::\n\n\n\n::: {.cell}\n::: {.cell-output-display}\n![Leader shares with 95% confidence intervals.](index_files/figure-html/fig-leader-ci-1.png){#fig-leader-ci width=672}\n:::\n:::\n\n\n# Do the crowd-avoiders and the strollers overlap?\n\n\"I'd rather come before or after peak bloom\" and \"I'd rather walk than picnic\" both sound like the same peaceful, less-crowded kind of cherry blossom outing. Let's bound the overlap.\n\n\n::: {.cell}\n\n:::\n\n\nOut of 35 overlapping voters, the \"peaceful stroller\" contingent could be as small as 20 or as large as 28 people (57%–80%), versus roughly 22 (63%) expected if the two preferences were unrelated. Since both options are already crowd favorites on their own, the floor stays high — there's a good chance most of our peers just want a quiet walk among the blossoms, crowds be damned.\n\n",
+    "supporting": [
+      "index_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
