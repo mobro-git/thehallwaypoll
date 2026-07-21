@@ -28,31 +28,11 @@ data = pollresults(series_filter)
 ```
 
 ```{r}
-simple_bar_question(data, "Orange Juice")
-```
-
-```{r}
-simple_bar_question(data, "Donuts")
-```
-
-```{r}
-simple_bar_question(data, "Pizza Style")
-```
-
-```{r}
-simple_bar_question(data, "Mac & Cheese")
-```
-
-```{r}
-simple_bar_question(data, "Peanut Butter")
-```
-
-```{r}
-simple_bar_question(data, "Chocolate Chip Cookies")
-```
-
-```{r}
-simple_bar_question(data, "Pickles")
+#| label: fig-overview
+#| fig-cap: "Votes and shares for each question (faceted)."
+#| fig-width: 9
+#| fig-height: 13.5
+faceted_bar_plot(data)
 ```
 
 # How decisive were these results?

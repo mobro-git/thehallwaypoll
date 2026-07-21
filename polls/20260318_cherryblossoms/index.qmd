@@ -29,23 +29,11 @@ data = pollresults(series_filter)
 ```
 
 ```{r}
-simple_bar_question(data, "Location")
-```
-
-```{r}
-simple_bar_question(data, "Vibe")
-```
-
-```{r}
-simple_bar_question(data, "Time")
-```
-
-```{r}
-simple_bar_question(data, "Color")
-```
-
-```{r}
-simple_bar_question(data, "Activity")
+#| label: fig-overview
+#| fig-cap: "Votes and shares for each question (faceted)."
+#| fig-width: 9
+#| fig-height: 10.5
+faceted_bar_plot(data)
 ```
 
 # How decisive were these results?

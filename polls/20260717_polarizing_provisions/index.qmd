@@ -28,7 +28,9 @@ data = pollresults(series_filter)
 ```
 
 ```{r}
-for (q in unique(data$question)) {
-  print(simple_bar_question(data, q))
-}
+#| label: fig-overview
+#| fig-cap: "Votes and shares for each question (faceted)."
+#| fig-width: 9
+#| fig-height: 10.5
+faceted_bar_plot(data)
 ```

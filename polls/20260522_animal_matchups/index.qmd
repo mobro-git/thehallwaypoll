@@ -28,31 +28,11 @@ data = pollresults(series_filter)
 ```
 
 ```{r}
-simple_bar_question(data, "Spiky")
-```
-
-```{r}
-simple_bar_question(data, "Pinnipeds")
-```
-
-```{r}
-simple_bar_question(data, "Insect-Eaters")
-```
-
-```{r}
-simple_bar_question(data, "Crocodylia")
-```
-
-```{r}
-simple_bar_question(data, "Corvidae")
-```
-
-```{r}
-simple_bar_question(data, "Lepidoptera")
-```
-
-```{r}
-simple_bar_question(data, "Anura")
+#| label: fig-overview
+#| fig-cap: "Votes and shares for each question (faceted)."
+#| fig-width: 9
+#| fig-height: 13.5
+faceted_bar_plot(data)
 ```
 
 # How decisive were these results, combined?

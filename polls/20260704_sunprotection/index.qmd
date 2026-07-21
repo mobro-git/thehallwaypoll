@@ -28,9 +28,11 @@ data = pollresults(series_filter)
 ```
 
 ```{r}
-for (q in unique(data$question)) {
-  print(simple_bar_question(data, q))
-}
+#| label: fig-overview
+#| fig-cap: "Votes and shares for each question (faceted)."
+#| fig-width: 9
+#| fig-height: 10.5
+faceted_bar_plot(data)
 ```
 
 RTP sat this one out — no votes logged from that office this round, so this week is an HQ-only story. We'll pick the office comparison back up next time RTP checks in.
