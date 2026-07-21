@@ -29,23 +29,26 @@ scale_fill_random = function(number) {
   
 }
 
-# bar plot for a specific question in a set of data
-simple_bar_question = function(data, question_selection) {
-  
-  df = data %>% filter(question == question_selection)
-  colors_needed = length(unique(df$option))
-  
-  ggplot(df) +
-    geom_col(aes(x=option,y=votes,fill=option), stat="identity") +
-    geom_text(aes(x=option,y=votes,label=votes), vjust=-0.5, color = "black", size = 3) +
-    scale_fill_random(colors_needed) +
-    facet_grid(~question) +
-    labs(fill="",
-         x="",
-         y="Votes") +
-    theme_minimal() +
-    theme(legend.position = "none")
-  
+# Faceted overview of every question in a poll: one panel per question, one
+# color per option, vote counts + share printed above each bar, two panels
+# per row (as many rows as needed to cover every question).
+faceted_bar_plot = function(data, ncol = 2) {
+  data = data %>%
+    mutate(question = factor(question, levels = unique(question)))
+
+  n_options = length(unique(data$option))
+
+  ggplot(data, aes(x = fct_reorder(option, votes), y = votes, fill = option)) +
+    geom_col(width = 0.65, show.legend = FALSE) +
+    geom_text(aes(label = paste0(votes, " (", percent(share, accuracy = 0.1), ")")),
+              vjust = -0.5, size = 3.3) +
+    scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
+    scale_fill_random(n_options) +
+    labs(x = NULL, y = "Votes") +
+    theme_minimal(base_size = 13) +
+    facet_wrap(~ question, scales = "free_x", ncol = ncol) +
+    theme(strip.text = element_text(face = "bold"),
+          axis.text.x = element_text(angle = 20, hjust = 1))
 }
 
 # Summarize every two-option question in a poll: leader/trailer votes & shares,

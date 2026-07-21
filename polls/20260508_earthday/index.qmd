@@ -31,19 +31,11 @@ data = pollresults(series_filter)
 Welcome to our first poll including results from the RTP campus! Previously, our poll was collecting data from but ONE geographic region. Thankfully, we have been able to expand our reach to the EPA RTP campus, both diversifying our pool of respondents and upping our N. We can now include an exploration of geographic differences in our polling results where we find points of interest.
 
 ```{r}
-simple_bar_question(data, "Enjoying Nature")
-```
-
-```{r}
-simple_bar_question(data, "Swimming")
-```
-
-```{r}
-simple_bar_question(data, "Animal Scoping")
-```
-
-```{r}
-simple_bar_question(data, "Volunteering")
+#| label: fig-overview
+#| fig-cap: "Votes and shares for each question (faceted)."
+#| fig-width: 9
+#| fig-height: 7.5
+faceted_bar_plot(data)
 ```
 
 # How decisive were these results, combined?
