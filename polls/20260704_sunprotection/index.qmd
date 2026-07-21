@@ -35,8 +35,6 @@ data = pollresults(series_filter)
 faceted_bar_plot(data)
 ```
 
-RTP sat this one out — no votes logged from that office this round, so this week is an HQ-only story. We'll pick the office comparison back up next time RTP checks in.
-
 # How decisive were these results?
 
 Hat is the odd one out this week with three options, so it gets its own test; everything else is a straight two-way race.
@@ -48,7 +46,7 @@ lopsided_sp = summary_sp %>% arrange(p_value_50_50)
 closest_sp  = summary_sp %>% arrange(desc(p_value_50_50)) %>% slice(1)
 ```
 
-**TL;DR:** Lotion trounced Spray (`r lopsided_sp$leader_votes[1]`–`r lopsided_sp$trailer_votes[1]`, `r percent(lopsided_sp$leader_share[1],1)`) for the most one-sided call of the week. Shades was the real toss-up: Wayfarer edged Aviator `r closest_sp$leader_votes[1]`–`r closest_sp$trailer_votes[1]`, barely distinguishable from a coin flip.
+**TL;DR:** `r lopsided_sp$question[1]` was the most one-sided call of the week — `r lopsided_sp$leader[1]` beat `r lopsided_sp$trailer[1]` `r lopsided_sp$leader_votes[1]`–`r lopsided_sp$trailer_votes[1]` (`r percent(lopsided_sp$leader_share[1],1)`), with Sunscreen right behind it. `r closest_sp$question[1]` was the real toss-up: `r closest_sp$leader[1]` edged `r closest_sp$trailer[1]` `r closest_sp$leader_votes[1]`–`r closest_sp$trailer_votes[1]`, about as close to a coin flip as it gets.
 
 ```{r}
 #| label: summary-table
@@ -86,7 +84,57 @@ hat %>%
   kableExtra::kable()
 ```
 
-Baseball Cap isn't just the leader, it's the clear favorite: `r percent(hat$share[1], 1)` of the vote versus Bucket Hat and Wide-brimmed Floppy Hat splitting the rest evenly. A chi-square goodness-of-fit test against "all three hats equally popular" gives p = `r signif(hat_chisq$p.value, 3)` — nowhere close to what we'd expect if hat preference were random. This office has a type.
+Baseball Cap isn't just the leader, it's the clear favorite: `r percent(hat$share[1], 1)` of the vote. `r hat$option[2]` (`r percent(hat$share[2], 1)`) pulls ahead of `r hat$option[3]` (`r percent(hat$share[3], 1)`) for a distant second, no longer the even split it looked like before RTP weighed in. A chi-square goodness-of-fit test against "all three hats equally popular" gives p = `r signif(hat_chisq$p.value, 3)` — nowhere close to what we'd expect if hat preference were random. Both offices have a type, too: HQ and RTP each independently put Baseball Cap on top.
+
+# Does HQ agree with RTP?
+
+RTP's votes are in for this poll, and it's the most eventful HQ/RTP comparison we've had yet.
+
+```{r}
+#| label: hq-rtp-stats
+hq_rtp_sp = hq_rtp_compare(data)
+alignment_sp = cor(hq_rtp_sp$hq_share, hq_rtp_sp$rtp_share)
+cumulative_sp = cumulative_alignment(17)
+flip_count_sp = flip_count_so_far(17)
+most_significant_sp = hq_rtp_sp %>% arrange(p_value) %>% slice(1)
+
+flips_sp = data %>%
+  group_by(question) %>%
+  filter(n() == 2, sum(rtp_votes) > 0) %>%
+  group_modify(~ {
+    hq_winner  = .x$option[which.max(.x$hq_votes)]
+    rtp_winner = .x$option[which.max(.x$rtp_votes)]
+    tibble(hq_winner, rtp_winner, flipped = hq_winner != rtp_winner)
+  }) %>%
+  ungroup() %>%
+  filter(flipped)
+```
+
+```{r}
+#| label: hq-rtp-table
+hq_rtp_sp %>%
+  transmute(
+    question,
+    `Leader (overall)` = option,
+    `HQ share`  = sprintf("%s (%d/%d)", percent(hq_share, 1), hq_votes, hq_N),
+    `RTP share` = sprintf("%s (%d/%d)", percent(rtp_share, 1), rtp_votes, rtp_N),
+    `Gap (pts)` = percent(abs(gap), 1),
+    `p-value`   = signif(p_value, 3)
+  ) %>%
+  kableExtra::kable()
+```
+
+```{r}
+#| label: fig-hq-rtp
+#| fig-cap: "HQ vs RTP support for each question's overall winner."
+#| fig-width: 7
+#| fig-height: 4
+hq_rtp_plot(hq_rtp_sp)
+```
+
+Two milestones this week. First, `r most_significant_sp$question[1]` clears p < 0.05 for the first time since RTP joined the poll — HQ went `r percent(most_significant_sp$hq_share[1], 1)` for `r most_significant_sp$option[1]`, RTP only `r percent(most_significant_sp$rtp_share[1], 1)` (p = `r signif(most_significant_sp$p_value[1], 2)`). Every office gap before this one had a p-value comfortably above 0.1 — this is the first one we can call a real difference rather than noise.
+
+Second, the Alignment Index drops to **`r round(alignment_sp, 2)`** this week, its lowest reading yet (cumulative across the whole RTP era: **`r round(cumulative_sp, 2)`**, so the long-run picture is still solidly aligned — one rough week doesn't undo five good ones). And `r flips_sp$question[1]` flipped outright: HQ's real preference was `r flips_sp$hq_winner[1]`, RTP's was `r flips_sp$rtp_winner[1]`, and the combined total ended up siding with RTP. That brings the running tally to **`r flip_count_sp` questions** since RTP joined where the two offices would have crowned different winners on their own.
 
 # Do the sun-safety-conscious cluster together?
 
