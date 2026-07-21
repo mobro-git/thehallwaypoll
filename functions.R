@@ -16,17 +16,22 @@ pollresults = function(series_filter) {
   
 }
 
-# make a scale_fill_manual of a specified number of random colors
+# make a scale_fill_manual with a set of distinct, high-contrast colors.
+# Hues are spaced evenly around the color wheel instead of sampled uniformly
+# at random -- random sampling too often placed two options right next to
+# each other in hue. Lightness alternates between two levels on top of that,
+# so even hard cases (lots of options, or hues that land close together)
+# still read as visually distinct.
 scale_fill_random = function(number) {
-  
+
   number <- as.integer(number)
-  
-  # Generate random hues for distinct colors; keep chroma/luminance moderate
-  hues <- stats::runif(number, min = 0, max = 360)
-  cols <- grDevices::hcl(h = hues, c = 70, l = 60, fixup = TRUE)
-  
+
+  hues <- seq(15, 375, length.out = number + 1)[seq_len(number)]
+  lums <- rep(c(55, 70), length.out = number)
+  cols <- grDevices::hcl(h = sample(hues), c = 80, l = lums, fixup = TRUE)
+
   ggplot2::scale_fill_manual(values = cols)
-  
+
 }
 
 # Faceted overview of every question in a poll: one panel per question, one
