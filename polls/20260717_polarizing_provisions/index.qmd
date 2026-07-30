@@ -46,7 +46,7 @@ lopsided_pp = summary_pp %>% arrange(p_value_50_50)
 closest_pp  = summary_pp %>% arrange(desc(p_value_50_50)) %>% slice(1)
 ```
 
-**TL;DR:** turns out most of these aren't polarizing at all. `r lopsided_pp$question[1]` was the least controversial opinion of the week — `r lopsided_pp$leader[1]` won `r lopsided_pp$leader_votes[1]`–`r lopsided_pp$trailer_votes[1]` (`r percent(lopsided_pp$leader_share[1],1)`), and three of the five questions landed at p < 0.0001 against a coin flip. The one genuine toss-up was `r closest_pp$question[1]`: `r closest_pp$leader[1]` edged `r closest_pp$trailer[1]` by just `r closest_pp$margin_votes[1]` vote(s) out of `r closest_pp$N[1]` — the only question in this whole poll that earns the name "polarizing."
+**TL;DR:** turns out most of these aren't polarizing at all. `r lopsided_pp$question[1]` was the least controversial opinion of the week - `r lopsided_pp$leader[1]` won `r lopsided_pp$leader_votes[1]`–`r lopsided_pp$trailer_votes[1]` (`r percent(lopsided_pp$leader_share[1],1)`), and three of the five questions landed at p < 0.0001 against a coin flip. The one genuine toss-up was `r closest_pp$question[1]`: `r closest_pp$leader[1]` edged `r closest_pp$trailer[1]` by just `r closest_pp$margin_votes[1]` votes out of `r closest_pp$N[1]` - the only question in this whole poll that earns the name "polarizing."
 
 ```{r}
 #| label: summary-table
@@ -112,7 +112,7 @@ hq_rtp_pp %>%
 hq_rtp_plot(hq_rtp_pp)
 ```
 
-After last week's record-low reading, the Alignment Index snaps back hard: **`r round(alignment_pp, 2)`** this week (cumulative across the whole RTP era: **`r round(cumulative_pp, 2)`**), with no office gap anywhere close to significant. Fittingly, the one place the offices genuinely split is the one question that was already a coin flip overall: `r flips_pp$question[1]`. HQ's real lean was `r flips_pp$hq_winner[1]`, RTP's was `r flips_pp$rtp_winner[1]`, and the combined vote landed on RTP's side by a whisker. That's flip number **`r flip_count_pp`** since RTP joined — and it makes sense that the closest overall race is also the one where HQ and RTP couldn't agree.
+After last week's record-low reading, the Alignment Index snaps back hard: **`r round(alignment_pp, 2)`** this week (cumulative across the whole RTP era: **`r round(cumulative_pp, 2)`**), with no office gap anywhere close to significant. Fittingly, the one place the offices genuinely split is the one question that was already a coin flip overall: `r flips_pp$question[1]`. HQ's real lean was `r flips_pp$hq_winner[1]`, RTP's was `r flips_pp$rtp_winner[1]`, and the combined vote landed on RTP's side by a whisker. That's flip number **`r flip_count_pp`** since RTP joined, and it makes sense that the closest overall race is also the one where HQ and RTP couldn't agree.
 
 # Do the food traditionalists stick together?
 
@@ -128,4 +128,4 @@ ov_trad = overlap_bounds(
 )
 ```
 
-Both questions drew the same `r ov_trad$m` voters, so this bound is about as tight as they get: somewhere between `r ov_trad$min_overlap` and `r ov_trad$max_overlap` people (`r percent(ov_trad$min_overlap/ov_trad$m, 1)`–`r percent(ov_trad$max_overlap/ov_trad$m, 1)`) said "no" to *both* the hotdog-as-sandwich and cereal-as-soup theories, versus about `r round(ov_trad$expected_overlap)` (`r percent(ov_trad$expected_overlap/ov_trad$m, 1)`) expected if the two opinions were unrelated. Either way, the food-category traditionalists are a comfortable majority in this office — liberal sandwich and soup definitions are a hard sell.
+Both questions drew the same `r ov_trad$m` voters, so this bound is about as tight as they get: somewhere between `r ov_trad$min_overlap` and `r ov_trad$max_overlap` people (`r percent(ov_trad$min_overlap/ov_trad$m, 1)`–`r percent(ov_trad$max_overlap/ov_trad$m, 1)`) said "no" to *both* the hotdog-as-sandwich and cereal-as-soup theories, versus about `r round(ov_trad$expected_overlap)` (`r percent(ov_trad$expected_overlap/ov_trad$m, 1)`) expected if the two opinions were unrelated. Either way, the food-category traditionalists are a comfortable majority in this office - liberal sandwich and soup definitions are a hard sell.

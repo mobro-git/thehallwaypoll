@@ -30,6 +30,20 @@ scale_fill_random = function(number) {
   
 }
 
+# make a scale_color_manual of a specified number of random colors
+scale_color_random = function(number) {
+  
+  number <- as.integer(number)
+  
+  # Generate random hues for distinct colors; keep chroma/luminance moderate
+  hues <- seq(15, 375, length.out = number + 1)[seq_len(number)]
+  lums <- rep(c(55, 70), length.out = number)
+  cols <- grDevices::hcl(h = sample(hues), c = 80, l = lums, fixup = TRUE)
+  
+  ggplot2::scale_color_manual(values = cols)
+  
+}
+
 # Faceted overview of every question in a poll: one panel per question, one
 # color per option, vote counts + share printed above each bar, two panels
 # per row (as many rows as needed to cover every question).
@@ -106,12 +120,15 @@ binom_summary_table = function(summary_df) {
 
 # Leader share +/- 95% CI, one row per question (dashed line marks 50/50)
 leader_ci_plot = function(summary_df) {
+  n_options = length(unique(summary_df$question))
+  
   summary_df %>%
     ggplot(aes(y = fct_rev(question), x = leader_share, color = question)) +
-    geom_point(size = 2) +
-    geom_errorbarh(aes(xmin = ci_lower, xmax = ci_upper), height = 0.15) +
+    geom_point(size = 2.5) +
+    geom_errorbarh(aes(xmin = ci_lower, xmax = ci_upper), height = 0.15, linewidth = 0.8, width = 0.2) +
     geom_vline(xintercept = 0.5, linetype = 2, color = "gray60") +
     scale_x_continuous(labels = percent_format(accuracy = 1), limits = c(0, 1)) +
+    scale_color_random(n_options) +
     labs(x = "Leader's share of votes", y = NULL) +
     theme_minimal(base_size = 13) +
     theme(legend.position = "none")
@@ -194,10 +211,10 @@ hq_rtp_plot = function(compare_df) {
     mutate(label = paste0(question, ": ", option)) %>%
     ggplot(aes(y = fct_rev(label))) +
     geom_segment(aes(x = hq_share, xend = rtp_share, yend = label), color = "gray70", linewidth = 1) +
-    geom_point(aes(x = hq_share, color = "HQ"), size = 3) +
-    geom_point(aes(x = rtp_share, color = "RTP"), size = 3) +
+    geom_point(aes(x = hq_share, color = "HQ"), size = 4) +
+    geom_point(aes(x = rtp_share, color = "RTP"), size = 4) +
     scale_x_continuous(labels = percent_format(accuracy = 1)) +
-    scale_color_manual(values = c("HQ" = "#4E79A7", "RTP" = "#E15759"), name = NULL) +
+    scale_color_manual(values = c("HQ" = "#EDE939", "RTP" = "#104275"), name = NULL) +
     labs(x = "Share of office's votes for the overall leader", y = NULL) +
     theme_minimal(base_size = 13) +
     theme(legend.position = "bottom")
