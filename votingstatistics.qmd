@@ -137,6 +137,9 @@ participation_by_poll = rtp_era %>%
 [Highest]{style="color: #4B824F"} vote count: ***`r mostvotes`*** for ***`r mostvoted`***
 (Poll: `r mostvotes_poll`, Question: `r mostvotes_question`)
 
+[Most decisive vote ever]{style="color: #4B824F"}: ***`r most_decisive$leader`*** over ***`r most_decisive$trailer`***, `r most_decisive$leader_votes`–`r most_decisive$trailer_votes`
+(Poll: `r most_decisive$series`, Question: `r most_decisive$question`; p = `r signif(most_decisive$p_value, 2)`)
+
 [Most unanimous]{style="color: #4B824F"} vote: ***`r mostunanimous`*** with a *resounding* ***`r mostunanimous_pct`*** % of the votes
 (Poll: `r mostunanimous_poll`, Question: `r mostunanimous_question`)
 
@@ -146,14 +149,7 @@ participation_by_poll = rtp_era %>%
 [Least unanimous]{style="color: #824B4B"} vote: ***`r leastunanimous`*** with ***`r leastunanimous_pct`*** % of the votes
 (Poll: `r leastunanimous_poll`, Question: `r leastunanimous_question`)
 
-## More Stats
-
-### Most & least decisive votes
-
-[Most decisive vote ever]{style="color: #4B824F"}: ***`r most_decisive$leader`*** over ***`r most_decisive$trailer`***, `r most_decisive$leader_votes`–`r most_decisive$trailer_votes`
-(Poll: `r most_decisive$series`, Question: `r most_decisive$question`; p = `r signif(most_decisive$p_value, 2)`)
-
-[Closest vote(s) ever]{style="color: #824B4B"}: a ***`r nrow(ties)`-way tie*** for closest — see the tie tracker below for the full list.
+[Closest vote(s) ever]{style="color: #6425B8"}: a ***`r nrow(ties)`-way tie*** for closest — see the tie tracker for the full list.
 
 ::: {.card title="Tie tracker"}
 
