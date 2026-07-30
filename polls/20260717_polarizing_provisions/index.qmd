@@ -2,7 +2,7 @@
 title: "Polarizing Provisions"
 description: |
   Where do you stand?
-date: '2026-07-14'
+date: '2026-07-17'
 image: "sandwich.jpg"
 categories:
     - Food
@@ -34,3 +34,98 @@ data = pollresults(series_filter)
 #| fig-height: 10.5
 faceted_bar_plot(data)
 ```
+
+# How decisive were these results?
+
+Five yes-or-no food debates, all billed as "polarizing." Let's see if the votes agree.
+
+```{r}
+#| label: summary-stats
+summary_pp = summarize_two_option(data)
+lopsided_pp = summary_pp %>% arrange(p_value_50_50)
+closest_pp  = summary_pp %>% arrange(desc(p_value_50_50)) %>% slice(1)
+```
+
+**TL;DR:** turns out most of these aren't polarizing at all. `r lopsided_pp$question[1]` was the least controversial opinion of the week — `r lopsided_pp$leader[1]` won `r lopsided_pp$leader_votes[1]`–`r lopsided_pp$trailer_votes[1]` (`r percent(lopsided_pp$leader_share[1],1)`), and three of the five questions landed at p < 0.0001 against a coin flip. The one genuine toss-up was `r closest_pp$question[1]`: `r closest_pp$leader[1]` edged `r closest_pp$trailer[1]` by just `r closest_pp$margin_votes[1]` vote(s) out of `r closest_pp$N[1]` — the only question in this whole poll that earns the name "polarizing."
+
+```{r}
+#| label: summary-table
+binom_summary_table(summary_pp)
+```
+
+```{r}
+#| label: fig-leader-ci
+#| fig-cap: "Leader shares with 95% confidence intervals."
+#| fig-width: 7
+#| fig-height: 4
+leader_ci_plot(summary_pp)
+```
+
+```{r}
+#| label: fig-waffle-potato-salad
+#| fig-cap: "One square per vote: Is potato salad a salad?"
+#| fig-width: 6
+#| fig-height: 4
+waffle_question(data, "Is potato salad a salad?")
+```
+
+# Does HQ agree with RTP?
+
+```{r}
+#| label: hq-rtp-stats
+hq_rtp_pp = hq_rtp_compare(data)
+alignment_pp = cor(hq_rtp_pp$hq_share, hq_rtp_pp$rtp_share)
+cumulative_pp = cumulative_alignment(18)
+flip_count_pp = flip_count_so_far(18)
+
+flips_pp = data %>%
+  group_by(question) %>%
+  filter(n() == 2, sum(rtp_votes) > 0) %>%
+  group_modify(~ {
+    hq_winner  = .x$option[which.max(.x$hq_votes)]
+    rtp_winner = .x$option[which.max(.x$rtp_votes)]
+    tibble(hq_winner, rtp_winner, flipped = hq_winner != rtp_winner)
+  }) %>%
+  ungroup() %>%
+  filter(flipped)
+```
+
+```{r}
+#| label: hq-rtp-table
+hq_rtp_pp %>%
+  transmute(
+    question,
+    `Leader (overall)` = option,
+    `HQ share`  = sprintf("%s (%d/%d)", percent(hq_share, 1), hq_votes, hq_N),
+    `RTP share` = sprintf("%s (%d/%d)", percent(rtp_share, 1), rtp_votes, rtp_N),
+    `Gap (pts)` = percent(abs(gap), 1),
+    `p-value`   = signif(p_value, 3)
+  ) %>%
+  kableExtra::kable()
+```
+
+```{r}
+#| label: fig-hq-rtp
+#| fig-cap: "HQ vs RTP support for each question's overall winner."
+#| fig-width: 7
+#| fig-height: 4
+hq_rtp_plot(hq_rtp_pp)
+```
+
+After last week's record-low reading, the Alignment Index snaps back hard: **`r round(alignment_pp, 2)`** this week (cumulative across the whole RTP era: **`r round(cumulative_pp, 2)`**), with no office gap anywhere close to significant. Fittingly, the one place the offices genuinely split is the one question that was already a coin flip overall: `r flips_pp$question[1]`. HQ's real lean was `r flips_pp$hq_winner[1]`, RTP's was `r flips_pp$rtp_winner[1]`, and the combined vote landed on RTP's side by a whisker. That's flip number **`r flip_count_pp`** since RTP joined — and it makes sense that the closest overall race is also the one where HQ and RTP couldn't agree.
+
+# Do the food traditionalists stick together?
+
+Someone who won't call a hotdog a sandwich and someone who won't call cereal a soup both sound like the same kind of stickler for categories. Let's bound the overlap.
+
+```{r}
+#| label: overlap-hotdog-cereal
+ov_trad = overlap_bounds(
+  a_total = data %>% filter(question == "Is a hotdog a sandwich?", option == "No") %>% pull(votes),
+  N_a     = data %>% filter(question == "Is a hotdog a sandwich?") %>% pull(N) %>% unique(),
+  b_total = data %>% filter(question == "Is cereal a soup?", option == "No") %>% pull(votes),
+  N_b     = data %>% filter(question == "Is cereal a soup?") %>% pull(N) %>% unique()
+)
+```
+
+Both questions drew the same `r ov_trad$m` voters, so this bound is about as tight as they get: somewhere between `r ov_trad$min_overlap` and `r ov_trad$max_overlap` people (`r percent(ov_trad$min_overlap/ov_trad$m, 1)`–`r percent(ov_trad$max_overlap/ov_trad$m, 1)`) said "no" to *both* the hotdog-as-sandwich and cereal-as-soup theories, versus about `r round(ov_trad$expected_overlap)` (`r percent(ov_trad$expected_overlap/ov_trad$m, 1)`) expected if the two opinions were unrelated. Either way, the food-category traditionalists are a comfortable majority in this office — liberal sandwich and soup definitions are a hard sell.
