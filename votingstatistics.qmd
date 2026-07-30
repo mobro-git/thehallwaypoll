@@ -124,6 +124,8 @@ participation_by_poll = rtp_era %>%
   arrange(series_no)
 ```
 
+# Overview
+
 ## Overview
 
 ### Totals
@@ -144,7 +146,34 @@ participation_by_poll = rtp_era %>%
 [Least unanimous]{style="color: #824B4B"} vote: ***`r leastunanimous`*** with ***`r leastunanimous_pct`*** % of the votes
 (Poll: `r leastunanimous_poll`, Question: `r leastunanimous_question`)
 
-## HQ + RTP Alignment
+## More Stats
+
+### Most & least decisive votes
+
+[Most decisive vote ever]{style="color: #4B824F"}: ***`r most_decisive$leader`*** over ***`r most_decisive$trailer`***, `r most_decisive$leader_votes`–`r most_decisive$trailer_votes`
+(Poll: `r most_decisive$series`, Question: `r most_decisive$question`; p = `r signif(most_decisive$p_value, 2)`)
+
+[Closest vote(s) ever]{style="color: #824B4B"}: a ***`r nrow(ties)`-way tie*** for closest — see the tie tracker below for the full list.
+
+::: {.card title="Tie tracker"}
+
+***`r nrow(ties)`*** questions have ended in a dead-even split so far:
+
+```{r}
+ties %>%
+  transmute(
+    Poll = series,
+    Question = question,
+    Split = paste0(leader_votes, "-", trailer_votes, " (", leader, " vs ", trailer, ")")
+  ) %>%
+  knitr::kable()
+```
+
+:::
+
+# HQ + RTP
+
+## Alignment
 
 ### Alignment Index
 
@@ -156,6 +185,7 @@ Cumulative correlation between HQ's and RTP's vote shares, across every option R
 
 ```{r}
 #| label: fig-alignment-trend
+#| fig-cap: "Leader-only HQ/RTP correlation, one poll at a time."
 ggplot(alignment_by_poll, aes(x = fct_reorder(series, series_no), y = alignment)) +
   geom_col(fill = "#4B6B82", width = 0.6) +
   geom_hline(yintercept = cumulative_alignment_index, linetype = "dashed", color = "gray40") +
@@ -178,35 +208,15 @@ ggplot(alignment_by_poll, aes(x = fct_reorder(series, series_no), y = alignment)
 
 [Biggest HQ/RTP gap on record]{style="color: #82704B"}: ***`r biggest_gap$question`*** (`r biggest_gap$series`) — HQ `r round(biggest_gap$hq_share*100,1)`% vs RTP `r round(biggest_gap$rtp_share*100,1)`% for *`r biggest_gap$option`* (p = `r signif(biggest_gap$p_value,2)`). It's also the only office gap that's cleared statistical significance so far.
 
-## More Stats
+## Participation
 
-### Most & least decisive votes
-
-[Most decisive vote ever]{style="color: #4B824F"}: ***`r most_decisive$leader`*** over ***`r most_decisive$trailer`***, `r most_decisive$leader_votes`–`r most_decisive$trailer_votes`
-(Poll: `r most_decisive$series`, Question: `r most_decisive$question`; p = `r signif(most_decisive$p_value, 2)`)
-
-[Closest vote(s) ever]{style="color: #824B4B"}: a ***`r nrow(ties)`-way tie*** for closest — see the tie tracker below for the full list.
-
-### Tie tracker
-
-***`r nrow(ties)`*** questions have ended in a dead-even split so far:
-
-```{r}
-ties %>%
-  transmute(
-    Poll = series,
-    Question = question,
-    Split = paste0(leader_votes, "–", trailer_votes, " (", leader, " vs ", trailer, ")")
-  ) %>%
-  knitr::kable()
-```
-
-### RTP participation
+::: {.card title="RTP participation"}
 
 RTP has cast ***`r rtp_total_votes`*** of the ***`r rtp_total_votes + hq_total_votes_since_rtp`*** votes counted since it joined — ***`r round(rtp_overall_share*100,1)`%*** of the total. That share hasn't trended up or down so much as bounced around a fairly consistent range, poll to poll:
 
 ```{r}
 #| label: fig-rtp-participation
+#| fig-cap: "RTP's share of the vote, one poll at a time."
 ggplot(participation_by_poll, aes(x = fct_reorder(series, series_no), y = rtp_share_of_poll)) +
   geom_col(fill = "#82704B", width = 0.6) +
   geom_hline(yintercept = rtp_overall_share, linetype = "dashed", color = "gray40") +
@@ -216,4 +226,6 @@ ggplot(participation_by_poll, aes(x = fct_reorder(series, series_no), y = rtp_sh
   theme_minimal(base_size = 12) +
   theme(axis.text.x = element_text(angle = 30, hjust = 1))
 ```
+
+:::
 
