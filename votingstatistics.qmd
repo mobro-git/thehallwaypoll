@@ -12,17 +12,18 @@ execute:
 
 ```{r}
 library(tidyverse)
+library(scales)
 library(DT)
 source("functions.R")
 
 data = readxl::read_xlsx(here::here("whiteboardpollresults.xlsx")) %>%
   filter(status == "complete") %>%
   mutate(
-    across(everything(), ~ replace_na(.x, 0)), 
+    across(everything(), ~ replace_na(.x, 0)),
     votes = hq_votes + rtp_votes) %>%
   group_by(series_no, series, date, question) %>%
   mutate(
-    N = sum(votes), 
+    N = sum(votes),
     share = round( (votes/N) * 100, 2)) %>%
   ungroup()
 
@@ -48,6 +49,79 @@ leastunanimous = unique((data %>% filter(share == min(data$share, na.rm = TRUE))
 leastunanimous_pct = min(data$share, na.rm = TRUE)
 leastunanimous_poll = pull(filter(data, share == leastunanimous_pct), series)
 leastunanimous_question = pull(filter(data, share == leastunanimous_pct), question)
+
+# --- HQ vs RTP alignment ---------------------------------------------------
+# Leader-only HQ/RTP comparison for every two-option question, across every
+# poll RTP has voted in -- the same method each blog post uses for its
+# "this week" Alignment Index. The cumulative_alignment() figure below uses a
+# different (all-options) method, exactly like each blog post shows both
+# side by side, so we keep that same pairing here.
+hq_rtp_all = data %>%
+  group_by(series_no, series, question) %>%
+  filter(n() == 2, sum(rtp_votes) > 0) %>%
+  group_modify(~ {
+    df    = .x %>% arrange(desc(votes))
+    top   = df %>% slice(1)
+    hq_N  = sum(df$hq_votes)
+    rtp_N = sum(df$rtp_votes)
+    pt = suppressWarnings(prop.test(x = c(top$hq_votes, top$rtp_votes), n = c(hq_N, rtp_N)))
+    tibble(
+      option    = top$option,
+      hq_share  = top$hq_votes / hq_N,
+      rtp_share = top$rtp_votes / rtp_N,
+      gap       = (top$hq_votes / hq_N) - (top$rtp_votes / rtp_N),
+      p_value   = pt$p.value
+    )
+  }) %>%
+  ungroup()
+
+alignment_by_poll = hq_rtp_all %>%
+  group_by(series_no, series) %>%
+  summarize(alignment = cor(hq_share, rtp_share), .groups = "drop") %>%
+  arrange(series_no)
+
+latest_complete_series = max(data$series_no)
+cumulative_alignment_index = cumulative_alignment(latest_complete_series)
+total_flips = flip_count_so_far(latest_complete_series)
+
+most_aligned_poll  = alignment_by_poll %>% arrange(desc(alignment)) %>% slice(1)
+least_aligned_poll = alignment_by_poll %>% arrange(alignment) %>% slice(1)
+biggest_gap        = hq_rtp_all %>% arrange(desc(abs(gap))) %>% slice(1)
+
+# --- Decisiveness across every two-option question ever asked --------------
+two_option_all = data %>%
+  group_by(series_no, series, question) %>%
+  filter(n() == 2) %>%
+  group_modify(~ {
+    Nq = unique(.x$N)
+    ordered = .x %>% arrange(desc(votes))
+    lead  = ordered %>% slice(1)
+    trail = ordered %>% slice(2)
+    bt = binom.test(lead$votes, Nq, p = 0.5)
+    tibble(
+      N = Nq,
+      leader = lead$option, leader_votes = lead$votes,
+      trailer = trail$option, trailer_votes = trail$votes,
+      p_value = bt$p.value,
+      is_tie = lead$votes == trail$votes
+    )
+  }) %>%
+  ungroup()
+
+most_decisive = two_option_all %>% filter(!is_tie) %>% arrange(p_value) %>% slice(1)
+ties = two_option_all %>% filter(is_tie) %>% arrange(series_no)
+
+# --- RTP participation -----------------------------------------------------
+rtp_era = data %>% filter(series_no >= 12)
+rtp_total_votes          = sum(rtp_era$rtp_votes)
+hq_total_votes_since_rtp = sum(rtp_era$hq_votes)
+rtp_overall_share        = rtp_total_votes / (rtp_total_votes + hq_total_votes_since_rtp)
+
+participation_by_poll = rtp_era %>%
+  group_by(series_no, series) %>%
+  summarize(hq_total = sum(hq_votes), rtp_total = sum(rtp_votes), .groups = "drop") %>%
+  mutate(rtp_share_of_poll = rtp_total / (hq_total + rtp_total)) %>%
+  arrange(series_no)
 ```
 
 ## Overview
@@ -69,4 +143,77 @@ leastunanimous_question = pull(filter(data, share == leastunanimous_pct), questi
 
 [Least unanimous]{style="color: #824B4B"} vote: ***`r leastunanimous`*** with ***`r leastunanimous_pct`*** % of the votes
 (Poll: `r leastunanimous_poll`, Question: `r leastunanimous_question`)
+
+## HQ + RTP Alignment
+
+### Alignment Index
+
+Cumulative correlation between HQ's and RTP's vote shares, across every option RTP has voted on since it joined the poll at Earth Day.
+
+***`r round(cumulative_alignment_index, 2)`*** cumulative Alignment Index (Earth Day → `r tail(alignment_by_poll$series, 1)`)
+
+### Alignment by poll
+
+```{r}
+#| label: fig-alignment-trend
+ggplot(alignment_by_poll, aes(x = fct_reorder(series, series_no), y = alignment)) +
+  geom_col(fill = "#4B6B82", width = 0.6) +
+  geom_hline(yintercept = cumulative_alignment_index, linetype = "dashed", color = "gray40") +
+  geom_text(aes(label = round(alignment, 2)), vjust = -0.5, size = 3.5) +
+  scale_y_continuous(limits = c(0, 1)) +
+  labs(x = NULL, y = "Alignment (that poll only)") +
+  theme_minimal(base_size = 12) +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1))
+```
+
+### Alignment superlatives
+
+[Most aligned poll]{style="color: #4B824F"}: ***`r most_aligned_poll$series`*** (`r round(most_aligned_poll$alignment, 2)`)
+
+[Least aligned poll]{style="color: #824B4B"}: ***`r least_aligned_poll$series`*** (`r round(least_aligned_poll$alignment, 2)`)
+
+### Flips & gaps
+
+***`r total_flips`*** questions where HQ and RTP would have crowned different winners on their own, since RTP joined the poll.
+
+[Biggest HQ/RTP gap on record]{style="color: #82704B"}: ***`r biggest_gap$question`*** (`r biggest_gap$series`) — HQ `r round(biggest_gap$hq_share*100,1)`% vs RTP `r round(biggest_gap$rtp_share*100,1)`% for *`r biggest_gap$option`* (p = `r signif(biggest_gap$p_value,2)`). It's also the only office gap that's cleared statistical significance so far.
+
+## More Stats
+
+### Most & least decisive votes
+
+[Most decisive vote ever]{style="color: #4B824F"}: ***`r most_decisive$leader`*** over ***`r most_decisive$trailer`***, `r most_decisive$leader_votes`–`r most_decisive$trailer_votes`
+(Poll: `r most_decisive$series`, Question: `r most_decisive$question`; p = `r signif(most_decisive$p_value, 2)`)
+
+[Closest vote(s) ever]{style="color: #824B4B"}: a ***`r nrow(ties)`-way tie*** for closest — see the tie tracker below for the full list.
+
+### Tie tracker
+
+***`r nrow(ties)`*** questions have ended in a dead-even split so far:
+
+```{r}
+ties %>%
+  transmute(
+    Poll = series,
+    Question = question,
+    Split = paste0(leader_votes, "–", trailer_votes, " (", leader, " vs ", trailer, ")")
+  ) %>%
+  knitr::kable()
+```
+
+### RTP participation
+
+RTP has cast ***`r rtp_total_votes`*** of the ***`r rtp_total_votes + hq_total_votes_since_rtp`*** votes counted since it joined — ***`r round(rtp_overall_share*100,1)`%*** of the total. That share hasn't trended up or down so much as bounced around a fairly consistent range, poll to poll:
+
+```{r}
+#| label: fig-rtp-participation
+ggplot(participation_by_poll, aes(x = fct_reorder(series, series_no), y = rtp_share_of_poll)) +
+  geom_col(fill = "#82704B", width = 0.6) +
+  geom_hline(yintercept = rtp_overall_share, linetype = "dashed", color = "gray40") +
+  geom_text(aes(label = percent(rtp_share_of_poll, accuracy = 1)), vjust = -0.5, size = 3.5) +
+  scale_y_continuous(limits = c(0, 0.6), labels = percent_format()) +
+  labs(x = NULL, y = "RTP share of that poll's votes") +
+  theme_minimal(base_size = 12) +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1))
+```
 
