@@ -1,7 +1,7 @@
 ---
 title: "What's the Opposite"
 description: |
-  Philosophical quandies of the modern era
+  Philosophical quandaries of the modern era
 date: '2026-08-07'
 image: "opposites.jpg"
 categories:
@@ -46,7 +46,7 @@ lopsided_op = summary_op %>% arrange(p_value_50_50)
 closest_op  = summary_op %>% arrange(desc(p_value_50_50)) %>% slice(1)
 ```
 
-**TL;DR:** a straight line's opposite is, apparently, obviously a curve — `r lopsided_op$leader[1]` beat `r lopsided_op$trailer[1]` `r lopsided_op$leader_votes[1]`–`r lopsided_op$trailer_votes[1]` (`r percent(lopsided_op$leader_share[1],1)`), the most lopsided call of the week by a wide margin. Fittingly, the closest race of the bunch was `r closest_op$question[1]` — `r closest_op$leader[1]` edged `r closest_op$trailer[1]` `r closest_op$leader_votes[1]`–`r closest_op$trailer_votes[1]`, essentially a coin flip. Turns out the opposite of a question is itself a genuinely open question.
+**TL;DR:** a straight line's opposite is, apparently, obviously a curve, with `r lopsided_op$leader[1]` beating `r lopsided_op$trailer[1]` `r lopsided_op$leader_votes[1]`–`r lopsided_op$trailer_votes[1]` (`r percent(lopsided_op$leader_share[1],1)`), the most lopsided call of the week by a wide margin. Fittingly, the closest race of the bunch was `r closest_op$question[1]`. `r closest_op$leader[1]` edged `r closest_op$trailer[1]` `r closest_op$leader_votes[1]`–`r closest_op$trailer_votes[1]`, essentially a coin flip. Turns out the opposite of a question is itself a genuinely open question.
 
 ```{r}
 #| label: summary-table
@@ -69,7 +69,7 @@ leader_ci_plot(summary_op)
 waffle_question(data, "What's the opposite of a question?")
 ```
 
-`r lopsided_op$question[1]` deserves one more look: `r percent(lopsided_op$leader_share[1],1)` isn't just this week's best — it's the **third most decisive vote in the whole history of this poll**, trailing only Ice Cream's landslide over Frozen Yogurt and "cereal is not a soup." Apparently the crowd has a much easier time agreeing on geometry than on breakfast.
+`r lopsided_op$question[1]` deserves one more look: `r percent(lopsided_op$leader_share[1],1)` isn't just this week's best, it's the **third most decisive vote in the whole history of this poll**, trailing only Ice Cream's landslide over Frozen Yogurt and "cereal is not a soup." Apparently the crowd has a much easier time agreeing on geometry than on breakfast.
 
 # Does HQ agree with RTP?
 
@@ -103,7 +103,7 @@ hq_rtp_op %>%
 hq_rtp_plot(hq_rtp_op)
 ```
 
-A quiet week on the office-alignment front: HQ and RTP picked the exact same winner on all five questions, no gap comes close to significant (all p > 0.16), and the Alignment Index for this poll alone lands at **`r round(alignment_op, 2)`** — middle of the pack, nothing dramatic in either direction. The cumulative index holds steady at **`r round(cumulative_op, 2)`**, and the running flip tally stays put at **`r flip_count_op`**. After the last two weeks' fireworks (a record-low alignment, then a record-high one), this poll was the two offices just... agreeing.
+A quiet week on the office-alignment front: HQ and RTP picked the exact same winner on all five questions, no gap comes close to significant (all p > 0.16), and the Alignment Index for this poll alone lands at **`r round(alignment_op, 2)`**, middle of the pack, nothing dramatic in either direction. The cumulative index holds steady at **`r round(cumulative_op, 2)`**, and the running flip tally stays put at **`r flip_count_op`**. After the last two weeks' fireworks (a record-low alignment, then a record-high one), this poll was the two offices just... agreeing.
 
 # Do the elemental opposites travel together?
 
@@ -119,4 +119,4 @@ ov_elemental = overlap_bounds(
 )
 ```
 
-Of the `r ov_elemental$m` overlapping voters, somewhere between `r ov_elemental$min_overlap` and `r ov_elemental$max_overlap` (`r percent(ov_elemental$min_overlap/ov_elemental$m, 1)`–`r percent(ov_elemental$max_overlap/ov_elemental$m, 1)`) picked *both* Water and Boiling, versus about `r round(ov_elemental$expected_overlap)` (`r percent(ov_elemental$expected_overlap/ov_elemental$m, 1)`) expected if the two choices were unrelated. Both options were comfortable majorities on their own, so there's a solid floor under the "opposites are extremes, not negations" school of thought in this office — melting and "no fire" just didn't have the same pull.
+Of the `r ov_elemental$m` overlapping voters, somewhere between `r ov_elemental$min_overlap` and `r ov_elemental$max_overlap` (`r percent(ov_elemental$min_overlap/ov_elemental$m, 1)`–`r percent(ov_elemental$max_overlap/ov_elemental$m, 1)`) picked *both* Water and Boiling, versus about `r round(ov_elemental$expected_overlap)` (`r percent(ov_elemental$expected_overlap/ov_elemental$m, 1)`) expected if the two choices were unrelated. Both options were comfortable majorities on their own, so there's a solid floor under the "opposites are extremes, not negations" school of thought in this office. Melting and "no fire" just didn't have the same pull.

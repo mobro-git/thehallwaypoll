@@ -2,11 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.thehallwaypoll.org/votingstatistics.html</loc>
-    <lastmod>2026-07-30T14:52:28.877Z</lastmod>
+    <lastmod>2026-08-13T20:05:55.701Z</lastmod>
   </url>
   <url>
     <loc>https://www.thehallwaypoll.org/polls/20260717_polarizing_provisions/index.html</loc>
-    <lastmod>2026-07-30T14:06:41.066Z</lastmod>
+    <lastmod>2026-08-13T20:05:55.626Z</lastmod>
   </url>
   <url>
     <loc>https://www.thehallwaypoll.org/polls/20260622_dessert_matchups_part2/index.html</loc>
@@ -87,5 +87,9 @@
   <url>
     <loc>https://www.thehallwaypoll.org/polls/index.html</loc>
     <lastmod>2026-05-08T14:47:26.610Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.thehallwaypoll.org/polls/20260807_opposites/index.html</loc>
+    <lastmod>2026-08-13T20:12:31.107Z</lastmod>
   </url>
 </urlset>
