@@ -89,6 +89,27 @@ most_aligned_poll  = alignment_by_poll %>% arrange(desc(alignment)) %>% slice(1)
 least_aligned_poll = alignment_by_poll %>% arrange(alignment) %>% slice(1)
 biggest_gap        = hq_rtp_all %>% arrange(desc(abs(gap))) %>% slice(1)
 
+# The gap with the biggest raw margin isn't necessarily the most statistically
+# significant one (significance depends on sample size too), so track them
+# separately and generate the summary sentence from whatever's actually true
+# right now instead of a claim that was only true when it was written.
+significant_gaps     = hq_rtp_all %>% filter(p_value < 0.05) %>% arrange(p_value)
+n_significant_gaps   = nrow(significant_gaps)
+most_significant_gap = significant_gaps %>% slice(1)
+
+significance_note = if (n_significant_gaps == 0) {
+  "No HQ/RTP gap has cleared statistical significance yet."
+} else if (biggest_gap$p_value >= 0.05) {
+  sprintf(
+    "It hasn't cleared statistical significance itself -- that distinction currently belongs to %s (%s, p = %s).",
+    most_significant_gap$question[1], most_significant_gap$series[1], signif(most_significant_gap$p_value[1], 2)
+  )
+} else if (n_significant_gaps == 1) {
+  "It's also the only office gap that's cleared statistical significance so far."
+} else {
+  sprintf("It's one of %d office gaps that have cleared statistical significance so far.", n_significant_gaps)
+}
+
 # --- Decisiveness across every two-option question ever asked --------------
 two_option_all = data %>%
   group_by(series_no, series, question) %>%
@@ -203,7 +224,7 @@ ggplot(alignment_by_poll, aes(x = fct_reorder(series, series_no), y = alignment)
 
 ***`r total_flips`*** questions where HQ and RTP would have crowned different winners on their own, since RTP joined the poll.
 
-[Biggest HQ/RTP gap on record]{style="color: #82704B"}: ***`r biggest_gap$question`*** (`r biggest_gap$series`) — HQ `r round(biggest_gap$hq_share*100,1)`% vs RTP `r round(biggest_gap$rtp_share*100,1)`% for *`r biggest_gap$option`* (p = `r signif(biggest_gap$p_value,2)`). It's also the only office gap that's cleared statistical significance so far.
+[Biggest HQ/RTP gap on record]{style="color: #82704B"}: ***`r biggest_gap$question`*** (`r biggest_gap$series`) — HQ `r round(biggest_gap$hq_share*100,1)`% vs RTP `r round(biggest_gap$rtp_share*100,1)`% for *`r biggest_gap$option`* (p = `r signif(biggest_gap$p_value,2)`). `r significance_note`
 
 ## Participation
 
