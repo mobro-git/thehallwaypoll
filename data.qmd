@@ -6,6 +6,7 @@ execute:
   warning: false
   error: false
   message: false
+  freeze: false
 ---
 
 ```{r}
