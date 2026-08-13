@@ -35,4 +35,88 @@ data = pollresults(series_filter)
 faceted_bar_plot(data)
 ```
 
-#
+# How decisive were these results?
+
+Five philosophical opposites, and one of them turns out to be a trick question.
+
+```{r}
+#| label: summary-stats
+summary_op = summarize_two_option(data)
+lopsided_op = summary_op %>% arrange(p_value_50_50)
+closest_op  = summary_op %>% arrange(desc(p_value_50_50)) %>% slice(1)
+```
+
+**TL;DR:** a straight line's opposite is, apparently, obviously a curve — `r lopsided_op$leader[1]` beat `r lopsided_op$trailer[1]` `r lopsided_op$leader_votes[1]`–`r lopsided_op$trailer_votes[1]` (`r percent(lopsided_op$leader_share[1],1)`), the most lopsided call of the week by a wide margin. Fittingly, the closest race of the bunch was `r closest_op$question[1]` — `r closest_op$leader[1]` edged `r closest_op$trailer[1]` `r closest_op$leader_votes[1]`–`r closest_op$trailer_votes[1]`, essentially a coin flip. Turns out the opposite of a question is itself a genuinely open question.
+
+```{r}
+#| label: summary-table
+binom_summary_table(summary_op)
+```
+
+```{r}
+#| label: fig-leader-ci
+#| fig-cap: "Leader shares with 95% confidence intervals."
+#| fig-width: 7
+#| fig-height: 4
+leader_ci_plot(summary_op)
+```
+
+```{r}
+#| label: fig-waffle-question
+#| fig-cap: "One square per vote: What's the opposite of a question?"
+#| fig-width: 6
+#| fig-height: 4
+waffle_question(data, "What's the opposite of a question?")
+```
+
+`r lopsided_op$question[1]` deserves one more look: `r percent(lopsided_op$leader_share[1],1)` isn't just this week's best — it's the **third most decisive vote in the whole history of this poll**, trailing only Ice Cream's landslide over Frozen Yogurt and "cereal is not a soup." Apparently the crowd has a much easier time agreeing on geometry than on breakfast.
+
+# Does HQ agree with RTP?
+
+```{r}
+#| label: hq-rtp-stats
+hq_rtp_op = hq_rtp_compare(data)
+alignment_op = cor(hq_rtp_op$hq_share, hq_rtp_op$rtp_share)
+cumulative_op = cumulative_alignment(19)
+flip_count_op = flip_count_so_far(19)
+```
+
+```{r}
+#| label: hq-rtp-table
+hq_rtp_op %>%
+  transmute(
+    question,
+    `Leader (overall)` = option,
+    `HQ share`  = sprintf("%s (%d/%d)", percent(hq_share, 1), hq_votes, hq_N),
+    `RTP share` = sprintf("%s (%d/%d)", percent(rtp_share, 1), rtp_votes, rtp_N),
+    `Gap (pts)` = percent(abs(gap), 1),
+    `p-value`   = signif(p_value, 3)
+  ) %>%
+  kableExtra::kable()
+```
+
+```{r}
+#| label: fig-hq-rtp
+#| fig-cap: "HQ vs RTP support for each question's overall winner."
+#| fig-width: 7
+#| fig-height: 4
+hq_rtp_plot(hq_rtp_op)
+```
+
+A quiet week on the office-alignment front: HQ and RTP picked the exact same winner on all five questions, no gap comes close to significant (all p > 0.16), and the Alignment Index for this poll alone lands at **`r round(alignment_op, 2)`** — middle of the pack, nothing dramatic in either direction. The cumulative index holds steady at **`r round(cumulative_op, 2)`**, and the running flip tally stays put at **`r flip_count_op`**. After the last two weeks' fireworks (a record-low alignment, then a record-high one), this poll was the two offices just... agreeing.
+
+# Do the elemental opposites travel together?
+
+Two of these questions reach for a physical extreme rather than a strict negation: Water isn't really the *absence* of fire, and Boiling isn't the reverse of freezing so much as its temperature opposite. Let's see how much the "go with the elemental extreme" crowd overlaps.
+
+```{r}
+#| label: overlap-elemental
+ov_elemental = overlap_bounds(
+  a_total = data %>% filter(question == "What's the opposite of fire?", option == "Water") %>% pull(votes),
+  N_a     = data %>% filter(question == "What's the opposite of fire?") %>% pull(N) %>% unique(),
+  b_total = data %>% filter(question == "What's the opposite of freezing?", option == "Boiling") %>% pull(votes),
+  N_b     = data %>% filter(question == "What's the opposite of freezing?") %>% pull(N) %>% unique()
+)
+```
+
+Of the `r ov_elemental$m` overlapping voters, somewhere between `r ov_elemental$min_overlap` and `r ov_elemental$max_overlap` (`r percent(ov_elemental$min_overlap/ov_elemental$m, 1)`–`r percent(ov_elemental$max_overlap/ov_elemental$m, 1)`) picked *both* Water and Boiling, versus about `r round(ov_elemental$expected_overlap)` (`r percent(ov_elemental$expected_overlap/ov_elemental$m, 1)`) expected if the two choices were unrelated. Both options were comfortable majorities on their own, so there's a solid floor under the "opposites are extremes, not negations" school of thought in this office — melting and "no fire" just didn't have the same pull.
