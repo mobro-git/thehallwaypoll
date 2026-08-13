@@ -1,5 +1,5 @@
 ---
-title: "Polarizing Provisions"
+title: "What's the Opposite"
 description: |
   Where do you stand?
 date: '2026-07-17'
