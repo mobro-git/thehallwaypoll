@@ -118,12 +118,15 @@ binom_summary_table = function(summary_df) {
     kableExtra::kable()
 }
 
-# Leader share +/- 95% CI, one row per question (dashed line marks 50/50)
+# Leader share +/- 95% CI, one row per question (dashed line marks 50/50).
+# Y-axis label includes the leader's answer, same "question: option" format
+# as hq_rtp_plot().
 leader_ci_plot = function(summary_df) {
   n_options = length(unique(summary_df$question))
-  
+
   summary_df %>%
-    ggplot(aes(y = fct_rev(question), x = leader_share, color = question)) +
+    mutate(label = paste0(question, ": ", leader)) %>%
+    ggplot(aes(y = fct_rev(label), x = leader_share, color = label)) +
     geom_point(size = 2.5) +
     geom_errorbarh(aes(xmin = ci_lower, xmax = ci_upper), height = 0.15, linewidth = 0.8, width = 0.2) +
     geom_vline(xintercept = 0.5, linetype = 2, color = "gray60") +
