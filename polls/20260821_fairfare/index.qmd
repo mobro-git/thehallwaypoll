@@ -1,0 +1,121 @@
+---
+title: "Fair Fare"
+description: |
+  Rides, prizes, and questionable snack decisions
+date: '2026-08-21'
+image: "fairfare.png"
+categories:
+    - Adventure
+    - Food
+format: html
+toc: true
+lightbox: true
+execute:
+  echo: false
+  warning: false
+  error: false
+  message: false
+draft: false
+---
+
+```{r}
+library(here)
+source(here("packages.R"))
+source(here("functions.R"))
+
+series_filter = 20
+
+data = pollresults(series_filter)
+```
+
+```{r}
+#| label: fig-overview
+#| fig-cap: "Votes and shares for each question (faceted)."
+#| fig-width: 9
+#| fig-height: 10.5
+faceted_bar_plot(data)
+```
+
+# How decisive were these results?
+
+Five fair-day dilemmas, and this crowd knows exactly what kind of fair they want.
+
+```{r}
+#| label: summary-stats
+summary_ff = summarize_two_option(data)
+lopsided_ff = summary_ff %>% arrange(p_value_50_50)
+closest_ff  = summary_ff %>% arrange(desc(p_value_50_50)) %>% slice(1)
+```
+
+**TL;DR:** `r lopsided_ff$question[1]` was the most one-sided call of the week — `r lopsided_ff$leader[1]` beat `r lopsided_ff$trailer[1]` `r lopsided_ff$leader_votes[1]`–`r lopsided_ff$trailer_votes[1]` (`r percent(lopsided_ff$leader_share[1],1)`). `r closest_ff$question[1]` was the closest thing to a real debate — `r closest_ff$leader[1]` edged `r closest_ff$trailer[1]` `r closest_ff$leader_votes[1]`–`r closest_ff$trailer_votes[1]`, the only question that isn't clearly distinguishable from a coin flip. But look across all five rows in the table below and a pattern jumps out: the classic, picture-postcard version of a fair — agricultural, a petting zoo, the Ferris wheel, traditional food, a carnival prize — won *every single category*. Nobody voted for the quirky alternative this week.
+
+```{r}
+#| label: summary-table
+binom_summary_table(summary_ff)
+```
+
+```{r}
+#| label: fig-leader-ci
+#| fig-cap: "Leader shares with 95% confidence intervals."
+#| fig-width: 7
+#| fig-height: 4
+leader_ci_plot(summary_ff)
+```
+
+```{r}
+#| label: fig-waffle-prizes
+#| fig-cap: "One square per vote: Prizes."
+#| fig-width: 6
+#| fig-height: 4
+waffle_question(data, "Prizes")
+```
+
+# Does HQ agree with RTP?
+
+```{r}
+#| label: hq-rtp-stats
+hq_rtp_ff = hq_rtp_compare(data)
+alignment_ff = cor(hq_rtp_ff$hq_share, hq_rtp_ff$rtp_share)
+cumulative_ff = cumulative_alignment(20)
+flip_count_ff = flip_count_so_far(20)
+```
+
+```{r}
+#| label: hq-rtp-table
+hq_rtp_ff %>%
+  transmute(
+    question,
+    `Leader (overall)` = option,
+    `HQ share`  = sprintf("%s (%d/%d)", percent(hq_share, 1), hq_votes, hq_N),
+    `RTP share` = sprintf("%s (%d/%d)", percent(rtp_share, 1), rtp_votes, rtp_N),
+    `Gap (pts)` = percent(abs(gap), 1),
+    `p-value`   = signif(p_value, 3)
+  ) %>%
+  kableExtra::kable()
+```
+
+```{r}
+#| label: fig-hq-rtp
+#| fig-cap: "HQ vs RTP support for each question's overall winner."
+#| fig-width: 7
+#| fig-height: 4
+hq_rtp_plot(hq_rtp_ff)
+```
+
+Total agreement on the winners: HQ and RTP picked the exact same option in all five categories, no gap comes close to significant, and the running flip tally holds at **`r flip_count_ff`**. But here's the odd part — the Alignment Index for this poll alone comes out to **`r round(alignment_ff, 2)`**, essentially flat, its lowest reading since Sun Protection's record low. Agreeing on *who wins* isn't the same as agreeing on *how much* — HQ was relatively more enthusiastic about the Petting Zoo, RTP was relatively more enthusiastic about the Carnival Prize, and those mismatched degrees of enthusiasm are enough to flatten the correlation even when every single winner matches. The cumulative index barely notices, holding at **`r round(cumulative_ff, 2)`** — one oddly-uncorrelated-but-unanimous week doesn't move five months of history much.
+
+# Do the fair traditionalists stick together?
+
+Every winning option this week was the classic, expected choice. Let's bound how much the "give me the fair my grandparents went to" crowd overlaps, using two questions that happened to draw the exact same number of voters.
+
+```{r}
+#| label: overlap-traditionalists
+ov_trad_fair = overlap_bounds(
+  a_total = data %>% filter(question == "Kind of fair", option == "Agricultural") %>% pull(votes),
+  N_a     = data %>% filter(question == "Kind of fair") %>% pull(N) %>% unique(),
+  b_total = data %>% filter(question == "Ride", option == "Ferris Wheel") %>% pull(votes),
+  N_b     = data %>% filter(question == "Ride") %>% pull(N) %>% unique()
+)
+```
+
+Both questions drew `r ov_trad_fair$m` voters, so the bound is nice and tight: somewhere between `r ov_trad_fair$min_overlap` and `r ov_trad_fair$max_overlap` people (`r percent(ov_trad_fair$min_overlap/ov_trad_fair$m, 1)`–`r percent(ov_trad_fair$max_overlap/ov_trad_fair$m, 1)`) picked *both* Agricultural fairs and the Ferris wheel, versus about `r round(ov_trad_fair$expected_overlap)` (`r percent(ov_trad_fair$expected_overlap/ov_trad_fair$m, 1)`) expected if the two preferences were unrelated. With both options already comfortable majorities on their own, there's a solid floor under the traditionalist coalition here — nobody's sneaking off to a Renaissance faire on the Tilt-a-whirl.
