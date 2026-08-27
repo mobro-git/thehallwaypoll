@@ -3,6 +3,7 @@ title: "Fair Fare"
 description: |
   Rides, prizes, and questionable snack decisions
 date: '2026-08-21'
+image: "fairfare.png"
 categories:
     - Adventure
     - Food
