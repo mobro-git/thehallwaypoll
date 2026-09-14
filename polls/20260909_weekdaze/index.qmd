@@ -1,0 +1,144 @@
+---
+title: "Week Daze"
+description: |
+  Monday through Sunday, mercilessly ranked
+date: '2026-09-09'
+categories:
+    - Philosophy
+format: html
+toc: true
+lightbox: true
+execute:
+  echo: false
+  warning: false
+  error: false
+  message: false
+draft: false
+---
+
+```{r}
+library(here)
+source(here("packages.R"))
+source(here("functions.R"))
+
+series_filter = 21
+
+data = pollresults(series_filter)
+```
+
+```{r}
+#| label: fig-overview
+#| fig-cap: "Votes and shares for each question (faceted)."
+#| fig-width: 9
+#| fig-height: 7.5
+faceted_bar_plot(data)
+```
+
+# How decisive were these results?
+
+Four questions this week, and for the first time every single one offered all seven days of the week as an option instead of a simple either-or. That changes the math a bit: "is the split different from 50/50" doesn't apply anymore, so instead we're asking "is the split different from everyone-equally-likely" (1-in-7, about 14.3% each) using a chi-square goodness-of-fit test.
+
+```{r}
+#| label: summary-stats
+summary_wd = summarize_multi_option(data)
+lopsided_wd = summary_wd %>% arrange(p_vs_uniform)
+closest_wd  = summary_wd %>% arrange(desc(p_vs_uniform)) %>% slice(1)
+```
+
+**TL;DR:** `r lopsided_wd$question[1]` produced the most lopsided result of the week — `r lopsided_wd$top_option[1]` alone took `r percent(lopsided_wd$top_share[1],1)` of the vote, nowhere close to the 1-in-7 share you'd expect if people picked days at random. `r closest_wd$question[1]` was the closest thing to a genuine debate: `r closest_wd$top_option[1]` led with just `r percent(closest_wd$top_share[1],1)`, the only question where the winner didn't crack a full quarter of the vote. And keep an eye on Tuesday — it quietly wins both **Most Productive** and **Longest-Feeling**, which tracks: the most productive day is also the one that drags on forever.
+
+```{r}
+#| label: summary-table
+multi_option_table(summary_wd)
+```
+
+```{r}
+#| label: fig-ci-favorite
+#| fig-cap: "Favorite: share of votes per day, with the 1-in-7 chance level dashed."
+#| fig-width: 7
+#| fig-height: 4.5
+multi_option_ci_plot(data, "Favorite")
+```
+
+```{r}
+#| label: fig-ci-worst
+#| fig-cap: "Worst: share of votes per day, with the 1-in-7 chance level dashed."
+#| fig-width: 7
+#| fig-height: 4.5
+multi_option_ci_plot(data, "Worst")
+```
+
+```{r}
+#| label: fig-waffle-favorite
+#| fig-cap: "One square per vote: Favorite."
+#| fig-width: 6.5
+#| fig-height: 5
+waffle_question(data, "Favorite")
+```
+
+# Does HQ agree with RTP?
+
+With seven options per question instead of two, "does HQ agree with RTP" isn't a single leader's-share comparison anymore either — it's a chi-square test of independence on the full office-by-day table for each question. (Two Saturday cells got zero votes from *both* offices, in "Worst" and "Longest-Feeling"; those get dropped before the test, since an empty category has nothing to compare and would otherwise divide by zero.)
+
+```{r}
+#| label: hq-rtp-stats
+hq_rtp_wd = hq_rtp_compare_multi(data)
+hq_rtp_shares_wd = hq_rtp_shares_multi(data)
+alignment_wd = cor(hq_rtp_shares_wd$hq_share, hq_rtp_shares_wd$rtp_share)
+cumulative_wd = cumulative_alignment(21)
+flip_count_wd = flip_count_so_far(21)
+
+flips_wd = data %>%
+  group_by(question) %>%
+  filter(n() > 2, sum(rtp_votes) > 0) %>%
+  group_modify(~ {
+    hq_winner  = .x$option[which.max(.x$hq_votes)]
+    rtp_winner = .x$option[which.max(.x$rtp_votes)]
+    tibble(hq_winner, rtp_winner, flipped = hq_winner != rtp_winner)
+  }) %>%
+  ungroup() %>%
+  filter(flipped)
+```
+
+```{r}
+#| label: hq-rtp-table
+hq_rtp_wd %>%
+  transmute(
+    question,
+    `Options tested` = options_tested,
+    `Options dropped (0 votes both offices)` = options_dropped,
+    `Chi-sq (df)` = sprintf("%.1f (%d)", chisq_stat, df),
+    `p-value` = signif(p_value, 3)
+  ) %>%
+  kableExtra::kable()
+```
+
+```{r}
+#| label: fig-hq-rtp
+#| fig-cap: "HQ vs RTP support for every day, every question."
+#| fig-width: 8
+#| fig-height: 9
+hq_rtp_plot(hq_rtp_shares_wd)
+```
+
+No question clears the usual p < 0.05 bar for a whole-distribution office difference, though `r hq_rtp_wd %>% arrange(p_value) %>% slice(1) %>% pull(question)` comes close (p = `r hq_rtp_wd %>% arrange(p_value) %>% slice(1) %>% pull(p_value) %>% signif(2)`). That's a different kind of test than the leader-vs-leader comparison used on two-option polls, so it doesn't add to that running tally of significant gaps — but it's worth watching if this poll design comes back.
+
+Two of the four questions did flip the top pick between offices this time: for `r flips_wd$question[1]`, HQ's pick was `r flips_wd$hq_winner[1]` while RTP's was `r flips_wd$rtp_winner[1]`; for `r flips_wd$question[2]`, HQ went with `r flips_wd$hq_winner[2]` while RTP went with `r flips_wd$rtp_winner[2]`. The other two questions (Favorite and Worst — the two most lopsided results of the week) had both offices landing on the same day. That brings the running flip tally to **`r flip_count_wd`**.
+
+The Alignment Index for this poll alone comes out to **`r round(alignment_wd, 2)`**, and the cumulative index actually ticks up slightly to **`r round(cumulative_wd, 2)`** — despite two flipped top picks, the overall *pattern* of support across all 28 day-options tracked reasonably well between offices. Flipping a close plurality race is a lot easier than derailing a correlation across dozens of data points.
+
+# Do the weekday blues run deep?
+
+Saturday swept "Favorite" and Monday swept "Worst" — the most classic possible result for a work-week poll. Let's bound how much those two crowds overlap.
+
+```{r}
+#| label: overlap-weekday-blues
+ov_blues = overlap_bounds(
+  a_total = data %>% filter(question == "Favorite", option == "Saturday") %>% pull(votes),
+  N_a     = data %>% filter(question == "Favorite") %>% pull(N) %>% unique(),
+  b_total = data %>% filter(question == "Worst", option == "Monday") %>% pull(votes),
+  N_b     = data %>% filter(question == "Worst") %>% pull(N) %>% unique()
+)
+```
+
+Of the `r ov_blues$m` overlapping voters, the "Saturday-loving, Monday-hating" crowd could be as small as `r ov_blues$min_overlap` or as large as `r ov_blues$max_overlap` people (`r percent(ov_blues$min_overlap/ov_blues$m, 1)`–`r percent(ov_blues$max_overlap/ov_blues$m, 1)`), versus about `r round(ov_blues$expected_overlap)` (`r percent(ov_blues$expected_overlap/ov_blues$m, 1)`) expected if the two opinions were unrelated. Unlike some past overlaps, the floor here genuinely can be zero — with two majorities this large but not landslide-enough to force an overlap by the pigeonhole alone, the totals alone can't rule out two completely disjoint crowds, even though basic intuition says the Saturday fans and the Monday haters are probably the same people.
