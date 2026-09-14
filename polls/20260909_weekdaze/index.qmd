@@ -28,10 +28,11 @@ data = pollresults(series_filter)
 
 ```{r}
 #| label: fig-overview
-#| fig-cap: "Votes and shares for each question (faceted)."
-#| fig-width: 9
-#| fig-height: 7.5
-faceted_bar_plot(data)
+#| fig-cap: "Share of each question's votes, by day of week."
+#| fig-width: 10
+#| fig-height: 6
+day_order = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+grouped_bar_by_question(data, category_order = day_order)
 ```
 
 # How decisive were these results?

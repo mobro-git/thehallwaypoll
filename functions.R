@@ -68,6 +68,34 @@ faceted_bar_plot = function(data, ncol = 2) {
           axis.text.x = element_text(angle = 20, hjust = 1))
 }
 
+# Grouped bar chart for polls where every question shares the same category
+# domain (e.g. day of week): one x position per shared category, one bar per
+# question, dodged and colored by question. Faceting by question (the usual
+# faceted_bar_plot) buries the category-to-category comparison that actually
+# matters for this shape of poll, so this puts the shared category on the
+# x-axis instead. Bars are dodged tightly (4+ questions per category), so
+# labels are percent-only and rotated vertical to avoid colliding with the
+# neighboring bar's label; exact vote counts belong in the summary table.
+grouped_bar_by_question = function(data, category_order = NULL) {
+  if (!is.null(category_order)) {
+    data = data %>% mutate(option = factor(option, levels = category_order))
+  }
+
+  n_q = length(unique(data$question))
+
+  data %>%
+    ggplot(aes(x = option, y = share, fill = question)) +
+    geom_col(position = position_dodge2(width = 0.8, padding = 0.1), width = 0.75) +
+    geom_text(aes(label = percent(share, accuracy = 1)),
+              position = position_dodge2(width = 0.8, padding = 0.1),
+              angle = 90, hjust = -0.15, size = 3) +
+    scale_y_continuous(labels = percent_format(accuracy = 1), expand = expansion(mult = c(0, 0.22))) +
+    scale_fill_random(n_q) +
+    labs(x = NULL, y = "Share of that question's votes", fill = NULL) +
+    theme_minimal(base_size = 13) +
+    theme(legend.position = "bottom", axis.text.x = element_text(angle = 20, hjust = 1))
+}
+
 # Summarize every two-option question in a poll: leader/trailer votes & shares,
 # margin, and an exact binomial test against a 50/50 split.
 summarize_two_option = function(data) {
