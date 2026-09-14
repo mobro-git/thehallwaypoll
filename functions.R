@@ -137,26 +137,100 @@ leader_ci_plot = function(summary_df) {
     theme(legend.position = "none")
 }
 
-# Waffle chart (one square per vote) for a single two-option question
+# Waffle chart (one square per vote) for a single question, any number of options
 waffle_question = function(data, question_selection, cols = 9) {
   df = data %>% filter(question == question_selection) %>% arrange(desc(votes))
-  stopifnot(nrow(df) == 2)
   N = unique(df$N)
   rows = ceiling(N / cols)
 
   tibble(
     id = 1:N,
-    option = c(rep(df$option[1], df$votes[1]), rep(df$option[2], df$votes[2]))
+    option = factor(rep(df$option, df$votes), levels = df$option)
   ) %>%
     mutate(row = (id - 1) %/% cols + 1,
            col = (id - 1) %% cols + 1) %>%
     ggplot(aes(x = col, y = rows - row + 1, fill = option)) +
     geom_tile(color = "white", linewidth = 0.5, width = 0.95, height = 0.95) +
-    scale_fill_random(2) +
+    scale_fill_random(nrow(df)) +
     coord_equal() +
     labs(x = NULL, y = NULL, fill = NULL, title = question_selection) +
     theme_void() +
     theme(legend.position = "bottom")
+}
+
+# Chi-square goodness-of-fit summary for every multi-option (3+) question in a
+# poll -- the generalization of summarize_two_option() for questions where a
+# 50/50 binomial test doesn't apply (e.g. "pick your favorite day of the
+# week"). Tests the observed split against "every option equally likely."
+summarize_multi_option = function(data) {
+  data %>%
+    group_by(question) %>%
+    filter(n() > 2) %>%
+    group_modify(~ {
+      Nq = unique(.x$N)
+      k  = nrow(.x)
+      top = .x %>% arrange(desc(votes)) %>% slice(1)
+      ct  = suppressWarnings(chisq.test(.x$votes))
+      top_vs_chance = suppressWarnings(binom.test(top$votes, Nq, p = 1 / k))
+
+      tibble(
+        N              = Nq,
+        k              = k,
+        top_option     = top$option,
+        top_votes      = top$votes,
+        top_share      = top$share,
+        zero_options   = sum(.x$votes == 0),
+        chisq_stat     = unname(ct$statistic),
+        df             = unname(ct$parameter),
+        p_vs_uniform   = ct$p.value,
+        p_top_vs_chance = top_vs_chance$p.value
+      )
+    }) %>%
+    ungroup()
+}
+
+# Kable of summarize_multi_option()
+multi_option_table = function(summary_df) {
+  summary_df %>%
+    transmute(
+      question,
+      N,
+      `# options`        = k,
+      `Top pick (votes)` = sprintf("%s (%d)", top_option, top_votes),
+      `Top share`        = percent(top_share, 0.1),
+      `Zero-vote options` = zero_options,
+      `Chi-sq (df)`      = sprintf("%.1f (%d)", chisq_stat, df),
+      `p vs uniform`     = signif(p_vs_uniform, 3),
+      `p: top vs chance` = signif(p_top_vs_chance, 3)
+    ) %>%
+    kableExtra::kable()
+}
+
+# Per-option share +/- 95% CI for a single multi-option question, dashed line
+# marks the "everyone equally likely" chance level (1/k) instead of 50/50.
+multi_option_ci_plot = function(data, question_selection) {
+  df = data %>% filter(question == question_selection) %>% arrange(desc(votes))
+  k = nrow(df)
+  chance = 1 / k
+
+  df %>%
+    rowwise() %>%
+    mutate(
+      ci = list(binom.test(votes, N, p = chance)$conf.int),
+      ci_lower = ci[1],
+      ci_upper = ci[2]
+    ) %>%
+    ungroup() %>%
+    mutate(label = fct_reorder(option, share)) %>%
+    ggplot(aes(y = label, x = share, color = label)) +
+    geom_point(size = 2.5) +
+    geom_errorbarh(aes(xmin = ci_lower, xmax = ci_upper), height = 0.15) +
+    geom_vline(xintercept = chance, linetype = 2, color = "gray60") +
+    scale_x_continuous(labels = percent_format(accuracy = 1)) +
+    scale_color_random(k) +
+    labs(x = "Share of votes", y = NULL, title = question_selection) +
+    theme_minimal(base_size = 13) +
+    theme(legend.position = "none")
 }
 
 # Feasible overlap bounds between the leading options of two *different* questions,
@@ -221,6 +295,49 @@ hq_rtp_plot = function(compare_df) {
     labs(x = "Share of office's votes for the overall leader", y = NULL) +
     theme_minimal(base_size = 13) +
     theme(legend.position = "bottom")
+}
+
+# HQ vs RTP for a multi-option question: a chi-square test of independence on
+# the office x option contingency table. Options with zero votes from BOTH
+# offices are dropped first -- a fully empty column makes every expected
+# count in it zero too, which is a division by zero in the chi-square
+# statistic, and a column with no votes at all carries no information about
+# whether the offices differ anyway.
+hq_rtp_compare_multi = function(data) {
+  data %>%
+    group_by(question) %>%
+    filter(n() > 2, sum(rtp_votes) > 0) %>%
+    group_modify(~ {
+      kept = .x %>% filter(hq_votes + rtp_votes > 0)
+      tab  = rbind(kept$hq_votes, kept$rtp_votes)
+      ct   = suppressWarnings(chisq.test(tab))
+
+      tibble(
+        options_tested  = nrow(kept),
+        options_dropped = nrow(.x) - nrow(kept),
+        chisq_stat      = unname(ct$statistic),
+        df              = unname(ct$parameter),
+        p_value         = ct$p.value
+      )
+    }) %>%
+    ungroup()
+}
+
+# Long HQ/RTP share table (one row per question x option) for a multi-option
+# poll, in the same shape hq_rtp_plot() already expects -- so the existing
+# dumbbell plot works unmodified across as many rows per question as needed.
+hq_rtp_shares_multi = function(data) {
+  data %>%
+    group_by(question) %>%
+    filter(n() > 2, sum(rtp_votes) > 0) %>%
+    mutate(
+      hq_N      = sum(hq_votes),
+      rtp_N     = sum(rtp_votes),
+      hq_share  = hq_votes / hq_N,
+      rtp_share = rtp_votes / rtp_N
+    ) %>%
+    ungroup() %>%
+    select(question, option, hq_votes, hq_N, hq_share, rtp_votes, rtp_N, rtp_share)
 }
 
 # Cumulative HQ-RTP Alignment Index: correlation between HQ's and RTP's vote
