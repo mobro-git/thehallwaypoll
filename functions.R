@@ -81,12 +81,17 @@ grouped_bar_by_question = function(data, category_order = NULL) {
     data = data %>% mutate(option = factor(option, levels = category_order))
   }
 
+  data = data %>%
+    group_by(question) %>%
+    mutate(is_top = share == max(share)) %>%
+    ungroup()
+
   n_q = length(unique(data$question))
 
   data %>%
     ggplot(aes(x = option, y = share, fill = question)) +
     geom_col(position = position_dodge2(width = 0.8, padding = 0.1), width = 0.75) +
-    geom_text(aes(label = percent(share, accuracy = 1)),
+    geom_text(aes(label = percent(share, accuracy = 1), fontface = if_else(is_top, "bold", "plain")),
               position = position_dodge2(width = 0.8, padding = 0.1),
               angle = 90, hjust = -0.15, size = 3) +
     scale_y_continuous(labels = percent_format(accuracy = 1), expand = expansion(mult = c(0, 0.22))) +
@@ -197,16 +202,18 @@ summarize_multi_option = function(data) {
     group_modify(~ {
       Nq = unique(.x$N)
       k  = nrow(.x)
-      top = .x %>% arrange(desc(votes)) %>% slice(1)
+      max_votes = max(.x$votes)
+      top_rows  = .x %>% filter(votes == max_votes) %>% arrange(option)
       ct  = suppressWarnings(chisq.test(.x$votes))
-      top_vs_chance = suppressWarnings(binom.test(top$votes, Nq, p = 1 / k))
+      top_vs_chance = suppressWarnings(binom.test(max_votes, Nq, p = 1 / k))
 
       tibble(
         N              = Nq,
         k              = k,
-        top_option     = top$option,
-        top_votes      = top$votes,
-        top_share      = top$share,
+        top_option     = paste(top_rows$option, collapse = " & "),
+        top_is_tie     = nrow(top_rows) > 1,
+        top_votes      = max_votes,
+        top_share      = unique(top_rows$share),
         zero_options   = sum(.x$votes == 0),
         chisq_stat     = unname(ct$statistic),
         df             = unname(ct$parameter),
