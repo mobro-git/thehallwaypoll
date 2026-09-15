@@ -41,15 +41,35 @@ mostunanimous_pct = max(data$share, na.rm = TRUE)
 mostunanimous_poll = pull(filter(data, share == mostunanimous_pct), series)
 mostunanimous_question = pull(filter(data, share == mostunanimous_pct), question)
 
-leastvoted = unique((data %>% filter(votes == min(data$votes, na.rm = TRUE)))$option)
-fewestvotes = min(data$votes, na.rm = TRUE)
-fewest_poll = pull(filter(data, votes == fewestvotes), series)
-fewest_question = pull(filter(data, votes == fewestvotes), question)
+# Format one or more tied rows for an extreme-value superlative. When only one
+# row hits the extreme, the caller builds its own single-row sentence; this is
+# only needed to render every tied row (poll + question + option) once each,
+# instead of the pull()-per-column approach silently concatenating mismatched
+# vectors when more than one row shares the extreme value.
+format_ties = function(rows) {
+  rows %>%
+    mutate(label = sprintf("%s (%s - %s)", option, series, question)) %>%
+    pull(label) %>%
+    paste(collapse = "; ")
+}
 
-leastunanimous = unique((data %>% filter(share == min(data$share, na.rm = TRUE)))$option)
+fewestvotes = min(data$votes, na.rm = TRUE)
+fewest_rows = data %>% filter(votes == fewestvotes) %>% distinct(series, question, option)
+leastvoted = unique(fewest_rows$option)
+fewest_tied = nrow(fewest_rows) > 1
+fewest_detail = format_ties(fewest_rows)
+
+nonzero_votes = data %>% filter(votes > 0)
+fewestvotes_nonzero = min(nonzero_votes$votes, na.rm = TRUE)
+fewest_nonzero_rows = nonzero_votes %>% filter(votes == fewestvotes_nonzero) %>% distinct(series, question, option)
+fewest_nonzero_tied = nrow(fewest_nonzero_rows) > 1
+fewest_nonzero_detail = format_ties(fewest_nonzero_rows)
+
 leastunanimous_pct = min(data$share, na.rm = TRUE)
-leastunanimous_poll = pull(filter(data, share == leastunanimous_pct), series)
-leastunanimous_question = pull(filter(data, share == leastunanimous_pct), question)
+leastunanimous_rows = data %>% filter(share == leastunanimous_pct) %>% distinct(series, question, option)
+leastunanimous = unique(leastunanimous_rows$option)
+leastunanimous_tied = nrow(leastunanimous_rows) > 1
+leastunanimous_detail = format_ties(leastunanimous_rows)
 
 # --- HQ vs RTP alignment ---------------------------------------------------
 # Leader-only HQ/RTP comparison for every two-option question, across every
@@ -202,13 +222,14 @@ participation_by_poll = rtp_era %>%
 [Most unanimous]{style="color: #4B824F"} vote: ***`r mostunanimous`*** with a *resounding* ***`r mostunanimous_pct`*** % of the votes
 (Poll: `r mostunanimous_poll`, Question: `r mostunanimous_question`)
 
-[Lowest]{style="color: #824B4B"} vote count: ***`r fewestvotes`*** for ***`r leastvoted`***
-(Poll: `r fewest_poll`, Question: `r fewest_question`)
+[Lowest]{style="color: #824B4B"} vote count: ***`r fewestvotes`*** `r if (fewest_tied) sprintf("- tied across %d options: %s", nrow(fewest_rows), fewest_detail) else sprintf("for ***%s*** (Poll: %s, Question: %s)", leastvoted, fewest_rows$series[1], fewest_rows$question[1])`
 
-[Least unanimous]{style="color: #824B4B"} vote: ***`r leastunanimous`*** with ***`r leastunanimous_pct`*** % of the votes
-(Poll: `r leastunanimous_poll`, Question: `r leastunanimous_question`)
+[Lowest (non-zero)]{style="color: #824B4B"} vote count: ***`r fewestvotes_nonzero`*** `r if (fewest_nonzero_tied) sprintf("- tied across %d options: %s", nrow(fewest_nonzero_rows), fewest_nonzero_detail) else sprintf("for ***%s*** (Poll: %s, Question: %s)", fewest_nonzero_rows$option[1], fewest_nonzero_rows$series[1], fewest_nonzero_rows$question[1])`
 
-[Closest vote(s) ever]{style="color: #6425B8"}: a ***`r nrow(two_option_ties)`-way tie*** for closest — see the tie tracker below.
+[Least unanimous]{style="color: #824B4B"} vote: `r if (leastunanimous_tied) sprintf("***%s%%*** of the votes - tied across %d options: %s", leastunanimous_pct, nrow(leastunanimous_rows), leastunanimous_detail) else sprintf("***%s*** with ***%s%%*** of the votes (Poll: %s, Question: %s)", leastunanimous, leastunanimous_pct, leastunanimous_rows$series[1], leastunanimous_rows$question[1])`
+
+[Closest vote(s) ever]{style="color: #6425B8"}: a ***`r nrow(two_option_ties)`-way tie*** for closest *(closest possible result in a 2-way poll — a dead-even 50/50 split)* — see the tie tracker below.
+<br><span style="font-size: 0.85em; color: gray;">This is scoped to two-option questions only, since a dead-even split is the closest a vote can possibly land. Multi-option ties for the lead are a different kind of tie — tracked separately in the tie tracker — and don't necessarily mean the overall result was close.</span>
 
 ::: {.card title="Tie tracker"}
 
