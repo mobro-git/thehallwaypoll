@@ -56,11 +56,43 @@ multi_option_table(summary_wd)
 ```
 
 ```{r}
+# multi_option_ci_plot() always sorts its y-axis by share (fct_reorder), which
+# would give each question's plot a different day order. This poll's shared
+# category domain reads better matching the day order used above instead, so
+# this is a one-off copy of that function with the axis order swapped out --
+# not worth generalizing into functions.R for a single poll's charts.
+multi_option_ci_plot_dayorder = function(data, question_selection, day_order) {
+  df = data %>% filter(question == question_selection)
+  k = nrow(df)
+  chance = 1 / k
+
+  df %>%
+    rowwise() %>%
+    mutate(
+      ci = list(binom.test(votes, N, p = chance)$conf.int),
+      ci_lower = ci[1],
+      ci_upper = ci[2]
+    ) %>%
+    ungroup() %>%
+    mutate(label = factor(option, levels = rev(day_order))) %>%
+    ggplot(aes(y = label, x = share, color = label)) +
+    geom_point(size = 2.5) +
+    geom_errorbarh(aes(xmin = ci_lower, xmax = ci_upper), height = 0.15) +
+    geom_vline(xintercept = chance, linetype = 2, color = "gray60") +
+    scale_x_continuous(labels = percent_format(accuracy = 1)) +
+    scale_color_random(k) +
+    labs(x = "Share of votes", y = NULL, title = question_selection) +
+    theme_minimal(base_size = 13) +
+    theme(legend.position = "none")
+}
+```
+
+```{r}
 #| label: fig-ci-favorite
 #| fig-cap: "Favorite: share of votes per day, with the 1-in-7 chance level dashed."
 #| fig-width: 7
 #| fig-height: 4.5
-multi_option_ci_plot(data, "Favorite")
+multi_option_ci_plot_dayorder(data, "Favorite", day_order)
 ```
 
 ```{r}
@@ -68,7 +100,7 @@ multi_option_ci_plot(data, "Favorite")
 #| fig-cap: "Worst: share of votes per day, with the 1-in-7 chance level dashed."
 #| fig-width: 7
 #| fig-height: 4.5
-multi_option_ci_plot(data, "Worst")
+multi_option_ci_plot_dayorder(data, "Worst", day_order)
 ```
 
 ```{r}
