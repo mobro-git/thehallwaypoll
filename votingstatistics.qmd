@@ -41,15 +41,72 @@ mostunanimous_pct = max(data$share, na.rm = TRUE)
 mostunanimous_poll = pull(filter(data, share == mostunanimous_pct), series)
 mostunanimous_question = pull(filter(data, share == mostunanimous_pct), question)
 
-leastvoted = unique((data %>% filter(votes == min(data$votes, na.rm = TRUE)))$option)
-fewestvotes = min(data$votes, na.rm = TRUE)
-fewest_poll = pull(filter(data, votes == fewestvotes), series)
-fewest_question = pull(filter(data, votes == fewestvotes), question)
+# Format one or more tied rows for an extreme-value superlative. When only one
+# row hits the extreme, the caller builds its own single-row sentence; this is
+# only needed to render every tied row (poll + question + option) once each,
+# instead of the pull()-per-column approach silently concatenating mismatched
+# vectors when more than one row shares the extreme value.
+format_ties = function(rows) {
+  rows %>%
+    mutate(label = sprintf("%s (%s - %s)", option, series, question)) %>%
+    pull(label) %>%
+    paste(collapse = "; ")
+}
 
-leastunanimous = unique((data %>% filter(share == min(data$share, na.rm = TRUE)))$option)
+fewestvotes = min(data$votes, na.rm = TRUE)
+fewest_rows = data %>% filter(votes == fewestvotes) %>% distinct(series, question, option)
+leastvoted = unique(fewest_rows$option)
+fewest_tied = nrow(fewest_rows) > 1
+fewest_detail = format_ties(fewest_rows)
+
+nonzero_votes = data %>% filter(votes > 0)
+fewestvotes_nonzero = min(nonzero_votes$votes, na.rm = TRUE)
+fewest_nonzero_rows = nonzero_votes %>% filter(votes == fewestvotes_nonzero) %>% distinct(series, question, option)
+fewest_nonzero_tied = nrow(fewest_nonzero_rows) > 1
+fewest_nonzero_detail = format_ties(fewest_nonzero_rows)
+
 leastunanimous_pct = min(data$share, na.rm = TRUE)
-leastunanimous_poll = pull(filter(data, share == leastunanimous_pct), series)
-leastunanimous_question = pull(filter(data, share == leastunanimous_pct), question)
+leastunanimous_rows = data %>% filter(share == leastunanimous_pct) %>% distinct(series, question, option)
+leastunanimous = unique(leastunanimous_rows$option)
+leastunanimous_tied = nrow(leastunanimous_rows) > 1
+leastunanimous_detail = format_ties(leastunanimous_rows)
+
+leastunanimous_pct_nonzero = min(nonzero_votes$share, na.rm = TRUE)
+leastunanimous_nonzero_rows = nonzero_votes %>% filter(share == leastunanimous_pct_nonzero) %>% distinct(series, question, option)
+leastunanimous_nonzero_tied = nrow(leastunanimous_nonzero_rows) > 1
+leastunanimous_nonzero_detail = format_ties(leastunanimous_nonzero_rows)
+
+# Raw vote counts (and raw shares) aren't comparable across polls with a
+# different number of options -- a 7-way poll mechanically splits votes
+# thinner than a 2-way poll, so its runt option will look "lower" than a
+# 2-way poll's runt even when neither is unusually spurned. Normalizing each
+# option's share against the chance level for that question (1/k, the same
+# baseline drawn in multi_option_ci_plot()) makes "how badly did this option
+# underperform" comparable no matter how many options the question had.
+chance_data = data %>%
+  group_by(series_no, series, question) %>%
+  mutate(k = n(), chance_share = 100 / k, ratio_to_chance = share / chance_share) %>%
+  ungroup()
+
+format_spurned = function(rows) {
+  rows %>%
+    mutate(label = sprintf("%s got just %sx its fair share (%d of %d votes across %d options; %s - %s)",
+                            option, round(ratio_to_chance, 2), votes, N, k, series, question)) %>%
+    pull(label) %>%
+    paste(collapse = "; ")
+}
+
+nonzero_chance = chance_data %>% filter(votes > 0)
+most_spurned_ratio = min(nonzero_chance$ratio_to_chance, na.rm = TRUE)
+most_spurned_rows = nonzero_chance %>%
+  filter(ratio_to_chance == most_spurned_ratio) %>%
+  distinct(series, question, option, votes, N, k, ratio_to_chance)
+most_spurned_tied = nrow(most_spurned_rows) > 1
+most_spurned_text = if (most_spurned_tied) {
+  sprintf("tied across %d options: %s", nrow(most_spurned_rows), format_spurned(most_spurned_rows))
+} else {
+  format_spurned(most_spurned_rows)
+}
 
 # --- HQ vs RTP alignment ---------------------------------------------------
 # Leader-only HQ/RTP comparison for every two-option question, across every
@@ -202,13 +259,19 @@ participation_by_poll = rtp_era %>%
 [Most unanimous]{style="color: #4B824F"} vote: ***`r mostunanimous`*** with a *resounding* ***`r mostunanimous_pct`*** % of the votes
 (Poll: `r mostunanimous_poll`, Question: `r mostunanimous_question`)
 
-[Lowest]{style="color: #824B4B"} vote count: ***`r fewestvotes`*** for ***`r leastvoted`***
-(Poll: `r fewest_poll`, Question: `r fewest_question`)
+[Lowest]{style="color: #824B4B"} vote count: ***`r fewestvotes`*** `r if (fewest_tied) sprintf("- tied across %d options: %s", nrow(fewest_rows), fewest_detail) else sprintf("for ***%s*** (Poll: %s, Question: %s)", leastvoted, fewest_rows$series[1], fewest_rows$question[1])`
 
-[Least unanimous]{style="color: #824B4B"} vote: ***`r leastunanimous`*** with ***`r leastunanimous_pct`*** % of the votes
-(Poll: `r leastunanimous_poll`, Question: `r leastunanimous_question`)
+[Lowest (non-zero)]{style="color: #824B4B"} vote count: ***`r fewestvotes_nonzero`*** `r if (fewest_nonzero_tied) sprintf("- tied across %d options: %s", nrow(fewest_nonzero_rows), fewest_nonzero_detail) else sprintf("for ***%s*** (Poll: %s, Question: %s)", fewest_nonzero_rows$option[1], fewest_nonzero_rows$series[1], fewest_nonzero_rows$question[1])`
 
-[Closest vote(s) ever]{style="color: #6425B8"}: a ***`r nrow(two_option_ties)`-way tie*** for closest — see the tie tracker below.
+[Least unanimous]{style="color: #824B4B"} vote: `r if (leastunanimous_tied) sprintf("***%s%%*** of the votes - tied across %d options: %s", leastunanimous_pct, nrow(leastunanimous_rows), leastunanimous_detail) else sprintf("***%s*** with ***%s%%*** of the votes (Poll: %s, Question: %s)", leastunanimous, leastunanimous_pct, leastunanimous_rows$series[1], leastunanimous_rows$question[1])`
+
+[Least unanimous (non-zero)]{style="color: #824B4B"} vote: `r if (leastunanimous_nonzero_tied) sprintf("***%s%%*** of the votes - tied across %d options: %s", leastunanimous_pct_nonzero, nrow(leastunanimous_nonzero_rows), leastunanimous_nonzero_detail) else sprintf("***%s*** with ***%s%%*** of the votes (Poll: %s, Question: %s)", leastunanimous_nonzero_rows$option[1], leastunanimous_pct_nonzero, leastunanimous_nonzero_rows$series[1], leastunanimous_nonzero_rows$question[1])`
+
+[Most-spurned option ever]{style="color: #824B4B"}: `r most_spurned_text`
+<br><span style="font-size: 0.85em; color: gray;">"Lowest" and "least unanimous" get thinner just from a question having more options, so they don't say much about how a specific option actually did against expectations. This instead compares each option's share to the chance level for its own question (1/*k*, where *k* is however many options that question had) — the lowest such ratio, among options that got at least one vote, is comparable no matter how many-way the poll was.</span>
+
+[Closest vote(s) ever]{style="color: #6425B8"}: a ***`r nrow(two_option_ties)`-way tie*** for closest *(closest possible result in a 2-way poll — a dead-even 50/50 split)* — see the tie tracker below.
+<br><span style="font-size: 0.85em; color: gray;">This is scoped to two-option questions only, since a dead-even split is the closest a vote can possibly land. Multi-option ties for the lead are a different kind of tie — tracked separately in the tie tracker — and don't necessarily mean the overall result was close.</span>
 
 ::: {.card title="Tie tracker"}
 

@@ -89,7 +89,7 @@ grouped_bar_by_question = function(data, category_order = NULL) {
   n_q = length(unique(data$question))
 
   data %>%
-    ggplot(aes(x = option, y = share, fill = question)) +
+    ggplot(aes(x = option, y = share, fill = question, group = question)) +
     geom_col(position = position_dodge2(width = 0.8, padding = 0.1), width = 0.75) +
     geom_text(aes(label = percent(share, accuracy = 1), fontface = if_else(is_top, "bold", "plain")),
               position = position_dodge2(width = 0.8, padding = 0.1),
