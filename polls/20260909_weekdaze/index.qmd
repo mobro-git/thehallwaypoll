@@ -149,11 +149,36 @@ hq_rtp_wd %>%
 ```
 
 ```{r}
+# hq_rtp_plot() plots fct_rev(label) on a plain character label, which
+# forcats coerces via base factor() (alphabetical) before reversing -- so it
+# unintentionally sorts alphabetically rather than preserving row order. That
+# doesn't matter for two-option polls (one row per question), but here it
+# alphabetizes the days within each question instead of Monday-Sunday. One-off
+# copy for this poll's chart, ordering explicitly by day_order instead.
+hq_rtp_plot_dayorder = function(compare_df, day_order) {
+  question_order = sort(unique(compare_df$question))
+  level_order = as.vector(t(outer(question_order, day_order, paste, sep = ": ")))
+
+  compare_df %>%
+    mutate(label = factor(paste0(question, ": ", option), levels = level_order)) %>%
+    ggplot(aes(y = fct_rev(label))) +
+    geom_segment(aes(x = hq_share, xend = rtp_share, yend = label), color = "gray70", linewidth = 1) +
+    geom_point(aes(x = hq_share, color = "HQ"), size = 4) +
+    geom_point(aes(x = rtp_share, color = "RTP"), size = 4) +
+    scale_x_continuous(labels = percent_format(accuracy = 1)) +
+    scale_color_manual(values = c("HQ" = "#EDE939", "RTP" = "#104275"), name = NULL) +
+    labs(x = "Share of office's votes for the overall leader", y = NULL) +
+    theme_minimal(base_size = 13) +
+    theme(legend.position = "bottom")
+}
+```
+
+```{r}
 #| label: fig-hq-rtp
 #| fig-cap: "HQ vs RTP support for every day, every question."
 #| fig-width: 8
 #| fig-height: 9
-hq_rtp_plot(hq_rtp_shares_wd)
+hq_rtp_plot_dayorder(hq_rtp_shares_wd, day_order)
 ```
 
 `r hq_rtp_wd %>% arrange(p_value) %>% slice(1) %>% pull(question)` actually clears the usual p < 0.05 bar for a whole-distribution office difference — barely, at p = `r hq_rtp_wd %>% arrange(p_value) %>% slice(1) %>% pull(p_value) %>% signif(3)`. That's a different kind of test than the leader-vs-leader comparison used on two-option polls, so it doesn't add to that running tally of significant gaps, but it's worth noting: it's the same question where HQ and RTP picked entirely different winners.
