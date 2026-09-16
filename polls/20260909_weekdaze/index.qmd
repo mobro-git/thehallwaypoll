@@ -124,7 +124,7 @@ hq_rtp_wd %>%
 hq_rtp_plot(hq_rtp_shares_wd)
 ```
 
-No question clears the usual p < 0.05 bar for a whole-distribution office difference, though `r hq_rtp_wd %>% arrange(p_value) %>% slice(1) %>% pull(question)` comes close (p = `r hq_rtp_wd %>% arrange(p_value) %>% slice(1) %>% pull(p_value) %>% signif(2)`). That's a different kind of test than the leader-vs-leader comparison used on two-option polls, so it doesn't add to that running tally of significant gaps — but it's worth watching if this poll design comes back.
+`r hq_rtp_wd %>% arrange(p_value) %>% slice(1) %>% pull(question)` actually clears the usual p < 0.05 bar for a whole-distribution office difference — barely, at p = `r hq_rtp_wd %>% arrange(p_value) %>% slice(1) %>% pull(p_value) %>% signif(3)`. That's a different kind of test than the leader-vs-leader comparison used on two-option polls, so it doesn't add to that running tally of significant gaps, but it's worth noting: it's the same question where HQ and RTP picked entirely different winners.
 
 Two of the four questions did flip the top pick between offices this time: for `r flips_wd$question[1]`, HQ's pick was `r flips_wd$hq_winner[1]` while RTP's was `r flips_wd$rtp_winner[1]`; for `r flips_wd$question[2]`, HQ went with `r flips_wd$hq_winner[2]` while RTP went with `r flips_wd$rtp_winner[2]`. The other two questions (Favorite and Worst — the two most lopsided results of the week) had both offices landing on the same day. That brings the running flip tally to **`r flip_count_wd`**.
 
