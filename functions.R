@@ -41,26 +41,46 @@ scale_color_random = function(number) {
   cols <- grDevices::hcl(h = sample(hues), c = 80, l = lums, fixup = TRUE)
   
   ggplot2::scale_color_manual(values = cols)
-  
+
+}
+
+# Extract the actual per-category colors a rendered chart landed on, so
+# another chart's fill/color scale can reuse them instead of generating its
+# own independent random palette -- scale_fill_random()/scale_color_random()
+# pick a fresh palette on every call, so two separate calls never match even
+# for the same categories. `labels` must give the category name for each of
+# that layer's groups, in ascending group order -- i.e. whatever order the
+# plotted column's discrete scale used internally (alphabetical for a plain
+# character column, or a custom order if it was already a factor).
+extract_colors = function(plot_obj, labels) {
+  layer_data = ggplot2::ggplot_build(plot_obj)$data[[1]]
+  aes_col = intersect(c("fill", "colour"), names(layer_data))[1]
+
+  layer_data %>%
+    dplyr::distinct(group, value = .data[[aes_col]]) %>%
+    dplyr::arrange(group) %>%
+    dplyr::pull(value) %>%
+    stats::setNames(labels)
 }
 
 # Faceted overview of every question in a poll: one panel per question, one
 # color per option, vote counts + share printed above each bar, two panels
-# per row (as many rows as needed to cover every question).
-faceted_bar_plot = function(data, ncol = 2) {
+# per row (as many rows as needed to cover every question). Pass `colors`
+# (a named vector, option -> color) to force a specific palette -- e.g. one
+# already used elsewhere on the page -- instead of a fresh random one.
+faceted_bar_plot = function(data, ncol = 2, colors = NULL) {
   data = data %>%
     mutate(question = factor(question, levels = unique(question)))
 
   n_options = length(unique(data$option))
-  palette <- palette.colors(n = n_options, palette = "Polychrome")
+  fill_scale = if (!is.null(colors)) scale_fill_manual(values = colors) else scale_fill_random(n_options)
 
   ggplot(data, aes(x = fct_reorder(option, votes), y = votes, fill = option)) +
     geom_col(width = 0.65, show.legend = FALSE) +
     geom_text(aes(label = paste0(votes, " (", percent(share, accuracy = 0.1), ")")),
               vjust = -0.5, size = 3.3) +
     scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
-    scale_fill_random(n_options) +
-    # scale_color_manual(values = palette) +
+    fill_scale +
     labs(x = NULL, y = "Votes") +
     theme_minimal(base_size = 13) +
     facet_wrap(~ question, scales = "free_x", ncol = ncol) +
@@ -170,11 +190,14 @@ leader_ci_plot = function(summary_df) {
     theme(legend.position = "none")
 }
 
-# Waffle chart (one square per vote) for a single question, any number of options
-waffle_question = function(data, question_selection, cols = 9) {
+# Waffle chart (one square per vote) for a single question, any number of
+# options. Pass `colors` (a named vector, option -> color) to match a
+# palette already used elsewhere on the page instead of a fresh random one.
+waffle_question = function(data, question_selection, cols = 9, colors = NULL) {
   df = data %>% filter(question == question_selection) %>% arrange(desc(votes))
   N = unique(df$N)
   rows = ceiling(N / cols)
+  fill_scale = if (!is.null(colors)) scale_fill_manual(values = colors) else scale_fill_random(nrow(df))
 
   tibble(
     id = 1:N,
@@ -184,7 +207,7 @@ waffle_question = function(data, question_selection, cols = 9) {
            col = (id - 1) %% cols + 1) %>%
     ggplot(aes(x = col, y = rows - row + 1, fill = option)) +
     geom_tile(color = "white", linewidth = 0.5, width = 0.95, height = 0.95) +
-    scale_fill_random(nrow(df)) +
+    fill_scale +
     coord_equal() +
     labs(x = NULL, y = NULL, fill = NULL, title = question_selection) +
     theme_void() +
@@ -243,10 +266,13 @@ multi_option_table = function(summary_df) {
 
 # Per-option share +/- 95% CI for a single multi-option question, dashed line
 # marks the "everyone equally likely" chance level (1/k) instead of 50/50.
-multi_option_ci_plot = function(data, question_selection) {
+# Pass `colors` (a named vector, option -> color) to match a palette already
+# used elsewhere on the page instead of a fresh random one.
+multi_option_ci_plot = function(data, question_selection, colors = NULL) {
   df = data %>% filter(question == question_selection) %>% arrange(desc(votes))
   k = nrow(df)
   chance = 1 / k
+  color_scale = if (!is.null(colors)) scale_color_manual(values = colors) else scale_color_random(k)
 
   df %>%
     rowwise() %>%
@@ -262,7 +288,7 @@ multi_option_ci_plot = function(data, question_selection) {
     geom_errorbarh(aes(xmin = ci_lower, xmax = ci_upper), height = 0.15) +
     geom_vline(xintercept = chance, linetype = 2, color = "gray60") +
     scale_x_continuous(labels = percent_format(accuracy = 1)) +
-    scale_color_random(k) +
+    color_scale +
     labs(x = "Share of votes", y = NULL, title = question_selection) +
     theme_minimal(base_size = 13) +
     theme(legend.position = "none")

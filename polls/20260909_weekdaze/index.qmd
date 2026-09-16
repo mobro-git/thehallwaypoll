@@ -37,11 +37,7 @@ fig_overview_wd = grouped_bar_by_question(data, category_order = day_order)
 # Pull the actual per-question colors this render landed on (scale_fill_random
 # picks a fresh random palette every render) so the HQ/RTP chart's axis text
 # can reuse the exact same colors as these bars, instead of guessing at them.
-question_colors = ggplot_build(fig_overview_wd)$data[[1]] %>%
-  distinct(group, fill) %>%
-  arrange(group) %>%
-  pull(fill) %>%
-  setNames(sort(unique(data$question)))
+question_colors = extract_colors(fig_overview_wd, sort(unique(data$question)))
 
 fig_overview_wd
 ```
@@ -72,7 +68,11 @@ multi_option_table(summary_wd)
 # category domain reads better matching the day order used above instead, so
 # this is a one-off copy of that function with the axis order swapped out --
 # not worth generalizing into functions.R for a single poll's charts.
-multi_option_ci_plot_dayorder = function(data, question_selection, day_order) {
+# It also takes an explicit day_colors palette instead of calling
+# scale_color_random() itself, so it can be made to match the waffle chart
+# below (built once here, ahead of its own section, since waffle_question()
+# picks a fresh random palette every call and we need that exact palette).
+multi_option_ci_plot_dayorder = function(data, question_selection, day_order, day_colors) {
   df = data %>% filter(question == question_selection)
   k = nrow(df)
   chance = 1 / k
@@ -91,11 +91,16 @@ multi_option_ci_plot_dayorder = function(data, question_selection, day_order) {
     geom_errorbarh(aes(xmin = ci_lower, xmax = ci_upper), height = 0.15) +
     geom_vline(xintercept = chance, linetype = 2, color = "gray60") +
     scale_x_continuous(labels = percent_format(accuracy = 1)) +
-    scale_color_random(k) +
+    scale_color_manual(values = day_colors) +
     labs(x = "Share of votes", y = NULL, title = question_selection) +
     theme_minimal(base_size = 13) +
     theme(legend.position = "none")
 }
+
+fig_waffle_favorite = waffle_question(data, "Favorite")
+
+favorite_votes_order = data %>% filter(question == "Favorite") %>% arrange(desc(votes)) %>% pull(option)
+day_colors = extract_colors(fig_waffle_favorite, favorite_votes_order)
 ```
 
 ```{r}
@@ -103,7 +108,7 @@ multi_option_ci_plot_dayorder = function(data, question_selection, day_order) {
 #| fig-cap: "Favorite: share of votes per day, with the 1-in-7 chance level dashed."
 #| fig-width: 7
 #| fig-height: 4.5
-multi_option_ci_plot_dayorder(data, "Favorite", day_order)
+multi_option_ci_plot_dayorder(data, "Favorite", day_order, day_colors)
 ```
 
 ```{r}
@@ -111,7 +116,7 @@ multi_option_ci_plot_dayorder(data, "Favorite", day_order)
 #| fig-cap: "Worst: share of votes per day, with the 1-in-7 chance level dashed."
 #| fig-width: 7
 #| fig-height: 4.5
-multi_option_ci_plot_dayorder(data, "Worst", day_order)
+multi_option_ci_plot_dayorder(data, "Worst", day_order, day_colors)
 ```
 
 ```{r}
@@ -119,7 +124,7 @@ multi_option_ci_plot_dayorder(data, "Worst", day_order)
 #| fig-cap: "One square per vote: Favorite."
 #| fig-width: 6.5
 #| fig-height: 5
-waffle_question(data, "Favorite")
+fig_waffle_favorite
 ```
 
 # Does HQ agree with RTP?
