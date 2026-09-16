@@ -44,9 +44,11 @@ Four questions this week, and for the first time every single one offered all se
 summary_wd = summarize_multi_option(data)
 lopsided_wd = summary_wd %>% arrange(p_vs_uniform)
 closest_wd  = summary_wd %>% arrange(desc(p_vs_uniform)) %>% slice(1)
+second_closest_wd = summary_wd %>% arrange(top_share) %>% slice(2)
+closest_margin_wd = second_closest_wd$top_share[1] - closest_wd$top_share[1]
 ```
 
-**TL;DR:** `r lopsided_wd$question[1]` produced the most lopsided result of the week — `r lopsided_wd$top_option[1]` alone took `r percent(lopsided_wd$top_share[1],1)` of the vote, nowhere close to the 1-in-7 share you'd expect if people picked days at random. `r closest_wd$question[1]` was the closest thing to a genuine debate: `r closest_wd$top_option[1]` led with just `r percent(closest_wd$top_share[1],1)`, the only question where the winner didn't crack a full quarter of the vote. And keep an eye on Tuesday — it wins **Most Productive** outright, and it doesn't even have sole ownership of **Longest-Feeling**: that one's a dead-even tie (`r summary_wd %>% filter(question == "Longest-Feeling") %>% pull(top_option)`, `r summary_wd %>% filter(question == "Longest-Feeling") %>% pull(top_share) %>% percent(1)` each). Tuesday is apparently both the most productive day of the week and, in a tie, one of the two that drags on forever.
+**TL;DR:** `r lopsided_wd$question[1]` produced the most lopsided result of the week — `r lopsided_wd$top_option[1]` alone took `r percent(lopsided_wd$top_share[1],1)` of the vote, nowhere close to the 1-in-7 share you'd expect if people picked days at random. `r closest_wd$question[1]` was the closest thing to a genuine debate: `r closest_wd$top_option[1]` led with just `r percent(closest_wd$top_share[1], accuracy = 0.1)`, the smallest winning share of the week — and only barely, just `r round(closest_margin_wd*100, 1)` points under `r second_closest_wd$question[1]`'s `r percent(second_closest_wd$top_share[1], accuracy = 0.1)`. And keep an eye on Tuesday — it wins **Most Productive** outright, and it doesn't even have sole ownership of **Longest-Feeling**: that one's a dead-even tie (`r summary_wd %>% filter(question == "Longest-Feeling") %>% pull(top_option)`, `r summary_wd %>% filter(question == "Longest-Feeling") %>% pull(top_share) %>% percent(1)` each). Tuesday is apparently both the most productive day of the week and, in a tie, one of the two that drags on forever.
 
 ```{r}
 #| label: summary-table
@@ -54,11 +56,43 @@ multi_option_table(summary_wd)
 ```
 
 ```{r}
+# multi_option_ci_plot() always sorts its y-axis by share (fct_reorder), which
+# would give each question's plot a different day order. This poll's shared
+# category domain reads better matching the day order used above instead, so
+# this is a one-off copy of that function with the axis order swapped out --
+# not worth generalizing into functions.R for a single poll's charts.
+multi_option_ci_plot_dayorder = function(data, question_selection, day_order) {
+  df = data %>% filter(question == question_selection)
+  k = nrow(df)
+  chance = 1 / k
+
+  df %>%
+    rowwise() %>%
+    mutate(
+      ci = list(binom.test(votes, N, p = chance)$conf.int),
+      ci_lower = ci[1],
+      ci_upper = ci[2]
+    ) %>%
+    ungroup() %>%
+    mutate(label = factor(option, levels = rev(day_order))) %>%
+    ggplot(aes(y = label, x = share, color = label)) +
+    geom_point(size = 2.5) +
+    geom_errorbarh(aes(xmin = ci_lower, xmax = ci_upper), height = 0.15) +
+    geom_vline(xintercept = chance, linetype = 2, color = "gray60") +
+    scale_x_continuous(labels = percent_format(accuracy = 1)) +
+    scale_color_random(k) +
+    labs(x = "Share of votes", y = NULL, title = question_selection) +
+    theme_minimal(base_size = 13) +
+    theme(legend.position = "none")
+}
+```
+
+```{r}
 #| label: fig-ci-favorite
 #| fig-cap: "Favorite: share of votes per day, with the 1-in-7 chance level dashed."
 #| fig-width: 7
 #| fig-height: 4.5
-multi_option_ci_plot(data, "Favorite")
+multi_option_ci_plot_dayorder(data, "Favorite", day_order)
 ```
 
 ```{r}
@@ -66,7 +100,7 @@ multi_option_ci_plot(data, "Favorite")
 #| fig-cap: "Worst: share of votes per day, with the 1-in-7 chance level dashed."
 #| fig-width: 7
 #| fig-height: 4.5
-multi_option_ci_plot(data, "Worst")
+multi_option_ci_plot_dayorder(data, "Worst", day_order)
 ```
 
 ```{r}
@@ -115,14 +149,39 @@ hq_rtp_wd %>%
 ```
 
 ```{r}
+# hq_rtp_plot() plots fct_rev(label) on a plain character label, which
+# forcats coerces via base factor() (alphabetical) before reversing -- so it
+# unintentionally sorts alphabetically rather than preserving row order. That
+# doesn't matter for two-option polls (one row per question), but here it
+# alphabetizes the days within each question instead of Monday-Sunday. One-off
+# copy for this poll's chart, ordering explicitly by day_order instead.
+hq_rtp_plot_dayorder = function(compare_df, day_order) {
+  question_order = sort(unique(compare_df$question))
+  level_order = as.vector(t(outer(question_order, day_order, paste, sep = ": ")))
+
+  compare_df %>%
+    mutate(label = factor(paste0(question, ": ", option), levels = level_order)) %>%
+    ggplot(aes(y = fct_rev(label))) +
+    geom_segment(aes(x = hq_share, xend = rtp_share, yend = label), color = "gray70", linewidth = 1) +
+    geom_point(aes(x = hq_share, color = "HQ"), size = 4) +
+    geom_point(aes(x = rtp_share, color = "RTP"), size = 4) +
+    scale_x_continuous(labels = percent_format(accuracy = 1)) +
+    scale_color_manual(values = c("HQ" = "#EDE939", "RTP" = "#104275"), name = NULL) +
+    labs(x = "Share of office's votes for the overall leader", y = NULL) +
+    theme_minimal(base_size = 13) +
+    theme(legend.position = "bottom")
+}
+```
+
+```{r}
 #| label: fig-hq-rtp
 #| fig-cap: "HQ vs RTP support for every day, every question."
 #| fig-width: 8
 #| fig-height: 9
-hq_rtp_plot(hq_rtp_shares_wd)
+hq_rtp_plot_dayorder(hq_rtp_shares_wd, day_order)
 ```
 
-No question clears the usual p < 0.05 bar for a whole-distribution office difference, though `r hq_rtp_wd %>% arrange(p_value) %>% slice(1) %>% pull(question)` comes close (p = `r hq_rtp_wd %>% arrange(p_value) %>% slice(1) %>% pull(p_value) %>% signif(2)`). That's a different kind of test than the leader-vs-leader comparison used on two-option polls, so it doesn't add to that running tally of significant gaps — but it's worth watching if this poll design comes back.
+`r hq_rtp_wd %>% arrange(p_value) %>% slice(1) %>% pull(question)` actually clears the usual p < 0.05 bar for a whole-distribution office difference — barely, at p = `r hq_rtp_wd %>% arrange(p_value) %>% slice(1) %>% pull(p_value) %>% signif(3)`. That's a different kind of test than the leader-vs-leader comparison used on two-option polls, so it doesn't add to that running tally of significant gaps, but it's worth noting: it's the same question where HQ and RTP picked entirely different winners.
 
 Two of the four questions did flip the top pick between offices this time: for `r flips_wd$question[1]`, HQ's pick was `r flips_wd$hq_winner[1]` while RTP's was `r flips_wd$rtp_winner[1]`; for `r flips_wd$question[2]`, HQ went with `r flips_wd$hq_winner[2]` while RTP went with `r flips_wd$rtp_winner[2]`. The other two questions (Favorite and Worst — the two most lopsided results of the week) had both offices landing on the same day. That brings the running flip tally to **`r flip_count_wd`**.
 
