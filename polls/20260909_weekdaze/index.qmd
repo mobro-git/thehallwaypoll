@@ -44,9 +44,11 @@ Four questions this week, and for the first time every single one offered all se
 summary_wd = summarize_multi_option(data)
 lopsided_wd = summary_wd %>% arrange(p_vs_uniform)
 closest_wd  = summary_wd %>% arrange(desc(p_vs_uniform)) %>% slice(1)
+second_closest_wd = summary_wd %>% arrange(top_share) %>% slice(2)
+closest_margin_wd = second_closest_wd$top_share[1] - closest_wd$top_share[1]
 ```
 
-**TL;DR:** `r lopsided_wd$question[1]` produced the most lopsided result of the week — `r lopsided_wd$top_option[1]` alone took `r percent(lopsided_wd$top_share[1],1)` of the vote, nowhere close to the 1-in-7 share you'd expect if people picked days at random. `r closest_wd$question[1]` was the closest thing to a genuine debate: `r closest_wd$top_option[1]` led with just `r percent(closest_wd$top_share[1],1)`, the smallest winning share of the week. And keep an eye on Tuesday — it wins **Most Productive** outright, and it doesn't even have sole ownership of **Longest-Feeling**: that one's a dead-even tie (`r summary_wd %>% filter(question == "Longest-Feeling") %>% pull(top_option)`, `r summary_wd %>% filter(question == "Longest-Feeling") %>% pull(top_share) %>% percent(1)` each). Tuesday is apparently both the most productive day of the week and, in a tie, one of the two that drags on forever.
+**TL;DR:** `r lopsided_wd$question[1]` produced the most lopsided result of the week — `r lopsided_wd$top_option[1]` alone took `r percent(lopsided_wd$top_share[1],1)` of the vote, nowhere close to the 1-in-7 share you'd expect if people picked days at random. `r closest_wd$question[1]` was the closest thing to a genuine debate: `r closest_wd$top_option[1]` led with just `r percent(closest_wd$top_share[1],1)`, the smallest winning share of the week — and only barely, just `r round(closest_margin_wd*100, 1)` points under `r second_closest_wd$question[1]`'s `r percent(second_closest_wd$top_share[1],1)`. And keep an eye on Tuesday — it wins **Most Productive** outright, and it doesn't even have sole ownership of **Longest-Feeling**: that one's a dead-even tie (`r summary_wd %>% filter(question == "Longest-Feeling") %>% pull(top_option)`, `r summary_wd %>% filter(question == "Longest-Feeling") %>% pull(top_share) %>% percent(1)` each). Tuesday is apparently both the most productive day of the week and, in a tie, one of the two that drags on forever.
 
 ```{r}
 #| label: summary-table
