@@ -140,7 +140,7 @@ ul.task-list li input[type="checkbox"] {
         
       </div>
     </div>
-<div id="dashboard-collapse" class="navbar-collapse collapse"><ul class="navbar-nav navbar-nav-scroll me-auto" role="tablist"><li class="nav-item" role="presentation"><a id="tab-overview" class="nav-link active" data-bs-toggle="tab" role="tab" data-bs-target="#overview" data-scrolling="false" href="#overview" aria-controls="overview" aria-selected="true"><span class="nav-link-text">Overview</span></a></li><li class="nav-item" role="presentation"><a id="tab-hq-rtp" class="nav-link" data-bs-toggle="tab" role="tab" data-bs-target="#hq-rtp" data-scrolling="false" href="#hq-rtp" aria-controls="hq-rtp" aria-selected="false"><span class="nav-link-text">HQ + RTP</span></a></li></ul></div></div>
+<div id="dashboard-collapse" class="navbar-collapse collapse"><ul class="navbar-nav navbar-nav-scroll me-auto" role="tablist"><li class="nav-item" role="presentation"><a id="tab-overview" class="nav-link active" data-bs-toggle="tab" role="tab" data-bs-target="#overview" data-scrolling="false" href="#overview" aria-controls="overview" aria-selected="true"><span class="nav-link-text">Overview</span></a></li><li class="nav-item" role="presentation"><a id="tab-tie-tracker" class="nav-link" data-bs-toggle="tab" role="tab" data-bs-target="#tie-tracker" data-scrolling="false" href="#tie-tracker" aria-controls="tie-tracker" aria-selected="false"><span class="nav-link-text">Tie Tracker</span></a></li><li class="nav-item" role="presentation"><a id="tab-hq-rtp" class="nav-link" data-bs-toggle="tab" role="tab" data-bs-target="#hq-rtp" data-scrolling="false" href="#hq-rtp" aria-controls="hq-rtp" aria-selected="false"><span class="nav-link-text">HQ + RTP</span></a></li></ul></div></div>
 </nav>
 </header></header>
 <!-- content -->
@@ -154,12 +154,12 @@ grid-auto-rows: minmax(0, 1fr);">
 <div id="overview" class="dashboard-page tab-pane show active html-fill-item html-fill-container" data-orientation="columns" aria-labelledby="tab-overview">
 <div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-columns: minmax(3em, 1fr);
 grid-auto-rows: minmax(0, 1fr);">
-<div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-rows: minmax(3em, max-content) minmax(3em, 1fr); grid-auto-columns: minmax(0, 1fr);">
+<div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-rows: minmax(3em, max-content) minmax(3em, max-content); grid-auto-columns: minmax(0, 1fr);">
 <div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-columns: minmax(3em, 1fr);
 grid-auto-rows: minmax(0, 1fr);">
 <div class="card html-fill-item html-fill-container bslib-card" data-fill="false" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
 <div class="card-body html-fill-item html-fill-container">
-<p><strong><em>82</em></strong> polls conducted &amp; <strong><em>4409</em></strong> votes counted</p>
+<p><strong><em>86</em></strong> polls conducted &amp; <strong><em>4768</em></strong> votes counted</p>
 </div>
 <bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
     <template>Expand</template>
@@ -168,36 +168,46 @@ grid-auto-rows: minmax(0, 1fr);">
     </span>
 </bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
 </div>
-<div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-columns: minmax(3em, 1fr) minmax(3em, 1fr);
+<div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-columns: minmax(3em, 1fr);
 grid-auto-rows: minmax(0, 1fr);">
 <div class="card html-fill-item html-fill-container bslib-card" data-fill="false" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
 <div class="card-body html-fill-item html-fill-container">
 <p><span style="color: #4B824F">Highest</span> vote count: <strong><em>75</em></strong> for <strong><em>No</em></strong> (Poll: Polarizing Provisions, Question: Is cereal a soup?)</p>
 <p><span style="color: #4B824F">Most decisive vote ever</span>: <strong><em>Ice Cream</em></strong> over <strong><em>Frozen Yogurt</em></strong>, 65–11 (Poll: Dessert Match-Ups Part I, Question: Frozen; p = 1.8^{-10})</p>
 <p><span style="color: #4B824F">Most unanimous</span> vote: <strong><em>Curve</em></strong> with a <em>resounding</em> <strong><em>87.1</em></strong> % of the votes (Poll: Opposites, Question: What’s the opposite of a straight line?)</p>
-<p><span style="color: #824B4B">Lowest</span> vote count: <strong><em>3</em></strong> for <strong><em>Seasonal Beer</em></strong> (Poll: Holiday Drinks, Question: holiday drinks)</p>
-<p><span style="color: #824B4B">Least unanimous</span> vote: <strong><em>Seasonal Beer</em></strong> with <strong><em>7.89</em></strong> % of the votes (Poll: Holiday Drinks, Question: holiday drinks)</p>
-<p><span style="color: #6425B8">Closest vote(s) ever</span>: a <strong><em>3-way tie</em></strong> for closest — see the tie tracker for the full list.</p>
+<!-- [Lowest]{style="color: #824B4B"} vote count: ***0*** - tied across 2 options: Saturday (Week Daze - Worst); Saturday (Week Daze - Longest-Feeling) -->
+<!-- [Lowest (non-zero)]{style="color: #824B4B"} vote count: ***1*** - tied across 3 options: Wednesday (Week Daze - Favorite); Friday (Week Daze - Worst); Sunday (Week Daze - Longest-Feeling) -->
+<!-- [Least unanimous]{style="color: #824B4B"} vote: ***0%*** of the votes - tied across 2 options: Saturday (Week Daze - Worst); Saturday (Week Daze - Longest-Feeling) -->
+<p><span style="color: #824B4B">Least unanimous (non-zero)</span> vote: <strong><em>Wednesday</em></strong> with <strong><em>1.09%</em></strong> of the votes (Poll: Week Daze, Question: Favorite)</p>
+<p><span style="color: #824B4B">Most-spurned option ever</span>: Wednesday got just 0.08x its fair share (1 of 92 votes across 7 options; Week Daze - Favorite) <br><span style="font-size: 0.85em; color: gray;">This compares each option’s share of votes to the chance level for its own question (1/<em>k</em>, where <em>k</em> is however many options that question had) — the lowest such ratio, among options that got at least one vote, is comparable no matter how many-way the poll was.</span></p>
+<p><span style="color: #6425B8">Closest vote(s) ever</span>: a <strong><em>3-way tie</em></strong> for closest <em>(closest possible result in a 2-way poll — a dead-even 50/50 split)</em> — see the tie tracker tab. <br><span style="font-size: 0.85em; color: gray;">This is scoped to two-option questions only, since a dead-even split is the closest a vote can possibly land. Multi-option ties for the lead are a different kind of tie — tracked separately in the tie tracker — and don’t necessarily mean the overall result was close.</span></p>
 </div>
 <bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
     <template>Expand</template>
     <span class="bslib-full-screen-enter badge rounded-pill">
         <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
     </span>
-</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div><div class="card html-fill-item html-fill-container bslib-card" data-title="Tie tracker" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
+</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
+</div>
+</div>
+</div>
+</div><div id="tie-tracker" class="dashboard-page tab-pane grid-skip html-fill-item html-fill-container" data-orientation="columns" aria-labelledby="tab-tie-tracker">
+<div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-columns: minmax(3em, 1fr);
+grid-auto-rows: minmax(0, 1fr);">
+<div class="card html-fill-item html-fill-container bslib-card" data-title="Tie tracker" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
 <div class="card-header"><div class="card-title"><span style="display: inline">
 Tie tracker
 </span></div></div>
 <div class="card-body html-fill-item html-fill-container">
-<p><strong><em>3</em></strong> questions have ended in a dead-even split so far:</p>
+<p><strong><em>4</em></strong> questions have ended in a tie for the lead so far — 3 as a dead-even two-option split, and 1 as a shared top spot among more than two options:</p>
 </div>
 <div class="cell card-body html-fill-item html-fill-container">
 <div class="cell-output-display html-fill-item html-fill-container">
 <table class="caption-top table table-sm table-striped small">
 <colgroup>
-<col style="width: 34%">
-<col style="width: 18%">
-<col style="width: 47%">
+<col style="width: 24%">
+<col style="width: 15%">
+<col style="width: 60%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -222,6 +232,11 @@ Tie tracker
 <td style="text-align: left;">Cinnamon</td>
 <td style="text-align: left;">23-23 (Churro vs Cinnamon Bun)</td>
 </tr>
+<tr class="even">
+<td style="text-align: left;">Week Daze</td>
+<td style="text-align: left;">Longest-Feeling</td>
+<td style="text-align: left;">23 votes each, tied for 1st of 7 options (Tuesday vs Wednesday)</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -233,8 +248,6 @@ Tie tracker
     </span>
 </bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
 </div>
-</div>
-</div>
 </div><div id="hq-rtp" class="dashboard-page tab-pane grid-skip html-fill-item html-fill-container" data-orientation="columns" aria-labelledby="tab-hq-rtp">
 <div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-columns: minmax(3em, 1fr) minmax(3em, 1fr);
 grid-auto-rows: minmax(0, 1fr);">
@@ -244,7 +257,7 @@ grid-auto-rows: minmax(0, 1fr);">
 <div class="card html-fill-item html-fill-container bslib-card" data-fill="false" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
 <div class="card-body html-fill-item html-fill-container">
 <p>Cumulative correlation between HQ’s and RTP’s vote shares, across every option RTP has voted on since it joined the poll at Earth Day.</p>
-<p><strong><em>0.83</em></strong> cumulative Alignment Index (Earth Day → Fair Fare)</p>
+<p><strong><em>0.89</em></strong> cumulative Alignment Index (Earth Day → Week Daze)</p>
 </div>
 <bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
     <template>Expand</template>
@@ -295,7 +308,7 @@ grid-auto-rows: minmax(0, 1fr);">
 grid-auto-rows: minmax(0, 1fr);">
 <div class="card html-fill-item html-fill-container bslib-card" data-fill="false" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
 <div class="card-body html-fill-item html-fill-container">
-<p><strong><em>9</em></strong> questions where HQ and RTP would have crowned different winners on their own, since RTP joined the poll.</p>
+<p><strong><em>11</em></strong> questions where HQ and RTP would have crowned different winners on their own, since RTP joined the poll.</p>
 <p><span style="color: #82704B">Biggest HQ/RTP gap on record</span>: <strong><em>Sunscreen</em></strong> (Sun Protection) — HQ 86% vs RTP 63.3% for <em>Lotion</em> (p = 0.038). It’s also the only office gap that’s cleared statistical significance so far.</p>
 </div>
 <bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
@@ -311,7 +324,7 @@ grid-auto-rows: minmax(0, 1fr);">
 RTP participation
 </span></div></div>
 <div class="card-body html-fill-item html-fill-container">
-<p>RTP has cast <strong><em>1255</em></strong> of the <strong><em>3162</em></strong> votes counted since it joined — <strong><em>39.7%</em></strong> of the total. That share hasn’t trended up or down so much as bounced around a fairly consistent range, poll to poll:</p>
+<p>RTP has cast <strong><em>1384</em></strong> of the <strong><em>3521</em></strong> votes counted since it joined — <strong><em>39.3%</em></strong> of the total. That share hasn’t trended up or down so much as bounced around a fairly consistent range, poll to poll:</p>
 </div>
 <div class="cell card-body html-fill-item html-fill-container">
 <div class="cell-output-display html-fill-item html-fill-container">
