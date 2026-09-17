@@ -111,7 +111,7 @@ most_spurned_text = if (most_spurned_tied) {
 # side by side, so we keep that same pairing here.
 hq_rtp_all = data %>%
   group_by(series_no, series, question) %>%
-  filter(sum(rtp_votes) > 0) %>% #n() == 2, 
+  filter(n() == 2, sum(rtp_votes) > 0) %>%
   group_modify(~ {
     df    = .x %>% arrange(desc(votes))
     top   = df %>% slice(1)
