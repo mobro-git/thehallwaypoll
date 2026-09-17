@@ -76,13 +76,8 @@ leastunanimous_nonzero_rows = nonzero_votes %>% filter(share == leastunanimous_p
 leastunanimous_nonzero_tied = nrow(leastunanimous_nonzero_rows) > 1
 leastunanimous_nonzero_detail = format_ties(leastunanimous_nonzero_rows)
 
-# Raw vote counts (and raw shares) aren't comparable across polls with a
-# different number of options -- a 7-way poll mechanically splits votes
-# thinner than a 2-way poll, so its runt option will look "lower" than a
-# 2-way poll's runt even when neither is unusually spurned. Normalizing each
-# option's share against the chance level for that question (1/k, the same
-# baseline drawn in multi_option_ci_plot()) makes "how badly did this option
-# underperform" comparable no matter how many options the question had.
+# Raw vote counts (and raw shares) aren't comparable across polls with a different number of options -- a 7-way poll mechanically splits votes thinner than a 2-way poll, so its runt option will look "lower" than a 2-way poll's runt even when neither is unusually spurned. Normalizing each option's share against the chance level for that question (1/k, the same baseline drawn in multi_option_ci_plot()) makes "how badly did this option underperform" comparable no matter how many options the question had.
+
 chance_data = data %>%
   group_by(series_no, series, question) %>%
   mutate(k = n(), chance_share = 100 / k, ratio_to_chance = share / chance_share) %>%
@@ -116,7 +111,7 @@ most_spurned_text = if (most_spurned_tied) {
 # side by side, so we keep that same pairing here.
 hq_rtp_all = data %>%
   group_by(series_no, series, question) %>%
-  filter(n() == 2, sum(rtp_votes) > 0) %>%
+  filter(sum(rtp_votes) > 0) %>% #n() == 2, 
   group_modify(~ {
     df    = .x %>% arrange(desc(votes))
     top   = df %>% slice(1)
@@ -292,19 +287,21 @@ participation_by_poll = rtp_era %>%
 [Most unanimous]{style="color: #4B824F"} vote: ***`r mostunanimous`*** with a *resounding* ***`r mostunanimous_pct`*** % of the votes
 (Poll: `r mostunanimous_poll`, Question: `r mostunanimous_question`)
 
-[Lowest]{style="color: #824B4B"} vote count: ***`r fewestvotes`*** `r if (fewest_tied) sprintf("- tied across %d options: %s", nrow(fewest_rows), fewest_detail) else sprintf("for ***%s*** (Poll: %s, Question: %s)", leastvoted, fewest_rows$series[1], fewest_rows$question[1])`
+<!-- [Lowest]{style="color: #824B4B"} vote count: ***`r fewestvotes`*** `r if (fewest_tied) sprintf("- tied across %d options: %s", nrow(fewest_rows), fewest_detail) else sprintf("for ***%s*** (Poll: %s, Question: %s)", leastvoted, fewest_rows$series[1], fewest_rows$question[1])` -->
 
-[Lowest (non-zero)]{style="color: #824B4B"} vote count: ***`r fewestvotes_nonzero`*** `r if (fewest_nonzero_tied) sprintf("- tied across %d options: %s", nrow(fewest_nonzero_rows), fewest_nonzero_detail) else sprintf("for ***%s*** (Poll: %s, Question: %s)", fewest_nonzero_rows$option[1], fewest_nonzero_rows$series[1], fewest_nonzero_rows$question[1])`
+<!-- [Lowest (non-zero)]{style="color: #824B4B"} vote count: ***`r fewestvotes_nonzero`*** `r if (fewest_nonzero_tied) sprintf("- tied across %d options: %s", nrow(fewest_nonzero_rows), fewest_nonzero_detail) else sprintf("for ***%s*** (Poll: %s, Question: %s)", fewest_nonzero_rows$option[1], fewest_nonzero_rows$series[1], fewest_nonzero_rows$question[1])` -->
 
-[Least unanimous]{style="color: #824B4B"} vote: `r if (leastunanimous_tied) sprintf("***%s%%*** of the votes - tied across %d options: %s", leastunanimous_pct, nrow(leastunanimous_rows), leastunanimous_detail) else sprintf("***%s*** with ***%s%%*** of the votes (Poll: %s, Question: %s)", leastunanimous, leastunanimous_pct, leastunanimous_rows$series[1], leastunanimous_rows$question[1])`
+<!-- [Least unanimous]{style="color: #824B4B"} vote: `r if (leastunanimous_tied) sprintf("***%s%%*** of the votes - tied across %d options: %s", leastunanimous_pct, nrow(leastunanimous_rows), leastunanimous_detail) else sprintf("***%s*** with ***%s%%*** of the votes (Poll: %s, Question: %s)", leastunanimous, leastunanimous_pct, leastunanimous_rows$series[1], leastunanimous_rows$question[1])` -->
 
 [Least unanimous (non-zero)]{style="color: #824B4B"} vote: `r if (leastunanimous_nonzero_tied) sprintf("***%s%%*** of the votes - tied across %d options: %s", leastunanimous_pct_nonzero, nrow(leastunanimous_nonzero_rows), leastunanimous_nonzero_detail) else sprintf("***%s*** with ***%s%%*** of the votes (Poll: %s, Question: %s)", leastunanimous_nonzero_rows$option[1], leastunanimous_pct_nonzero, leastunanimous_nonzero_rows$series[1], leastunanimous_nonzero_rows$question[1])`
 
 [Most-spurned option ever]{style="color: #824B4B"}: `r most_spurned_text`
-<br><span style="font-size: 0.85em; color: gray;">"Lowest" and "least unanimous" get thinner just from a question having more options, so they don't say much about how a specific option actually did against expectations. This instead compares each option's share to the chance level for its own question (1/*k*, where *k* is however many options that question had) — the lowest such ratio, among options that got at least one vote, is comparable no matter how many-way the poll was.</span>
+<br><span style="font-size: 0.85em; color: gray;">This compares each option's share of votes to the chance level for its own question (1/*k*, where *k* is however many options that question had) — the lowest such ratio, among options that got at least one vote, is comparable no matter how many-way the poll was.</span>
 
-[Closest vote(s) ever]{style="color: #6425B8"}: a ***`r nrow(two_option_ties)`-way tie*** for closest *(closest possible result in a 2-way poll — a dead-even 50/50 split)* — see the tie tracker below.
+[Closest vote(s) ever]{style="color: #6425B8"}: a ***`r nrow(two_option_ties)`-way tie*** for closest *(closest possible result in a 2-way poll — a dead-even 50/50 split)* — see the tie tracker tab.
 <br><span style="font-size: 0.85em; color: gray;">This is scoped to two-option questions only, since a dead-even split is the closest a vote can possibly land. Multi-option ties for the lead are a different kind of tie — tracked separately in the tie tracker — and don't necessarily mean the overall result was close.</span>
+
+# Tie Tracker
 
 ::: {.card title="Tie tracker"}
 
