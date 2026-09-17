@@ -356,11 +356,9 @@ all_ties %>%
 
 ### Alignment Index
 
-Cumulative correlation between HQ's and RTP's vote shares, across every option RTP has voted on since it joined the poll at Earth Day:
+Cumulative Alignment Index between HQ's and RTP's vote shares, across every option RTP has voted on (Earth Day → `r latest_complete_series_name`): ***`r round(cumulative_alignment_index, 2)`***
 
-***`r round(cumulative_alignment_index, 2)`*** cumulative Alignment Index (Earth Day → `r latest_complete_series_name`)
-
-This is a different calculation from the per-poll bars (see Alignment by poll tab to the right), not their average. It's also asking a stricter question than "did the two offices pick the same winner" -- it's asking whether they were equally *enthusiastic* about every option. Each per-poll bar answers that on so few votes that it can swing wildly: Fair Fare reads as negative even though HQ and RTP agreed on every winner, just with slightly different enthusiasm. This number pools every vote from every poll instead, so it's a far more reliable read on how closely the two offices actually vote alike.
+This is a different calculation from the per-poll index (see Alignment by poll tab to the right), not their average. It's asking a stricter question than "did the two offices pick the same winner" -- it's asking whether they were equally *enthusiastic* about every option. Each per-poll index answers that on so few votes that it can swing wildly: Fair Fare reads as negative even though HQ and RTP agreed on every winner, just with slightly different enthusiasm. This number pools every vote from every poll, so it's a far more reliable read on how closely the two offices actually vote alike.
 
 ### Alignment superlatives
 
@@ -370,9 +368,9 @@ This is a different calculation from the per-poll bars (see Alignment by poll ta
 
 ### Flips & gaps
 
-***`r total_flips`*** questions where HQ and RTP would have crowned different winners on their own, since RTP joined the poll.
+[***`r total_flips`***]{style="color: #82704B"} questions where HQ and RTP would have crowned different winners on their own, since RTP joined the poll (see Different crowns tabs for the winners).
 
-[Biggest HQ/RTP gap on record]{style="color: #82704B"}: ***`r biggest_gap$question`*** (`r biggest_gap$series`) — HQ `r round(biggest_gap$hq_share*100,1)`% vs RTP `r round(biggest_gap$rtp_share*100,1)`% for *`r biggest_gap$option`* (p = `r signif(biggest_gap$p_value,2)`). `r significance_note`
+[Biggest HQ/RTP gap on record]{style="color: #82704B"}: ***`r biggest_gap$question`*** (`r biggest_gap$series`) — HQ `r round(biggest_gap$hq_share*100,1)`% vs RTP `r round(biggest_gap$rtp_share*100,1)`% for *`r biggest_gap$option`* (p = `r signif(biggest_gap$p_value,2)`). `r significance_note` <br><span style="font-size: 0.85em; color: gray;">This stat requires a *shared* winner and asks "how differently did the two offices feel about *this one thing*?".</span>
 
 ## Graphs
 
@@ -417,7 +415,7 @@ ggplot(participation_by_poll, aes(x = fct_reorder(series, series_no), y = rtp_sh
 
 #### Different crowns
 
-Every question where HQ and RTP would have crowned different winners on their own, since RTP joined the poll -- each office's pick and how far ahead of their own runner-up it was, sorted by the two margins combined (a rough read on how emphatic the standoff was, not on how far apart the offices' support for the same option was -- they didn't pick the same option here).
+Every question where HQ and RTP would have crowned different winners on their own, since RTP joined the poll -- each office's pick and how far ahead of their own runner-up it was, sorted by the two margins combined, the "Standoff score" (a rough read on how emphatic the standoff was, not on how far apart the offices' support for the same option was -- they didn't pick the same option here).
 
 ```{r}
 #| label: tbl-different-crowns
@@ -427,7 +425,7 @@ different_crowns %>%
     Question = question,
     `HQ pick` = sprintf("%s (+%.1f pts)", hq_winner, hq_margin_pts),
     `RTP pick` = sprintf("%s (+%.1f pts)", rtp_winner, rtp_margin_pts),
-    `Combined margin` = sprintf("%.1f pts", total_margin_pts)
+    `Standoff score` = sprintf("%.1f pts", total_margin_pts)
   ) %>%
   knitr::kable()
 ```
