@@ -160,6 +160,29 @@ cumulative_alignment_index = cumulative_alignment(latest_complete_series)
 total_flips = flip_count_so_far(latest_complete_series)
 latest_complete_series_name = data %>% filter(series_no == latest_complete_series) %>% pull(series) %>% unique()
 
+# Detail behind total_flips above: every question (any number of options)
+# where HQ's and RTP's own winners differed, with each office's winning
+# margin -- how far ahead their pick was of their own runner-up -- rather
+# than any comparison across offices, since the two offices didn't pick the
+# same option to begin with.
+different_crowns = data %>%
+  filter(series_no >= 12, series_no <= latest_complete_series) %>%
+  group_by(series_no, series, question) %>%
+  filter(sum(rtp_votes) > 0) %>%
+  group_modify(~ {
+    hq_sorted  = .x %>% arrange(desc(hq_votes))
+    rtp_sorted = .x %>% arrange(desc(rtp_votes))
+    tibble(
+      hq_winner      = hq_sorted$option[1],
+      hq_margin_pts  = (hq_sorted$hq_votes[1] - hq_sorted$hq_votes[2]) / sum(.x$hq_votes) * 100,
+      rtp_winner     = rtp_sorted$option[1],
+      rtp_margin_pts = (rtp_sorted$rtp_votes[1] - rtp_sorted$rtp_votes[2]) / sum(.x$rtp_votes) * 100
+    )
+  }) %>%
+  ungroup() %>%
+  filter(hq_winner != rtp_winner) %>%
+  arrange(series_no)
+
 # How many option-level data points actually feed the cumulative correlation
 # -- mirrors cumulative_alignment()'s own filtering -- so the explanation
 # below can cite a real, current number instead of a stale hard-coded one.
@@ -386,6 +409,22 @@ ggplot(participation_by_poll, aes(x = fct_reorder(series, series_no), y = rtp_sh
   labs(x = NULL, y = "RTP share of that poll's votes") +
   theme_minimal(base_size = 12) +
   theme(axis.text.x = element_text(angle = 30, hjust = 1))
+```
+
+#### Different crowns
+
+Every question where HQ and RTP would have crowned different winners on their own, since RTP joined the poll -- each office's pick and how far ahead of their own runner-up it was.
+
+```{r}
+#| label: tbl-different-crowns
+different_crowns %>%
+  transmute(
+    Poll = series,
+    Question = question,
+    `HQ pick` = sprintf("%s (+%.1f pts)", hq_winner, hq_margin_pts),
+    `RTP pick` = sprintf("%s (+%.1f pts)", rtp_winner, rtp_margin_pts)
+  ) %>%
+  knitr::kable()
 ```
 
 :::
