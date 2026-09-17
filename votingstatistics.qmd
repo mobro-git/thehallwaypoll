@@ -111,7 +111,7 @@ most_spurned_text = if (most_spurned_tied) {
 # side by side, so we keep that same pairing here.
 hq_rtp_all = data %>%
   group_by(series_no, series, question) %>%
-  filter(sum(rtp_votes) > 0) %>% #n() == 2, 
+  filter(n() == 2, sum(rtp_votes) > 0) %>%
   group_modify(~ {
     df    = .x %>% arrange(desc(votes))
     top   = df %>% slice(1)
@@ -333,25 +333,7 @@ Cumulative correlation between HQ's and RTP's vote shares, across every option R
 
 ***`r round(cumulative_alignment_index, 2)`*** cumulative Alignment Index (Earth Day → `r latest_complete_series_name`)
 
-This is a different statistic from the per-poll bars below, not just a smoothed-out version of them -- so it won't sit at their average, and there's no reason to expect it to land in their middle. Each bar comes from one poll's own small sample: as few as 4-7 leader pairs for a two-option poll, or one poll's worth of option shares for a multi-option one. A sample that small is noisy -- a couple of options where HQ and RTP's *enthusiasm* ranked slightly differently is enough to swing that one poll's number a long way, or even flip its sign, even in a poll where the offices agreed on every single winner (see Fair Fare, below). The cumulative figure instead pools every option from every poll since RTP joined -- currently ***`r alignment_pool_n`*** data points -- into one correlation, which drowns out that poll-to-poll noise and settles on a much more stable read of how closely the two offices actually track each other overall.
-
-### Alignment by poll
-
-```{r}
-#| label: fig-alignment-trend
-#| fig-cap: "HQ/RTP correlation, one poll at a time. Two-option polls use the leader-only method; polls where every question has more than two options (no single leader pair to compare) use the all-shares method instead -- the same distinction each poll's own post draws."
-ggplot(alignment_by_poll_all, aes(x = fct_reorder(series, series_no), y = alignment, fill = method)) +
-  geom_col(width = 0.6) +
-  geom_hline(yintercept = cumulative_alignment_index, linetype = "dashed", color = "gray40") +
-  geom_text(aes(label = round(alignment, 2)), vjust = -0.5, size = 3.5) +
-  scale_y_continuous(limits = c(min(0, min(alignment_by_poll_all$alignment) - 0.05), 1)) +
-  scale_fill_manual(values = c("two-option (leader only)" = "#4B6B82", "multi-option (all shares)" = "#8B5FBF"), name = NULL) +
-  labs(x = NULL, y = "Alignment (that poll only)") +
-  theme_minimal(base_size = 12) +
-  theme(axis.text.x = element_text(angle = 30, hjust = 1), legend.position = "bottom")
-```
-
-The dashed line is that same cumulative figure, for reference -- it's plotted here to show how much any single poll's bar can wander from it, not because the bars are expected to average out to it.
+This is a different statistic from the per-poll Alignment by poll chart (see the Participation section's second tab), not just a smoothed-out version of it -- so it won't sit at that chart's average, and there's no reason to expect it to land in the middle of those bars. Each bar there comes from one poll's own small sample: as few as 4-7 leader pairs for a two-option poll, or one poll's worth of option shares for a multi-option one. A sample that small is noisy -- a couple of options where HQ and RTP's *enthusiasm* ranked slightly differently is enough to swing that one poll's number a long way, or even flip its sign, even in a poll where the offices agreed on every single winner (Fair Fare reads as slightly negative for exactly this reason). The cumulative figure instead pools every option from every poll since RTP joined -- currently ***`r alignment_pool_n`*** data points -- into one correlation, which drowns out that poll-to-poll noise and settles on a much more stable read of how closely the two offices actually track each other overall.
 
 ### Alignment superlatives
 
@@ -367,7 +349,11 @@ The dashed line is that same cumulative figure, for reference -- it's plotted he
 
 ## Participation
 
-::: {.card title="RTP participation"}
+### RTP participation
+
+::: {.panel-tabset}
+
+#### Participation share
 
 RTP has cast ***`r rtp_total_votes`*** of the ***`r rtp_total_votes + hq_total_votes_since_rtp`*** votes counted since it joined — ***`r round(rtp_overall_share*100,1)`%*** of the total. That share hasn't trended up or down so much as bounced around a fairly consistent range, poll to poll:
 
@@ -382,6 +368,24 @@ ggplot(participation_by_poll, aes(x = fct_reorder(series, series_no), y = rtp_sh
   labs(x = NULL, y = "RTP share of that poll's votes") +
   theme_minimal(base_size = 12) +
   theme(axis.text.x = element_text(angle = 30, hjust = 1))
+```
+
+#### Alignment by poll
+
+The cumulative Alignment Index (see the Alignment section above) pools every option from every poll into one correlation; this instead shows each poll's own alignment on its own, so you can see how much any single poll's read can wander from that cumulative figure (dashed line) -- see the Alignment section above for why that's expected rather than a discrepancy.
+
+```{r}
+#| label: fig-alignment-trend
+#| fig-cap: "HQ/RTP correlation, one poll at a time. Two-option polls use the leader-only method; polls where every question has more than two options (no single leader pair to compare) use the all-shares method instead -- the same distinction each poll's own post draws."
+ggplot(alignment_by_poll_all, aes(x = fct_reorder(series, series_no), y = alignment, fill = method)) +
+  geom_col(width = 0.6) +
+  geom_hline(yintercept = cumulative_alignment_index, linetype = "dashed", color = "gray40") +
+  geom_text(aes(label = round(alignment, 2)), vjust = -0.5, size = 3.5) +
+  scale_y_continuous(limits = c(min(0, min(alignment_by_poll_all$alignment) - 0.05), 1)) +
+  scale_fill_manual(values = c("two-option (leader only)" = "#4B6B82", "multi-option (all shares)" = "#8B5FBF"), name = NULL) +
+  labs(x = NULL, y = "Alignment (that poll only)") +
+  theme_minimal(base_size = 12) +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1), legend.position = "bottom")
 ```
 
 :::
