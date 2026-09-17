@@ -163,6 +163,17 @@ alignment_by_poll_all = bind_rows(alignment_by_poll, multi_option_alignment_by_p
 latest_complete_series = max(data$series_no)
 cumulative_alignment_index = cumulative_alignment(latest_complete_series)
 total_flips = flip_count_so_far(latest_complete_series)
+latest_complete_series_name = data %>% filter(series_no == latest_complete_series) %>% pull(series) %>% unique()
+
+# How many option-level data points actually feed the cumulative correlation
+# -- mirrors cumulative_alignment()'s own filtering -- so the explanation
+# below can cite a real, current number instead of a stale hard-coded one.
+alignment_pool_n = data %>%
+  filter(series_no >= 12, series_no <= latest_complete_series) %>%
+  group_by(series_no, question) %>%
+  filter(sum(rtp_votes) > 0) %>%
+  ungroup() %>%
+  nrow()
 
 most_aligned_poll  = alignment_by_poll_all %>% arrange(desc(alignment)) %>% slice(1)
 least_aligned_poll = alignment_by_poll_all %>% arrange(alignment) %>% slice(1)
@@ -323,7 +334,9 @@ all_ties %>%
 
 Cumulative correlation between HQ's and RTP's vote shares, across every option RTP has voted on since it joined the poll at Earth Day.
 
-***`r round(cumulative_alignment_index, 2)`*** cumulative Alignment Index (Earth Day → `r tail(alignment_by_poll$series, 1)`)
+***`r round(cumulative_alignment_index, 2)`*** cumulative Alignment Index (Earth Day → `r latest_complete_series_name`)
+
+This is a different statistic from the per-poll bars below, not just a smoothed-out version of them -- so it won't sit at their average, and there's no reason to expect it to land in their middle. Each bar comes from one poll's own small sample: as few as 4-7 leader pairs for a two-option poll, or one poll's worth of option shares for a multi-option one. A sample that small is noisy -- a couple of options where HQ and RTP's *enthusiasm* ranked slightly differently is enough to swing that one poll's number a long way, or even flip its sign, even in a poll where the offices agreed on every single winner (see Fair Fare, below). The cumulative figure instead pools every option from every poll since RTP joined -- currently ***`r alignment_pool_n`*** data points -- into one correlation, which drowns out that poll-to-poll noise and settles on a much more stable read of how closely the two offices actually track each other overall.
 
 ### Alignment by poll
 
@@ -340,6 +353,8 @@ ggplot(alignment_by_poll_all, aes(x = fct_reorder(series, series_no), y = alignm
   theme_minimal(base_size = 12) +
   theme(axis.text.x = element_text(angle = 30, hjust = 1), legend.position = "bottom")
 ```
+
+The dashed line is that same cumulative figure, for reference -- it's plotted here to show how much any single poll's bar can wander from it, not because the bars are expected to average out to it.
 
 ### Alignment superlatives
 
