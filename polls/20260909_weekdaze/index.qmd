@@ -42,6 +42,8 @@ question_colors = extract_colors(fig_overview_wd, sort(unique(data$question)))
 fig_overview_wd
 ```
 
+In honor of Labor Day, we asked you how you feel about your labored days.
+
 # How decisive were these results?
 
 Four questions this week, and for the first time every single one offered all seven days of the week as an option instead of a simple either-or. That changes the math a bit: "is the split different from 50/50" doesn't apply anymore, so instead we're asking "is the split different from everyone-equally-likely" (1-in-7, about 14.3% each) using a chi-square goodness-of-fit test.
