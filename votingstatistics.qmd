@@ -164,7 +164,10 @@ latest_complete_series_name = data %>% filter(series_no == latest_complete_serie
 # where HQ's and RTP's own winners differed, with each office's winning
 # margin -- how far ahead their pick was of their own runner-up -- rather
 # than any comparison across offices, since the two offices didn't pick the
-# same option to begin with.
+# same option to begin with. total_margin_pts (the two margins summed) is a
+# rough "how emphatic was the standoff" score: high when both offices were
+# individually decisive about their own, differing pick, not a measure of
+# how far apart their support for the same option was (there isn't one here).
 different_crowns = data %>%
   filter(series_no >= 12, series_no <= latest_complete_series) %>%
   group_by(series_no, series, question) %>%
@@ -181,7 +184,8 @@ different_crowns = data %>%
   }) %>%
   ungroup() %>%
   filter(hq_winner != rtp_winner) %>%
-  arrange(series_no)
+  mutate(total_margin_pts = hq_margin_pts + rtp_margin_pts) %>%
+  arrange(desc(total_margin_pts))
 
 # How many option-level data points actually feed the cumulative correlation
 # -- mirrors cumulative_alignment()'s own filtering -- so the explanation
@@ -413,7 +417,7 @@ ggplot(participation_by_poll, aes(x = fct_reorder(series, series_no), y = rtp_sh
 
 #### Different crowns
 
-Every question where HQ and RTP would have crowned different winners on their own, since RTP joined the poll -- each office's pick and how far ahead of their own runner-up it was.
+Every question where HQ and RTP would have crowned different winners on their own, since RTP joined the poll -- each office's pick and how far ahead of their own runner-up it was, sorted by the two margins combined (a rough read on how emphatic the standoff was, not on how far apart the offices' support for the same option was -- they didn't pick the same option here).
 
 ```{r}
 #| label: tbl-different-crowns
@@ -422,7 +426,8 @@ different_crowns %>%
     Poll = series,
     Question = question,
     `HQ pick` = sprintf("%s (+%.1f pts)", hq_winner, hq_margin_pts),
-    `RTP pick` = sprintf("%s (+%.1f pts)", rtp_winner, rtp_margin_pts)
+    `RTP pick` = sprintf("%s (+%.1f pts)", rtp_winner, rtp_margin_pts),
+    `Combined margin` = sprintf("%.1f pts", total_margin_pts)
   ) %>%
   knitr::kable()
 ```
