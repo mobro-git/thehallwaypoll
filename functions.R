@@ -153,7 +153,11 @@ summarize_two_option = function(data) {
     ungroup()
 }
 
-# Nicely formatted kable of a summarize_two_option() table
+# Nicely formatted kable of a summarize_two_option() table. p-values are
+# pre-formatted as scientific-notation strings rather than left as raw
+# numbers -- kable() picks fixed vs. scientific notation per column based on
+# every value present, so a single very small p-value (or a narrow range of
+# them) can silently round to "0" instead of showing its real magnitude.
 binom_summary_table = function(summary_df) {
   summary_df %>%
     transmute(
@@ -164,7 +168,7 @@ binom_summary_table = function(summary_df) {
       `Leader share`    = percent(leader_share, 0.1),
       `Margin (votes)`  = margin_votes,
       `Margin (points)` = percent(margin_share, 0.1),
-      `p vs 50/50`      = signif(p_value_50_50, 3),
+      `p vs 50/50`      = formatC(p_value_50_50, format = "e", digits = 2),
       `Leader 95% CI`   = sprintf("[%.2f, %.2f]", ci_lower, ci_upper),
       `Votes to flip`   = flips_to_flip
     ) %>%
@@ -248,6 +252,11 @@ summarize_multi_option = function(data) {
 }
 
 # Kable of summarize_multi_option()
+# p-values are pre-formatted as scientific-notation strings rather than left
+# as raw numbers -- kable() picks fixed vs. scientific notation per column
+# based on every value present, so a single very small p-value (or a narrow
+# range of them, as with a lone multi-option question) can silently round to
+# "0" instead of showing its real magnitude.
 multi_option_table = function(summary_df) {
   summary_df %>%
     transmute(
@@ -258,8 +267,8 @@ multi_option_table = function(summary_df) {
       `Top share`        = percent(top_share, 0.1),
       `Zero-vote options` = zero_options,
       `Chi-sq (df)`      = sprintf("%.1f (%d)", chisq_stat, df),
-      `p vs uniform`     = signif(p_vs_uniform, 3),
-      `p: top vs chance` = signif(p_top_vs_chance, 3)
+      `p vs uniform`     = formatC(p_vs_uniform, format = "e", digits = 2),
+      `p: top vs chance` = formatC(p_top_vs_chance, format = "e", digits = 2)
     ) %>%
     kableExtra::kable()
 }
@@ -320,11 +329,14 @@ overlap_bounds = function(a_total, N_a, b_total, N_b) {
 }
 
 # Compare HQ vs RTP on the leading option of every two-option question, via a
-# two-proportion test -- are the two offices voting the same way?
+# two-proportion test -- are the two offices voting the same way? Questions
+# only one office actually voted on are dropped (zero trials breaks
+# prop.test, and there's no second office's result to compare against
+# anyway).
 hq_rtp_compare = function(data) {
   data %>%
     group_by(question) %>%
-    filter(n() == 2, sum(rtp_votes) > 0) %>%
+    filter(n() == 2, sum(hq_votes) > 0, sum(rtp_votes) > 0) %>%
     group_modify(~ {
       df  = .x %>% arrange(desc(votes))
       top = df %>% slice(1)
@@ -367,7 +379,7 @@ hq_rtp_plot = function(compare_df) {
 hq_rtp_compare_multi = function(data) {
   data %>%
     group_by(question) %>%
-    filter(n() > 2, sum(rtp_votes) > 0) %>%
+    filter(n() > 2, sum(hq_votes) > 0, sum(rtp_votes) > 0) %>%
     group_modify(~ {
       kept = .x %>% filter(hq_votes + rtp_votes > 0)
       tab  = rbind(kept$hq_votes, kept$rtp_votes)
@@ -390,7 +402,7 @@ hq_rtp_compare_multi = function(data) {
 hq_rtp_shares_multi = function(data) {
   data %>%
     group_by(question) %>%
-    filter(n() > 2, sum(rtp_votes) > 0) %>%
+    filter(n() > 2, sum(hq_votes) > 0, sum(rtp_votes) > 0) %>%
     mutate(
       hq_N      = sum(hq_votes),
       rtp_N     = sum(rtp_votes),
@@ -405,12 +417,14 @@ hq_rtp_shares_multi = function(data) {
 # shares across every option, from the start of RTP participation (series 12,
 # Earth Day) through the given series, inclusive. Used to track whether the
 # two offices are drifting apart or staying in sync as more polls come in.
+# Questions only one office voted on are dropped -- a 0/0 share from the
+# silent office would inject an NA into every downstream correlation.
 cumulative_alignment = function(through_series, since_series = 12) {
   df = readxl::read_xlsx(here::here("whiteboardpollresults.xlsx")) %>%
     filter(series_no >= since_series, series_no <= through_series, status == "complete") %>%
     mutate(across(c(hq_votes, rtp_votes), ~ replace_na(.x, 0))) %>%
     group_by(series_no, question) %>%
-    filter(sum(rtp_votes) > 0) %>%
+    filter(sum(hq_votes) > 0, sum(rtp_votes) > 0) %>%
     mutate(hq_share = hq_votes / sum(hq_votes), rtp_share = rtp_votes / sum(rtp_votes)) %>%
     ungroup()
 
@@ -420,12 +434,15 @@ cumulative_alignment = function(through_series, since_series = 12) {
 # Count of questions (since RTP joined) where HQ's and RTP's individual winners
 # differed from each other, through the given series (inclusive) -- i.e. the
 # combined "winner" only held because the offices' opposite leans canceled out.
+# Questions only one office voted on are dropped: which.max() on an all-zero
+# column would otherwise hand that office a meaningless "winner" (whichever
+# option happens to sort first), which can spuriously count as a flip.
 flip_count_so_far = function(through_series, since_series = 12) {
   readxl::read_xlsx(here::here("whiteboardpollresults.xlsx")) %>%
     filter(series_no >= since_series, series_no <= through_series, status == "complete") %>%
     mutate(across(c(hq_votes, rtp_votes), ~ replace_na(.x, 0))) %>%
     group_by(series_no, question) %>%
-    filter(sum(rtp_votes) > 0) %>%
+    filter(sum(hq_votes) > 0, sum(rtp_votes) > 0) %>%
     summarize(
       hq_winner  = option[which.max(hq_votes)],
       rtp_winner = option[which.max(rtp_votes)],

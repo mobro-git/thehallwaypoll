@@ -1,0 +1,186 @@
+---
+title: "Labor of Love?"
+description: |
+  Cube farms, Teams etiquette, and the great thermostat war
+date: '2026-09-28'
+categories:
+    - Office
+format: html
+toc: true
+lightbox: true
+execute:
+  echo: false
+  warning: false
+  error: false
+  message: false
+draft: false
+---
+
+```{r}
+library(here)
+source(here("packages.R"))
+source(here("functions.R"))
+
+series_filter = 22
+
+data = pollresults(series_filter)
+```
+
+```{r}
+#| label: fig-overview
+#| fig-cap: "Votes and shares for each question (faceted)."
+#| fig-width: 9
+#| fig-height: 10.5
+faceted_bar_plot(data)
+```
+
+Two of this week's six questions were office-specific: "Cube Farm Traffic" only went up on HQ's whiteboard, and "Moving Upward" only went up on RTP's. Everyone else got all six questions. More on the two one-office questions below -- they're part of the decisiveness numbers like everything else, just excluded from the HQ/RTP comparison later on, since there's no second office's result to compare them to.
+
+# How decisive were these results?
+
+Five of six questions were a simple either-or, so those get the usual binomial test against a 50/50 split. The sixth, "Best Email Signoff," had four options, so it gets the chi-square goodness-of-fit test instead (see the [Week Daze](../20260909_weekdaze/index.html) post for why).
+
+```{r}
+#| label: summary-stats
+summary_lol = summarize_two_option(data)
+lopsided_lol = summary_lol %>% arrange(p_value_50_50)
+closest_lol  = summary_lol %>% arrange(desc(p_value_50_50)) %>% slice(1)
+```
+
+**TL;DR:** `r lopsided_lol$question[1]` was the most one-sided call of the week -- `r lopsided_lol$leader[1]` beat `r lopsided_lol$trailer[1]` `r lopsided_lol$leader_votes[1]`–`r lopsided_lol$trailer_votes[1]` (`r percent(lopsided_lol$leader_share[1],1)`). `r closest_lol$question[1]` was the closest thing to a real debate: `r closest_lol$leader[1]` edged `r closest_lol$trailer[1]` `r closest_lol$leader_votes[1]`–`r closest_lol$trailer_votes[1]`, about as close to a coin flip as this poll has ever produced (p = `r signif(closest_lol$p_value_50_50[1], 2)`) -- fittingly, it's also the one question only RTP got to weigh in on.
+
+```{r}
+#| label: summary-table
+binom_summary_table(summary_lol)
+```
+
+```{r}
+#| label: fig-leader-ci
+#| fig-cap: "Leader shares with 95% confidence intervals."
+#| fig-width: 7
+#| fig-height: 4
+leader_ci_plot(summary_lol)
+```
+
+```{r}
+#| label: fig-waffle-temp
+#| fig-cap: "One square per vote: Worst Office Temperature."
+#| fig-width: 6
+#| fig-height: 4
+waffle_question(data, "Worst Office Temperature")
+```
+
+## Best Email Signoff
+
+```{r}
+#| label: summary-stats-multi
+summary_signoff = summarize_multi_option(data)
+```
+
+The one four-way question of the week: "Thanks" narrowly took it with `r percent(summary_signoff$top_share[1],1)` of the vote, nowhere near the landslide some of the two-option questions produced -- four options makes for a much harder plurality to run away with.
+
+```{r}
+#| label: summary-table-multi
+multi_option_table(summary_signoff)
+```
+
+```{r}
+#| label: fig-ci-signoff
+#| fig-cap: "Best Email Signoff: share of votes per option, with the 1-in-4 chance level dashed."
+#| fig-width: 7
+#| fig-height: 4
+multi_option_ci_plot(data, "Best Email Signoff")
+```
+
+# Does HQ agree with RTP?
+
+"Cube Farm Traffic" and "Moving Upward" only ran in one office each, so there's no second office's result to compare them to -- they're dropped from everything in this section.
+
+```{r}
+#| label: hq-rtp-stats
+hq_rtp_lol = hq_rtp_compare(data)
+hq_rtp_multi_lol = hq_rtp_compare_multi(data)
+
+hq_rtp_shares_lol = data %>%
+  filter(!question %in% c("Cube Farm Traffic", "Moving Upward")) %>%
+  group_by(question) %>%
+  mutate(
+    hq_N      = sum(hq_votes),
+    rtp_N     = sum(rtp_votes),
+    hq_share  = hq_votes / hq_N,
+    rtp_share = rtp_votes / rtp_N
+  ) %>%
+  ungroup() %>%
+  select(question, option, hq_votes, hq_N, hq_share, rtp_votes, rtp_N, rtp_share)
+
+alignment_lol = cor(hq_rtp_shares_lol$hq_share, hq_rtp_shares_lol$rtp_share)
+cumulative_lol = cumulative_alignment(series_filter)
+flip_count_lol = flip_count_so_far(series_filter)
+
+flips_lol = data %>%
+  filter(!question %in% c("Cube Farm Traffic", "Moving Upward")) %>%
+  group_by(question) %>%
+  filter(sum(rtp_votes) > 0) %>%
+  group_modify(~ {
+    hq_winner  = .x$option[which.max(.x$hq_votes)]
+    rtp_winner = .x$option[which.max(.x$rtp_votes)]
+    tibble(hq_winner, rtp_winner, flipped = hq_winner != rtp_winner)
+  }) %>%
+  ungroup() %>%
+  filter(flipped)
+```
+
+```{r}
+#| label: hq-rtp-table
+hq_rtp_lol %>%
+  transmute(
+    question,
+    `Leader (overall)` = option,
+    `HQ share`  = sprintf("%s (%d/%d)", percent(hq_share, 1), hq_votes, hq_N),
+    `RTP share` = sprintf("%s (%d/%d)", percent(rtp_share, 1), rtp_votes, rtp_N),
+    `Gap (pts)` = percent(abs(gap), 1),
+    `p-value`   = signif(p_value, 3)
+  ) %>%
+  kableExtra::kable()
+```
+
+```{r}
+#| label: hq-rtp-table-multi
+hq_rtp_multi_lol %>%
+  transmute(
+    question,
+    `Options tested` = options_tested,
+    `Options dropped (0 votes both offices)` = options_dropped,
+    `Chi-sq (df)` = sprintf("%.1f (%d)", chisq_stat, df),
+    `p-value` = signif(p_value, 3)
+  ) %>%
+  kableExtra::kable()
+```
+
+```{r}
+#| label: fig-hq-rtp
+#| fig-cap: "HQ vs RTP support for every option, every shared question."
+#| fig-width: 7
+#| fig-height: 5
+hq_rtp_plot(hq_rtp_shares_lol)
+```
+
+`r if (nrow(flips_lol) == 0) "HQ and RTP picked the exact same winner on all four shared questions this week -- no flips, and the running flip tally holds at" else sprintf('%d of the four shared questions flipped the top pick between offices, keeping the running flip tally at', nrow(flips_lol))` **`r flip_count_lol`**.
+
+The Alignment Index for this poll alone comes out to **`r round(alignment_lol, 2)`**, and the cumulative index sits at **`r round(cumulative_lol, 2)`**. With total agreement on every winner and reasonably similar enthusiasm across the board, this was a quiet week for office tension.
+
+# Do the procrastinators run hot?
+
+"Wait until it's really a problem" swept EISD Tickets, and "Too Hot" swept Worst Office Temperature -- both landslides, and both questions drew almost identical crowds. Let's bound how much the "let it boil over" types overlap.
+
+```{r}
+#| label: overlap-procrastinators
+ov_lol = overlap_bounds(
+  a_total = data %>% filter(question == "EISD Tickets", option == "Wait until its really a problem") %>% pull(votes),
+  N_a     = data %>% filter(question == "EISD Tickets") %>% pull(N) %>% unique(),
+  b_total = data %>% filter(question == "Worst Office Temperature", option == "Too Hot") %>% pull(votes),
+  N_b     = data %>% filter(question == "Worst Office Temperature") %>% pull(N) %>% unique()
+)
+```
+
+Of the `r ov_lol$m` overlapping voters, the ticket-procrastinating, thermostat-blaming crowd could be as small as `r ov_lol$min_overlap` or as large as `r ov_lol$max_overlap` people (`r percent(ov_lol$min_overlap/ov_lol$m, 1)`–`r percent(ov_lol$max_overlap/ov_lol$m, 1)`), versus about `r round(ov_lol$expected_overlap)` (`r percent(ov_lol$expected_overlap/ov_lol$m, 1)`) expected if the two opinions were unrelated. Both landslides are large enough that the floor sits well above zero -- there's a real, forced overlap here, not just a coincidence of two big majorities.
