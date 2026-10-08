@@ -31,10 +31,16 @@ data = pollresults(series_filter)
 #| fig-cap: "Votes and shares for each question (faceted)."
 #| fig-width: 9
 #| fig-height: 10.5
-faceted_bar_plot(data)
+data_overview = data %>%
+  mutate(question = case_when(
+    question == "Cube Farm Traffic" ~ "Cube Farm Traffic (HQ-only)",
+    question == "Moving Upward"     ~ "Moving Upward (RTP-only)",
+    TRUE ~ question
+  ))
+faceted_bar_plot(data_overview)
 ```
 
-Two of this week's six questions were office-specific: "Cube Farm Traffic" only went up on HQ's whiteboard, and "Moving Upward" only went up on RTP's. Everyone else got all six questions. More on the two one-office questions below -- they're part of the decisiveness numbers like everything else, just excluded from the HQ/RTP comparison later on, since there's no second office's result to compare them to.
+Two of this week's six questions were office-specific: "Cube Farm Traffic" only went up on HQ's whiteboard, and "Moving Upward" only went up on RTP's. Both offices got the remaining four questions. More on the two one-office questions below -- they're part of the decisiveness numbers like everything else, just excluded from the HQ/RTP comparison later on, since there's no second office's result to compare them to.
 
 # How decisive were these results?
 
@@ -51,7 +57,8 @@ closest_lol  = summary_lol %>% arrange(desc(p_value_50_50)) %>% slice(1)
 
 ```{r}
 #| label: summary-table
-binom_summary_table(summary_lol)
+binom_summary_table(summary_lol %>% arrange(desc(margin_share))) %>%
+  kableExtra::footnote(general = "Sorted by margin (points), largest to smallest.")
 ```
 
 ```{r}
