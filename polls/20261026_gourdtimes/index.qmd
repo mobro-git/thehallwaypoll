@@ -1,0 +1,183 @@
+---
+title: "Gourd Times"
+description: |
+  Leaves, lattes, and the eternal cinnamon supremacy
+date: '2026-10-26'
+categories:
+    - Autumn
+format: html
+toc: true
+lightbox: true
+execute:
+  echo: false
+  warning: false
+  error: false
+  message: false
+draft: false
+---
+
+```{r}
+library(here)
+source(here("packages.R"))
+source(here("functions.R"))
+
+series_filter = 23
+
+data = pollresults(series_filter)
+```
+
+```{r}
+#| label: fig-overview
+#| fig-cap: "Votes and shares for each question (faceted)."
+#| fig-width: 9
+#| fig-height: 10.5
+faceted_bar_plot(data)
+```
+
+Both offices weighed in on all five questions this week, so nothing's excluded from anything below -- the first time that's been true since Week Daze.
+
+# How decisive were these results?
+
+Four of this week's five questions offered three or four choices instead of the usual either-or, so those get the chi-square goodness-of-fit test against "everyone's equally likely" instead of a 50/50 binomial test (see the [Week Daze](../20260909_weekdaze/index.html) post for why). Only "Décor Preference" was a simple two-way question -- more on that one below.
+
+```{r}
+#| label: summary-stats
+summary_gourd = summarize_multi_option(data)
+lopsided_gourd = summary_gourd %>% arrange(p_vs_uniform)
+closest_gourd  = summary_gourd %>% arrange(desc(p_vs_uniform)) %>% slice(1)
+```
+
+**TL;DR:** `r lopsided_gourd$question[1]` produced the most lopsided result of the week -- `r lopsided_gourd$top_option[1]` alone took `r percent(lopsided_gourd$top_share[1],1)` of the vote, miles past what you'd expect from `r lopsided_gourd$k[1]` equally likely options. `r closest_gourd$question[1]` was the closest thing to a real debate: `r closest_gourd$top_option[1]` led with just `r percent(closest_gourd$top_share[1],1)`, barely clearing the 1-in-`r closest_gourd$k[1]` chance level and the only question that isn't clearly distinguishable from a random pick.
+
+```{r}
+#| label: summary-table
+multi_option_table(summary_gourd)
+```
+
+```{r}
+#| label: fig-ci-spice
+#| fig-cap: "Best Spice: share of votes per option, with the 1-in-4 chance level dashed."
+#| fig-width: 7
+#| fig-height: 4.5
+multi_option_ci_plot(data, "Best Spice")
+```
+
+```{r}
+#| label: fig-ci-leaf
+#| fig-cap: "Favorite Leaf Color: share of votes per option, with the 1-in-3 chance level dashed."
+#| fig-width: 7
+#| fig-height: 4.5
+multi_option_ci_plot(data, "Favorite Leaf Color")
+```
+
+```{r}
+#| label: fig-waffle-spice
+#| fig-cap: "One square per vote: Best Spice."
+#| fig-width: 6.5
+#| fig-height: 5
+waffle_question(data, "Best Spice")
+```
+
+## Décor Preference
+
+```{r}
+#| label: summary-stats-decor
+summary_decor = summarize_two_option(data)
+```
+
+The one two-option holdout of the week: `r summary_decor$leader[1]` beat `r summary_decor$trailer[1]` `r summary_decor$leader_votes[1]`–`r summary_decor$trailer_votes[1]` (`r percent(summary_decor$leader_share[1],1)`), a decisive enough split that this office apparently has zero patience for haunted-house vibes at their desks.
+
+```{r}
+#| label: summary-table-decor
+binom_summary_table(summary_decor)
+```
+
+# Does HQ agree with RTP?
+
+With three or four options on most questions, "does HQ agree with RTP" mostly means a chi-square test of independence on the full office-by-option table, the same as every multi-option poll since Week Daze. Décor Preference, the lone two-option question, still gets the simpler leader-vs-leader comparison.
+
+```{r}
+#| label: hq-rtp-stats
+hq_rtp_multi_gourd = hq_rtp_compare_multi(data)
+hq_rtp_two_gourd    = hq_rtp_compare(data)
+
+hq_rtp_shares_gourd = data %>%
+  group_by(question) %>%
+  mutate(
+    hq_N      = sum(hq_votes),
+    rtp_N     = sum(rtp_votes),
+    hq_share  = hq_votes / hq_N,
+    rtp_share = rtp_votes / rtp_N
+  ) %>%
+  ungroup() %>%
+  select(question, option, hq_votes, hq_N, hq_share, rtp_votes, rtp_N, rtp_share)
+
+alignment_gourd   = cor(hq_rtp_shares_gourd$hq_share, hq_rtp_shares_gourd$rtp_share)
+cumulative_gourd  = cumulative_alignment(series_filter)
+flip_count_gourd  = flip_count_so_far(series_filter)
+
+flips_gourd = data %>%
+  group_by(question) %>%
+  group_modify(~ {
+    hq_winner  = .x$option[which.max(.x$hq_votes)]
+    rtp_winner = .x$option[which.max(.x$rtp_votes)]
+    tibble(hq_winner, rtp_winner, flipped = hq_winner != rtp_winner)
+  }) %>%
+  ungroup() %>%
+  filter(flipped)
+```
+
+```{r}
+#| label: hq-rtp-table-multi
+hq_rtp_multi_gourd %>%
+  transmute(
+    question,
+    `Options tested` = options_tested,
+    `Options dropped (0 votes both offices)` = options_dropped,
+    `Chi-sq (df)` = sprintf("%.1f (%d)", chisq_stat, df),
+    `p-value` = formatC(p_value, format = "e", digits = 2)
+  ) %>%
+  kableExtra::kable()
+```
+
+```{r}
+#| label: hq-rtp-table-two
+hq_rtp_two_gourd %>%
+  transmute(
+    question,
+    `Leader (overall)` = option,
+    `HQ share`  = sprintf("%s (%d/%d)", percent(hq_share, 1), hq_votes, hq_N),
+    `RTP share` = sprintf("%s (%d/%d)", percent(rtp_share, 1), rtp_votes, rtp_N),
+    `Gap (pts)` = percent(abs(gap), 1),
+    `p-value`   = formatC(p_value, format = "e", digits = 2)
+  ) %>%
+  kableExtra::kable()
+```
+
+```{r}
+#| label: fig-hq-rtp
+#| fig-cap: "HQ vs RTP support for every option, every question."
+#| fig-width: 7
+#| fig-height: 6
+hq_rtp_plot(hq_rtp_shares_gourd)
+```
+
+`r nrow(flips_gourd)` question flipped the top pick between offices this week: for `r flips_gourd$question[1]`, HQ went with `r flips_gourd$hq_winner[1]` while RTP leaned `r flips_gourd$rtp_winner[1]` -- fittingly, it's also the one question whose office-by-option split clears p < 0.05 (see the table above). That brings the running flip tally to **`r flip_count_gourd`**. The other four questions saw both offices land on the same pick.
+
+The Alignment Index for this poll alone comes out to **`r round(alignment_gourd, 2)`**, and the cumulative index sits at **`r round(cumulative_gourd, 2)`**. One real disagreement out of five questions, with reasonably matched enthusiasm everywhere else, is a fairly typical week by this poll's standards.
+
+# Do the basic fall people stick together?
+
+"Cinnamon" swept Best Spice and "Cozy" swept Décor Preference -- about as stereotypically autumnal a pair of landslides as this poll has ever produced, and they drew almost identically sized crowds. Let's bound the overlap.
+
+```{r}
+#| label: overlap-basic-fall
+ov_gourd = overlap_bounds(
+  a_total = data %>% filter(question == "Best Spice", option == "Cinnamon") %>% pull(votes),
+  N_a     = data %>% filter(question == "Best Spice") %>% pull(N) %>% unique(),
+  b_total = data %>% filter(question == "Décor Preference", option == "Cozy") %>% pull(votes),
+  N_b     = data %>% filter(question == "Décor Preference") %>% pull(N) %>% unique()
+)
+```
+
+Of the `r ov_gourd$m` overlapping voters, the cinnamon-loving, cozy-decorating crowd could be as small as `r ov_gourd$min_overlap` or as large as `r ov_gourd$max_overlap` people (`r percent(ov_gourd$min_overlap/ov_gourd$m, 1)`–`r percent(ov_gourd$max_overlap/ov_gourd$m, 1)`), versus about `r round(ov_gourd$expected_overlap)` (`r percent(ov_gourd$expected_overlap/ov_gourd$m, 1)`) expected if the two preferences were unrelated. Both landslides are large enough that the floor sits comfortably above zero -- there's a real "basic fall" contingent here, not just two big majorities colliding by chance.
